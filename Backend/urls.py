@@ -1,22 +1,27 @@
-"""
-URL configuration for Backend project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path
+from django.http import HttpResponse
+from procyclingstats import Race
+
+# Create a Race object for the Giro d'Italia 2022
+race = Race("race/grand-prix-chantal-biya/2023/stage-4")
+
+# Parse the race information from the website
+race_data = race.parse()
+
+# Get the nationality of the race
+name = race.name()
+nationality = race.nationality()
+
+test = name, "is hosted in ", nationality
+
+# Print the nationality
+print(name, "is hosted in", nationality)
+
+def hello_world(request):
+    return HttpResponse(test)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', hello_world, name='hello_world'),  # This maps the root URL to the hello_world view
 ]
