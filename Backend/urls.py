@@ -15,9 +15,6 @@ nationality = race.nationality()
 
 test = name, "is hosted in ", nationality
 
-# Print the nationality
-print(name, "is hosted in", nationality)
-
 def hello_world(request):
     return HttpResponse(test)
 
