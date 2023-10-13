@@ -1,9 +1,8 @@
 from django.contrib import admin
 from django.urls import path
-from django.http import HttpResponse
-from Backend import views
+from controller.usercontroller import UserController
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.show_race),  # This maps the root URL to the show_race view
+    path('adduser/', UserController.add_user)
 ]
