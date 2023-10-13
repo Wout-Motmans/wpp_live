@@ -8,7 +8,6 @@ interface User {
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (username : string, email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -26,28 +25,6 @@ export function useAuth() {
 
 export function AuthProvider({ children } : { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-
-	const register = async (username: string, email: string, password: string) => {
-    try {
-      	const response = await fetch('/api/register', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ username, email, password }),
-		});
-
-		if (response.ok) {
-			const data = await response.json();
-			const { username } = data;
-			setUser({ username });
-		} else {
-			throw new Error('Registration failed');
-		}
-    } catch (error) {
-    	console.error('Register error:', error);
-    }
-  };
 
   const login = async (email: string, password: string) => {
 	try {
@@ -76,7 +53,7 @@ export function AuthProvider({ children } : { children: ReactNode }) {
   };
 
   return (
-	<AuthContext.Provider value={{ user, login, logout, register }}>
+	<AuthContext.Provider value={{ user, login, logout }}>
 	  {children}
 	</AuthContext.Provider>
   );
