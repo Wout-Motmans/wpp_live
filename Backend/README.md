@@ -7,4 +7,4 @@
 2.1 Check if pip is installed succesfully: - in cmd: pip -V --> pip 23.2.1
 3: Install django & procyclingstats - in cmd: pip install django - in cmd: pip install procyclingstats
 
-4: in /Backend folder python python manage.py runserver --> Ga naar http://127.0.0.1:8000/ en kijk of het werkt
+4: in /Backend folder python manage.py runserver --> Ga naar http://127.0.0.1:8000/ en kijk of het werkt
