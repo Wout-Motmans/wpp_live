@@ -5,7 +5,6 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    # Add the path to the parent directory (containing the "Backend" folder) to the Python path
     parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     sys.path.append(parent_dir)
     

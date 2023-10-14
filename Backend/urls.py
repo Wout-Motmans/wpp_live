@@ -1,10 +1,11 @@
 from django.contrib import admin
 from django.urls import path
-from controller.usercontroller import UserController
-from controller.racecontroller import get_race_details
+from rest_framework.authtoken.views import obtain_auth_token
+from controller.controller import get_all_users, change_user_role
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('adduser/', UserController.add_user),
-    path('getracedetails/', get_race_details)
+    path('admin', admin.site.urls),
+    path('auth', obtain_auth_token),
+    path('users', get_all_users),
+    path('changeRole', change_user_role),
 ]
