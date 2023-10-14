@@ -32,3 +32,50 @@ def change_user_role(request):
         user.save()
         return Response(status=status.HTTP_200_OK)
     return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def add_user(request):
+    if request.user.is_staff:
+        data = json.loads(request.body.decode('utf-8'))
+        username = data.get("username")
+        password = data.get("password")
+        User.objects.create_user(username, password)
+        return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_user(request):
+    if request.user.is_staff:
+        data = json.loads(request.body.decode('utf-8'))
+        user_id = int(data.get("id"))
+        user = User.objects.get(id=user_id)
+        user.delete()
+        return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def edit_user(request):
+    if request.user.is_staff:
+        data = json.loads(request.body.decode('utf-8'))
+        user_id = int(data.get("id"))
+        user = User.objects.get(id=user_id)
+
+        new_username = data.get("username")
+        if new_username:
+            user.username = new_username
+
+        new_password = data.get("password")
+        if new_password:
+            user.set_password(new_password)
+        user.save()
+        return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_401_UNAUTHORIZED)
