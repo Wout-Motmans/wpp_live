@@ -11,5 +11,6 @@
 - pip install procyclingstats
 - pip install djangorestframework
 - pip install psycopg2
+- pip install django-cors-headers
 
 4: in /Backend folder python manage.py runserver --> Ga naar http://127.0.0.1:8000/ en kijk of het werkt
