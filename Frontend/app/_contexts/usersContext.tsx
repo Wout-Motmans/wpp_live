@@ -4,14 +4,15 @@ import { ReactNode, createContext, useContext, useEffect, useState } from 'react
 import { useAuth } from '../_contexts/authContext';
 
 
-interface Users {
+interface User {
     id : number,
     username: string,
-    superuser: boolean
+    isStaff: boolean
 }
 
 interface UsersContextType {
-	users: Users[];
+	users: User[];
+    getUsers: () => void;
 }
 
 const UsersContext = createContext<UsersContextType | undefined>(undefined);
@@ -28,9 +29,9 @@ export function useUsers() {
 
 export function UsersProvider({ children } : { children: ReactNode }) {
 	const { auth } = useAuth();
-    const [users, setUsers] = useState<Users[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
 
-    const getAllUsers = async () => {
+    const getUsers = async () => {
 	    const response = await fetch('/api/users', {
 		    method: 'GET',
 		    headers: {
@@ -48,11 +49,11 @@ export function UsersProvider({ children } : { children: ReactNode }) {
 	}
 
     useEffect(() => {
-        getAllUsers();
+        getUsers();
     }, []);
 
     return (
-        <UsersContext.Provider value={{ users }}>
+        <UsersContext.Provider value={{ users, getUsers }}>
             {children}
         </UsersContext.Provider>
   );

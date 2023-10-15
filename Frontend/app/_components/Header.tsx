@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useAuth } from '../_contexts/authContext';
 import { usePathname } from 'next/navigation';
 
-const navigationRoutes = ['adminpage']
+const navigationRoutes = ['adminpage', 'raceinfo']
 
 export default function Header(){
     const { logout } = useAuth();
@@ -44,9 +44,11 @@ export default function Header(){
                                         </Link>
                                     )
                                 })
-                                &&
+                            }
+                            {
                                 pathname !== '/login' &&
                                 <button onClick={() => logout()} className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Logout</button>
+                                
                             }
                         </nav>
                     </div>

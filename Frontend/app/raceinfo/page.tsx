@@ -2,10 +2,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+interface RaceInfo {
+  name : string,
+  nationality : string
+}
+
 function RaceInfoPage() {
   const [raceName, setRaceName] = useState('');
-  const [raceInfo, setRaceInfo] = useState(null);
-  const [error, setError] = useState(null);
+  const [raceInfo, setRaceInfo] = useState<RaceInfo | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleRaceNameChange = (event) => {
     setRaceName(event.target.value);
@@ -16,7 +21,7 @@ function RaceInfoPage() {
       setError('Race name is required.');
       setRaceInfo(null);
     } else {
-      axios.get(`http://localhost:8000/getraceinfo?race_name=${raceName}`)
+      axios.get(`api/getraceinfo?race_name=${raceName}`)
         .then((response) => {
           setRaceInfo(response.data);
           setError(null);
