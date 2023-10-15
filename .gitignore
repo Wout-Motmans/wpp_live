@@ -2,3 +2,4 @@
 **/**/__pycache__/
 **/.idea/_
 **/cycling/**/__pycache__/
+Backend/database_config.py
