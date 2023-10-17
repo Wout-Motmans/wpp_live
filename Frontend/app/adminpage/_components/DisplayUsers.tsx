@@ -1,7 +1,6 @@
 'use client'
 import { Select, Table, Button } from 'antd';
 import { useUsers } from '../../_contexts/usersContext';
-import { useAuth } from '../../_contexts/authContext';
 import { useState } from 'react';
 import EditUser from './EditUser';
 
@@ -61,16 +60,15 @@ export default function DisplayUsers() {
 
 
 const Toggle =  ( {id, isStaff } : User) => {
-    const { auth } = useAuth()
 	const { getUsers } = useUsers();
 	const handleChange = async (staff : string) => {
         const response = await fetch('/api/changeRole', {
             method: 'POST',
             headers: {
-                'Authorization': `Token ${auth?.token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ id, staff }),
+            credentials: 'include',
 	    });
         if (!response.ok) {
             throw new Error("Error, couldnt change role")
@@ -92,16 +90,15 @@ const Toggle =  ( {id, isStaff } : User) => {
 }
 
 const Delete = ( { id } : { id : number } ) => {
-	const { auth } = useAuth()
 	const { getUsers } = useUsers();
 	const handleDelete = async () => {
 		const response = await fetch('/api/deleteuser', {
             method: 'DELETE',
             headers: {
-                'Authorization': `Token ${auth?.token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ id }),
+            credentials: 'include',
 	    });
         if (!response.ok) {
             throw new Error("Error, couldnt delete user")
@@ -113,7 +110,6 @@ const Delete = ( { id } : { id : number } ) => {
 }
 
 function Add({close} : {close: () => void}) {
-	const { auth } = useAuth()
 	const { getUsers } = useUsers();
 	
 	const [username, setUsername] = useState("")
@@ -123,10 +119,10 @@ function Add({close} : {close: () => void}) {
 		const response = await fetch('/api/adduser', {
             method: 'POST',
             headers: {
-                'Authorization': `Token ${auth?.token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ username, password }),
+            credentials: 'include',
 	    });
         if (!response.ok) {
             throw new Error("Error, couldnt add user")

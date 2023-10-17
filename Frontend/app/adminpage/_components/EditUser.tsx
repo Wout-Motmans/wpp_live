@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { useAuth } from '@/app/_contexts/authContext';
 import { useUsers } from "@/app/_contexts/usersContext";
 
 interface User {
@@ -10,8 +9,6 @@ interface User {
 
 
 export default function EditUser({user, close} : { user : User, close : () => void }) {
-    
-	const { auth } = useAuth()
 	const { getUsers } = useUsers();
 
 
@@ -22,10 +19,10 @@ export default function EditUser({user, close} : { user : User, close : () => vo
 		const response = await fetch('/api/edituser', {
             method: 'POST',
             headers: {
-                'Authorization': `Token ${auth?.token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ id : user.id, username, password }),
+            credentials: 'include',
 	    });
         if (!response.ok) {
             throw new Error("Error, couldnt edit user")

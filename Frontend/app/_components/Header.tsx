@@ -1,13 +1,13 @@
 'use client'
 import Link from 'next/link';
-import { useAuth } from '../_contexts/authContext';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '../_contexts/authContext';
 
 const navigationRoutes = ['adminpage', 'raceinfo']
 
 export default function Header(){
-    const { logout } = useAuth();
     const pathname = usePathname()
+	const { logout } = useAuth();
 
     return (
         <div className=" bg-[#1e1e24]">
@@ -47,8 +47,7 @@ export default function Header(){
                             }
                             {
                                 pathname !== '/login' &&
-                                <button onClick={() => logout()} className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Logout</button>
-                                
+                                <button onClick={logout}  className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Logout</button>
                             }
                         </nav>
                     </div>
@@ -57,3 +56,6 @@ export default function Header(){
         </div>
     )
 }
+
+
+

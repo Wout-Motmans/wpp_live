@@ -12,10 +12,6 @@ function RaceInfoPage() {
   const [raceInfo, setRaceInfo] = useState<RaceInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleRaceNameChange = (event) => {
-    setRaceName(event.target.value);
-  };
-
   const fetchRaceInfo = () => {
     if (!raceName) {
       setError('Race name is required.');

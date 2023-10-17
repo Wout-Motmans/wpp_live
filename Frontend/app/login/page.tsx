@@ -1,16 +1,18 @@
 'use client'
 import { useAuth } from '../_contexts/authContext';
+import { useAuthCheck } from '../_hooks/useAuthCheck';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
-	const { user, auth, login } = useAuth();
+	const { login } = useAuth();
+    const { isAuthenticated } = useAuthCheck()
 	const router = useRouter();
 
 	const [username, setUsername] = useState<string>('')
 	const [password, setPassword] = useState<string>('')
   
-	if (user && auth) router.push('/adminpage')
+	if ( isAuthenticated() ) router.push('/adminpage')
 
 	return (
 		<main className="relative flex flex-col items-center justify-center h-full overflow-hidden flex-grow">
