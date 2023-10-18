@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import { useAuth } from '../_contexts/authContext';
 import { useAuthCheck } from '../_hooks/useAuthCheck';
@@ -14,7 +15,7 @@ export default function Home() {
   
   	return (
         <UsersProvider>
-            <main className="relative flex flex-col items-center justify-center h-full overflow-hidden flex-grow">
+            <main className="flex flex-col items-center justify-center h-full m-auto">
                 <DisplayUsers />
 	        </main>
         </UsersProvider>

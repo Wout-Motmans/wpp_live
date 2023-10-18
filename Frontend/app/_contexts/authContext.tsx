@@ -71,13 +71,11 @@ export function AuthProvider({ children } : { children: ReactNode }) {
             }
             return res.json();
         })
-        .then(_ => {
-            setUser('');
-            setIsLoggedIn(false);
-        })
         .catch(error => {
             console.error('Logout error:', error);
         });
+        setUser('');
+        setIsLoggedIn(false);
     };
 
     return (

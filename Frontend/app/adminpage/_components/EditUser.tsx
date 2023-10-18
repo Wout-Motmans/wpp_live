@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useUsers } from "@/app/_contexts/usersContext";
+import Cookies from 'js-cookie';
 
 interface User {
 	id : number,
@@ -11,7 +12,6 @@ interface User {
 export default function EditUser({user, close} : { user : User, close : () => void }) {
 	const { getUsers } = useUsers();
 
-
 	const [username, setUsername] = useState(user.username)
 	const [password, setPassword] = useState("")
     
@@ -19,10 +19,10 @@ export default function EditUser({user, close} : { user : User, close : () => vo
 		const response = await fetch('/api/edituser', {
             method: 'POST',
             headers: {
+                'X-CSRFToken': Cookies.get('csrftoken')!,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ id : user.id, username, password }),
-            credentials: 'include',
 	    });
         if (!response.ok) {
             throw new Error("Error, couldnt edit user")

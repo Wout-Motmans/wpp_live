@@ -30,8 +30,6 @@ ALLOWED_HOSTS = []
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
 
-CSRF_HEADER_NAME = "X-Csrftoken"
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -75,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = 'Cycling.asgi.application'
+WSGI_APPLICATION = 'Cycling.wsgi.application'
 
 
 # Database

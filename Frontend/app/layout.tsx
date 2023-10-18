@@ -13,12 +13,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col">
-        <AuthProvider>
-          <Header/>
-          {children}
-        </AuthProvider>
-      </body>
+        <body className="min-h-screen flex flex-col">
+            <AuthProvider>
+                <Header/>
+                {children}
+            </AuthProvider>
+        </body>
     </html>
   )
 }
