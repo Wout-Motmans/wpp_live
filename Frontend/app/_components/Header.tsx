@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../_contexts/authContext';
 
-const navigationRoutes = ['adminpage', 'raceinfo']
+const navigationRoutes = ['testrace','adminpage', 'raceinfo']
 
 export default function Header(){
     const pathname = usePathname()
@@ -27,7 +27,7 @@ export default function Header(){
                             </path>
                         </svg>
                     </Link>
-                    <nav>
+                    <nav className='flex flex-row items-center'>
                         {
                             pathname === '/' &&
                             <Link href={"/login"} className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Login</Link>
@@ -39,7 +39,7 @@ export default function Header(){
                                     href={`/${route}`}
                                     className={`text-xl pr-3 text-white ${pathname === `/${route}`? "underline" : ""} `}
                                     >
-                                        {route}
+                                    {route}
                                     </Link>
                                 )
                             })

@@ -33,7 +33,6 @@ def my_logout(request):
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication])
 def my_authenticate(request):
-    print(request.COOKIES)
     if not request.user.is_authenticated:
         return Response({'isAuthenticated': False}, status=status.HTTP_401_UNAUTHORIZED)
     return Response({"isAuthenticated": True}, status=status.HTTP_200_OK)

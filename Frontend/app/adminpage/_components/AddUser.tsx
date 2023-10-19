@@ -37,7 +37,6 @@ export default function AddUser({close} : {close: () => void}) {
 
 
 	return (
-        <div>
         <div className='absolute h-full w-full top-0 left-0'>
             <div className=' flex flex-col items-center justify-center h-full'>
                 <div className="w-full p-6 bg-white rounded-md shadow-md sm:max-w-md">
@@ -60,8 +59,6 @@ export default function AddUser({close} : {close: () => void}) {
                     </button>
                 </div>
             </div>
-            <div className='absolute h-full w-full top-0 left-0' onClick={() => close()}></div>
-        </div>
         </div>
 	)
 }

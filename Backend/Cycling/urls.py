@@ -14,7 +14,9 @@ urlpatterns = [
     path('adduser', user.add_user),
     path('deleteuser', user.delete_user),
     path('edituser', user.edit_user),
+    
+    path('popraces', race.get_popular_races),
+    path('startriders/<str:race_url>', race.get_start_riders),
 ]
 
-#path('getraceinfo', get_race_info),
 
