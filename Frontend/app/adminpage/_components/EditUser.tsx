@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { useAuth } from '@/app/_contexts/authContext';
 import { useUsers } from "@/app/_contexts/usersContext";
+import Cookies from 'js-cookie';
 
 interface User {
 	id : number,
@@ -10,10 +10,7 @@ interface User {
 
 
 export default function EditUser({user, close} : { user : User, close : () => void }) {
-    
-	const { auth } = useAuth()
 	const { getUsers } = useUsers();
-
 
 	const [username, setUsername] = useState(user.username)
 	const [password, setPassword] = useState("")
@@ -22,7 +19,7 @@ export default function EditUser({user, close} : { user : User, close : () => vo
 		const response = await fetch('/api/edituser', {
             method: 'POST',
             headers: {
-                'Authorization': `Token ${auth?.token}`,
+                'X-CSRFToken': Cookies.get('csrftoken')!,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ id : user.id, username, password }),

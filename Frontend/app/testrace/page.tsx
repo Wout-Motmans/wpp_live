@@ -2,9 +2,12 @@
 'use client'
 import { useAuth } from '../_contexts/authContext';
 import { useAuthCheck } from '../_hooks/useAuthCheck';
-import { UsersProvider } from '../_contexts/usersContext';
-import DisplayUsers from './_components/DisplayUsers'
 import { useEffect } from 'react';
+import DisplayRaces from './_components/DisplayRaces';
+import DisplayUsers from './_components/DisplayUsers';
+import { UsersProvider } from '../_contexts/usersContext';
+
+
 
 export default function Home() {
     const { authenticate } = useAuth();
@@ -12,13 +15,18 @@ export default function Home() {
     useEffect(() => {authenticate()}, [])
     requireAuth();
 
-  
-  	return (
-        <UsersProvider>
-            <main className="flex flex-col items-center justify-center h-full m-auto">
-                <DisplayUsers />
-	        </main>
-        </UsersProvider>
+
+
+	return (
+		<main className=" flex m-12 child:pl-10">
+            <DisplayRaces/>
+            <UsersProvider>
+                <DisplayUsers/>
+            </UsersProvider>
+		</main>
   	)
 }
   
+
+
+

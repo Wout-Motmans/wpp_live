@@ -1,17 +1,17 @@
 'use client'
 import Link from 'next/link';
-import { useAuth } from '../_contexts/authContext';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '../_contexts/authContext';
 
-const navigationRoutes = ['adminpage', 'raceinfo']
+const navigationRoutes = ['testrace','adminpage', 'raceinfo']
 
 export default function Header(){
-    const { logout } = useAuth();
     const pathname = usePathname()
+	const { logout } = useAuth();
 
     return (
-        <div className=" bg-[#1e1e24]">
-            <div className=" mx-auto max-w-screen-xl " >
+        <header className=" bg-[#1e1e24]">
+            <div className=" mx-auto " >
                 <div className="flex items-center justify-between px-6 py-3 mx-auto ">
                     <Link href='/' className="flex">
                         <svg width="570" height="90" xmlns="http://www.w3.org/2000/svg">
@@ -27,33 +27,33 @@ export default function Header(){
                             </path>
                         </svg>
                     </Link>
-                    <div className="">
-                        <nav>
-                            {
-                                pathname === '/' &&
-                                <Link href={"/login"} className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Login</Link>
-                                ||
-                                navigationRoutes.map((route) => {
-                                    return (
-                                        <Link 
-                                        key={route} 
-                                        href={`/${route}`}
-                                        className={`text-xl pr-3 text-white ${pathname === `/${route}`? "underline" : ""} `}
-                                        >
-                                            {route}
-                                        </Link>
-                                    )
-                                })
-                            }
-                            {
-                                pathname !== '/login' &&
-                                <button onClick={() => logout()} className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Logout</button>
-                                
-                            }
-                        </nav>
-                    </div>
+                    <nav className='flex flex-row items-center'>
+                        {
+                            pathname === '/' &&
+                            <Link href={"/login"} className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Login</Link>
+                            ||
+                            navigationRoutes.map((route) => {
+                                return (
+                                    <Link 
+                                    key={route} 
+                                    href={`/${route}`}
+                                    className={`text-xl pr-3 text-white ${pathname === `/${route}`? "underline" : ""} `}
+                                    >
+                                    {route}
+                                    </Link>
+                                )
+                            })
+                        }
+                        {
+                            pathname !== '/login' &&
+                            <button onClick={logout}  className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Logout</button>
+                        }
+                    </nav>
                 </div>
             </div>
-        </div>
+        </header>
     )
 }
+
+
+

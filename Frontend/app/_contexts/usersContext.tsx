@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
-import { useAuth } from '../_contexts/authContext';
 
 
 interface User {
@@ -28,17 +27,10 @@ export function useUsers() {
 
 
 export function UsersProvider({ children } : { children: ReactNode }) {
-	const { auth } = useAuth();
     const [users, setUsers] = useState<User[]>([]);
 
     const getUsers = async () => {
-	    const response = await fetch('/api/users', {
-		    method: 'GET',
-		    headers: {
-                'Authorization': `Token ${auth?.token}`,
-		        'Content-Type': 'application/json',
-		    }
-	    });
+	    const response = await fetch('/api/users');
 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
