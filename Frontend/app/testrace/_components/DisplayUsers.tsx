@@ -13,6 +13,7 @@ interface User {
 export default function DisplayUsers() {
     const { users } = useUsers()
 
+    console.log(users)
     const [selectedUsers, setSelectedUsers] = useState<User[]>([])
 
     useMemo(() => console.log('selectedUsers changed:', selectedUsers), [selectedUsers]);

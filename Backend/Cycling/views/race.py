@@ -39,3 +39,39 @@ def get_start_riders(request, race_url):
     return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
+
+#wannes stuff (not touched)
+@api_view(['GET'])
+def get_race_info(request):
+    print("here")
+    race_name = request.GET.get('race_name')
+
+    if race_name:
+        try:
+            race = Race(race_name)
+            name = race.name()
+            nationality = race.nationality()
+
+            return Response({'name': name, 'nationality': nationality}, status=200)
+        except Exception as e:
+            return Response({'error': str(e)}, status=400)
+    else:
+        return Response({'error': 'race_name parameter is required'}, status=400)
+    
+
+
+#Jordy stuff
+@api_view(['GET'])
+def get_race_info(request):
+    race_name = request.GET.get('race_name')
+    print(race_name)
+    try:
+        race = Race(race_name)
+        name = race.name()
+        nationality = race.nationality()
+        year = race.year()
+        stages = [{'stage_name': stage['stage_name'], 'stage_url': stage['stage_url'], 'rider_name': stage['rider_name']} for stage in race.stages()]
+        return Response({'name': name, 'nationality': nationality, 'year': year, 'stages': stages}, status=200)
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
+    

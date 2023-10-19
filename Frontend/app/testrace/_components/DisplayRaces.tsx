@@ -55,8 +55,9 @@ const getNewestRaces = async (): Promise<RaceInfo[]> => {
         const response = await fetch('/api/popraces');
     
         if (!response.ok) throw new Error('popraces error');
-    
+        
         const data = await response.json();
+        console.log(data)
         const modifiedData: RaceInfo[] = data.map((race: { url: any; name: any; year: any; }) => ({
             key: race.url,
             name: race.name,

@@ -3,14 +3,20 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 interface RaceInfo {
-  name : string,
-  nationality : string
+  name: string;
+  nationality: string;
+  year: number;
+  stages: { stage_name: string, stage_url: string, rider_name: string }[];
 }
 
-function RaceInfoPage() {
+export default function RaceInfoPage() {
   const [raceName, setRaceName] = useState('');
   const [raceInfo, setRaceInfo] = useState<RaceInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const handleRaceNameChange = (event) => {
+    setRaceName(event.target.value);
+  };
 
   const fetchRaceInfo = () => {
     if (!raceName) {
@@ -19,6 +25,7 @@ function RaceInfoPage() {
     } else {
       axios.get(`api/getraceinfo?race_name=${raceName}`)
         .then((response) => {
+          console.log(response.data);
           setRaceInfo(response.data);
           setError(null);
         })
@@ -52,11 +59,20 @@ function RaceInfoPage() {
           <div className="mt-4">
             <p className="text-lg">Name: {raceInfo.name}</p>
             <p className="text-lg">Nationality: {raceInfo.nationality}</p>
+            <p className="text-lg">Year: {raceInfo.year} </p>
+            <p className="text-lg">Stages:</p>
+            <ul className=' divide-y-4'>
+              {raceInfo.stages.map((stage, index) => (
+                <li key={index}>
+                  <p>Stage Name: {stage.stage_name}</p>
+                  <p>Stage Winner: {stage.rider_name}</p>
+                  <p>Stage URL: {stage.stage_url}</p>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>
     </div>
   );
 }
-
-export default RaceInfoPage;
