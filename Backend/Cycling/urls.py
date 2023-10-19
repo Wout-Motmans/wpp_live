@@ -18,10 +18,8 @@ urlpatterns = [
     path('popraces', race.get_popular_races),
     path('startriders/<str:race_url>', race.get_start_riders),
 
-    path('startriders/<str:race_url>', race.get_start_riders),
-
-
     path('getraceinfo', race.get_race_info),
+    path('getstageinfo', race.get_stage_info),
 ]
 
 

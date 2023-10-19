@@ -75,3 +75,21 @@ def get_race_info(request):
     except Exception as e:
         return Response({'error': str(e)}, status=400)
     
+
+
+@api_view(['GET'])
+def get_stage_info(request):
+    stage_name = request.GET.get('stage_name')
+    try:
+        stage = Stage(stage_name)
+        date = stage.date()
+        distance = stage.distance()
+        stage_type = stage.stage_type()
+        depart = stage.departure()
+        arrival = stage.arrival()
+        print("HEREEEEEEEEEEEEEEEEEEEE")
+        results = [{'rider_name': result['rider_name'], 'rider_number': result['rider_number'], 'rank': result['rank'], 'uci_points' : result['uci_points']} for result in stage.results()]
+
+        return Response({'name' : stage_name, 'date' : date, 'distance' : distance, "stage_type" : stage_type, "depart" : depart, "arrival" : arrival, "results" : results}, status=200)
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)

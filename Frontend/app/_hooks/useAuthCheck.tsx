@@ -3,7 +3,7 @@ import { useAuth } from '../_contexts/authContext';
 import { useRouter } from 'next/navigation';
 
 export function useAuthCheck() {
-    const { isLoggedIn } = useAuth();
+    const { isLoggedIn, authenticate } = useAuth();
     const router = useRouter();
     
 
@@ -11,7 +11,7 @@ export function useAuthCheck() {
 
     const requireAuth = () => {
         if (!isAuthenticated()) {
-        router.push('/login');
+            router.push('/login');
         }
     };
 
