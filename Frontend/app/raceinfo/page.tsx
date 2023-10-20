@@ -57,6 +57,7 @@ function RaceInfoPage() {
   };
 
   const fetchRaceInfo = () => {
+    setStageInfo(null);
     if (!raceName || !raceYear) {
       setError('Race name and year are required.');
       setRaceInfo(null);
