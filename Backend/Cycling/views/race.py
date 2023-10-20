@@ -105,13 +105,29 @@ def get_stage_info(request):
 def calculate_score(request):
     
     stage_name = request.GET.get('stage_name')
+    print(stage_name)
     if stage_name:
-
+        
         stage = Stage(stage_name)
 
     else:
         return Response({'error': 'invalid stage data'}, status=400)
 
+    def gc_test(stage):
+        if stage.gc()[0] == 1:
+            return "shirt_yellow"
+        elif stage.points()[0] == 1:
+            return "shirt_green"
+        elif stage.kom()[0] == 1:
+            return "shirt_polka"
+        else :
+            return "no shirt"
+        
+    def shirt_points():
+        if stage.gc()[0] == 1:
+            return 20
+        else:
+            return 0
     
     results = [{'rider_name': result['rider_name'], 'rank': result['rank']} for result in stage.results()]
     point_array = [100, 80, 70, 65, 55, 45, 35, 30, 25, 20,17,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1]
@@ -126,7 +142,7 @@ def calculate_score(request):
        
         return point_array[res.get('rank')- 1]
 
-    err = [{'rider_name': res.get('rider_name'), 'rider_rank': res.get('rank'),'points':bereken(res)} for res in results]
+    err = [{'rider_name': res.get('rider_name'), 'rider_rank': res.get('rank'),'points':bereken(res),'GC':gc_test(stage),'shirt points':shirt_points()} for res in results]
     print(err)        
 
     return Response ({"test" : err}, status=200)
