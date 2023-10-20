@@ -37,6 +37,21 @@ def get_start_riders(request, race_url):
     return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticated])
+def add_game(request):
+    if request.user.is_staff:
+        print(request.data)
+
+
+
+
+        
+        
+        return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_401_UNAUTHORIZED)
+
 
 
 

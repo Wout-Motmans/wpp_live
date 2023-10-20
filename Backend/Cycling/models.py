@@ -16,3 +16,6 @@ class ChosenRidersDB(models.Model):
     player = models.ForeignKey(User, on_delete=models.CASCADE)
     rider = models.ForeignKey(RiderDB, on_delete=models.CASCADE)
     game = models.ForeignKey(GameDB, on_delete=models.CASCADE)
+
+
+    
