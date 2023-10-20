@@ -6,7 +6,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth import  get_user_model
-from procyclingstats import Race, RaceStartlist, Stage
+from procyclingstats import Race, RaceStartlist, Stage , RiderResults
 import string
 import json
 
@@ -100,3 +100,35 @@ def get_stage_info(request):
             return Response({'error': str(e)}, status=400)
     else:
         return Response({'error': 'invalid stage data'}, status=400)
+
+@api_view(['GET'])
+def calculate_score(request):
+    
+    stage_name = request.GET.get('stage_name')
+    if stage_name:
+
+        stage = Stage(stage_name)
+
+    else:
+        return Response({'error': 'invalid stage data'}, status=400)
+
+    
+    results = [{'rider_name': result['rider_name'], 'rank': result['rank']} for result in stage.results()]
+    point_array = [100, 80, 70, 65, 55, 45, 35, 30, 25, 20,17,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1]
+
+
+    def bereken(res):
+        print(res)
+        if(res.get('rank') == None):
+            return 0
+        if (res.get('rank') > len(point_array)):
+            return 0
+       
+        return point_array[res.get('rank')- 1]
+
+    err = [{'rider_name': res.get('rider_name'), 'rider_rank': res.get('rank'),'points':bereken(res)} for res in results]
+    print(err)        
+
+    return Response ({"test" : err}, status=200)
+
+    
