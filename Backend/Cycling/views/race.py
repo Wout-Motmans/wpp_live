@@ -7,8 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth import  get_user_model
 from procyclingstats import Race, RaceStartlist, Stage
-import string
-import json
+from Cycling.models import RiderDB, RaceDB, GameDB, ChosenRidersDB
+
 
 giro_latest = Race('/'.join(max(Race('/race/giro-d-italia/2020').prev_editions_select(), key=lambda entry: int(entry["text"]))['value'].split('/')[0:3]))
 tour_latest = Race('/'.join(max(Race('/race/tour-de-france/2020').prev_editions_select(), key=lambda entry: int(entry["text"]))['value'].split('/')[0:3]))
@@ -20,12 +20,9 @@ vuelta_latest = Race('/'.join(max(Race('/race/vuelta-a-espana/2020').prev_editio
 @permission_classes([IsAuthenticated])
 def get_popular_races(request):
     if request.user.is_staff:
-
         data = [{'url': x.relative_url(),'name': x.name(),'year': x.year()} for x in [giro_latest, tour_latest, vuelta_latest]]
-
         return Response(status=status.HTTP_200_OK, data=data)
     return Response(status=status.HTTP_401_UNAUTHORIZED)
-
 
 
 @api_view(['GET'])
@@ -33,10 +30,40 @@ def get_popular_races(request):
 @permission_classes([IsAuthenticated])
 def get_start_riders(request, race_url):
     if request.user.is_staff:
-        startlist = RaceStartlist(f"{race_url}/startlist").startlist()
-
-        return Response(status=status.HTTP_200_OK, data=startlist)
+        startlist = RaceStartlist(f"{race_url.replace('_', '/')}/startlist").startlist()
+        selected_keys = ["rider_name", "rider_url", "team_name", "team_url"]
+        result = [{key: item[key] for key in selected_keys} for item in startlist]
+        return Response(status=status.HTTP_200_OK, data=result)
     return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+
+
+
+#for rider in startlist:
+#    if not RiderDB.objects.get(url=rider['rider_url']):
+#        rider = RiderDB(url=rider['rider_url'])
+#        rider.save()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
