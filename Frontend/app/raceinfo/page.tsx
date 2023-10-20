@@ -51,10 +51,16 @@ function RaceInfoPage() {
     } else if (event.key === 'ArrowUp') {
       event.preventDefault();
       setSelectedSuggestionIndex(prevIndex => Math.max(prevIndex - 1, -1));
-    } else if (event.key === 'Enter' && selectedSuggestionIndex !== -1) {
+    } else if (event.key === 'Enter') {
       event.preventDefault();
-      setRaceName(nameSuggestions[selectedSuggestionIndex]);
-      setNameSuggestions([]);
+      if (selectedSuggestionIndex !== -1) {
+        setRaceName(nameSuggestions[selectedSuggestionIndex]);
+        setNameSuggestions([]);
+      } else if (nameSuggestions.length === 1) {
+        // If there's only one suggestion, autofill it
+        setRaceName(nameSuggestions[0]);
+        setNameSuggestions([]);
+      }
     }
   };
 
@@ -62,28 +68,43 @@ function RaceInfoPage() {
     // Validate race year and fetch race info
     const currentYear = new Date().getFullYear();
     const selectedYear = parseInt(raceYear);
+    const formattedRaceName = raceName.toLowerCase();
   
     if (!raceName) {
       setError('Race name is required.');
       return;
     }
   
-    if (!selectedYear || selectedYear < 1903 || selectedYear > currentYear) {
-      setError('Please enter a valid race year between 1903 and the current year.');
+    let raceSpecificError = '';
+  
+    if (formattedRaceName === "giro d'italia") {
+      if (selectedYear < 1909 || selectedYear > currentYear) {
+        raceSpecificError = 'Year should be between 1909 and the current year for Giro d\'Italia.';
+      }
+    } else if (formattedRaceName === "la vuelta ciclista a españa") {
+      if (selectedYear < 1935 || selectedYear > currentYear) {
+        raceSpecificError = 'Year should be between 1935 and the current year for La Vuelta Ciclista a España.';
+      }
+    } else if (formattedRaceName === "tour de france" && (selectedYear < 1903 || selectedYear > currentYear)) {
+                 raceSpecificError = 'Year should be between 1903 and the current year for Tour de France.';
+           }
+  
+    if (raceSpecificError) {
+      setError(raceSpecificError);
       return;
     }
   
     // Convert specific race name to API call format
-    let formattedRaceName = raceName.toLowerCase();
+    let apiFormattedRaceName = formattedRaceName;
     if (formattedRaceName === "la vuelta ciclista a españa") {
-      formattedRaceName = "vuelta-a-espana";
+      apiFormattedRaceName = "vuelta-a-espana";
     } else {
       // Convert other race names to API call format (replace spaces with hyphens)
-      formattedRaceName = formattedRaceName.replace(/ /g, '-').replace(/'/g, '-').replace(/á/g, 'a').replace(/é/g, 'e');
+      apiFormattedRaceName = apiFormattedRaceName.replace(/ /g, '-').replace(/'/g, '-').replace(/á/g, 'a').replace(/é/g, 'e');
     }
   
     // Construct the full race name for the API call
-    const fullRaceName = `race/${formattedRaceName}/${selectedYear}`;
+    const fullRaceName = `race/${apiFormattedRaceName}/${selectedYear}`;
   
     axios
       .get(`api/getraceinfo?race_name=${fullRaceName}`)
@@ -95,6 +116,7 @@ function RaceInfoPage() {
         setError('Error fetching race information.');
       });
   };
+  
   
 
   return (
