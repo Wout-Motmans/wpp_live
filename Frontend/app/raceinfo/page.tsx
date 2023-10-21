@@ -22,12 +22,19 @@ function RaceInfoPage() {
   const [error, setError] = useState<string>('');
 
   const fetchNameSuggestions = (input: string) => {
+    // Don't show suggestions if the name field is empty
+    if (input.trim() === '') {
+      setNameSuggestions([]);
+      return;
+    }
+  
     // Filter race names based on input
-    const suggestions = races
-      .filter(race => race.toLowerCase().startsWith(input.toLowerCase()))
-      .map(race => race);
+    const matchingRace = races.find(race => race.toLowerCase().startsWith(input.toLowerCase()));
+    const suggestions = matchingRace ? [matchingRace] : [];
     setNameSuggestions(suggestions);
   };
+  
+  
 
   const handleRaceNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const name = event.target.value;
