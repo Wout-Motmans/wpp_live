@@ -2,7 +2,7 @@
 'use client'
 import { useAuth } from '../_contexts/authContext';
 import { useAuthCheck } from '../_hooks/useAuthCheck';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import DisplayRaces from './_components/DisplayRaces';
 import DisplayUsers from './_components/DisplayUsers';
 import { UsersProvider } from '../_contexts/usersContext';
@@ -30,7 +30,8 @@ export default function Home() {
 
     const [chosenRace, setChosenRace] = useState<string>('')
     const [chosenUsers, setChosenUsers] = useState<User[]>([])
-    const [startRiders, setStartRiders] = useState<Rider[]>([])
+    //const [startRiders, setStartRiders] = useState<Rider[]>([])
+
     const [displayGame, setDisplayGame] = useState<boolean>(false)
     const [chosingNow, setChosingNow] = useState<number>(0)
     const [template, setTemplate] = useState<User[]>([])
@@ -42,9 +43,10 @@ export default function Home() {
     }
 
     const startGame = async () => {
-        setStartRiders(await getStartRiders(chosenRace))
+        //setStartRiders(await getStartRiders(chosenRace))
     }
     
+    const startRiders = useMemo( async () => { await getStartRiders(chosenRace)},[chosenRace])
 
     
 

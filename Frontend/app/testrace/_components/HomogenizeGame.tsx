@@ -19,41 +19,14 @@ interface Rider {
     rider_name: string,
 }
 
-interface ChosenRider {
+interface ChosenRiders {
     user: User,
-    rider: Rider
+    riders: Rider[]
 }
-
-const columns: ColumnsType<Rider> = [
-    {
-      title: 'Riders',
-      dataIndex: 'rider_name',
-    },
-];
-  
-interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
-    'data-row-key': string;
-}
-  
-const Row = (props: RowProps) => {
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-        id: props['data-row-key'],
-    });
-
-    const style: React.CSSProperties = {
-        ...props.style,
-        transform: CSS.Transform.toString(transform && { ...transform, scaleY: 1 }),
-        transition,
-        cursor: 'move',
-        ...(isDragging ? { position: 'relative', zIndex: 9999 } : {}),
-    };
-
-    return <tr {...props} ref={setNodeRef} style={style} {...attributes} {...listeners} />;
-};
 
 
 export default function HomogenizeGame({ chosenRace, users, startRiders } : { chosenRace : string, users : User[], startRiders : Rider[] }){
-    const [chosenRiders, setChosenRiders] = useState<ChosenRider[]>([])
+    const [chosenRiders, setChosenRiders] = useState<ChosenRiders[]>([])
     
     const handleAddGame = async () => {
         addGame(chosenRace, users, chosenRiders)
