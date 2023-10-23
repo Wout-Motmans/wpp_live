@@ -30,29 +30,15 @@ export default function Home() {
 
     const [chosenRace, setChosenRace] = useState<string>('')
     const [chosenUsers, setChosenUsers] = useState<User[]>([])
-    //const [startRiders, setStartRiders] = useState<Rider[]>([])
+    const [startRiders, setStartRiders] = useState<Rider[]>([])
 
     const [displayGame, setDisplayGame] = useState<boolean>(false)
-    const [chosingNow, setChosingNow] = useState<number>(0)
     const [template, setTemplate] = useState<User[]>([])
 
-    const incrementChosingNow = () => setChosingNow(p => p+1)
-    const chosingNowPlayer = () => {
-        const choosingUserKey = template[chosingNow % template.length]
-        return choosingUserKey.key
-    }
-
     const startGame = async () => {
-        //setStartRiders(await getStartRiders(chosenRace))
+        setStartRiders(await getStartRiders(chosenRace))
     }
     
-    const startRiders = useMemo( async () => { await getStartRiders(chosenRace)},[chosenRace])
-
-    
-
-
-
-
 
 	return (
         <UsersProvider>
@@ -68,8 +54,8 @@ export default function Home() {
                     :
                     <div className='flex flex-col'>
                         <div className='flex'>
-                            <HomogenizeGame chosenRace={chosenRace} users={chosenUsers} startRiders={startRiders}/>
-                            <Template users={chosenUsers} setTemplate={setTemplate}/>
+                            <HomogenizeGame race={chosenRace} users={chosenUsers} riders={startRiders} template={template}/>
+                            <Template users={chosenUsers} template={template} setTemplate={setTemplate}/>
                         </div>
                     </div>
                     

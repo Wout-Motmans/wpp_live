@@ -1,13 +1,6 @@
 import { List } from "antd"
 import Cookies from 'js-cookie';
-import type { DragEndEvent } from '@dnd-kit/core';
-import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
-import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import React, { useState } from 'react';
-import { Table } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
 
 
 interface User {
@@ -19,17 +12,38 @@ interface Rider {
     rider_name: string,
 }
 
-interface ChosenRiders {
+interface Team {
     user: User,
     riders: Rider[]
 }
 
 
-export default function HomogenizeGame({ chosenRace, users, startRiders } : { chosenRace : string, users : User[], startRiders : Rider[] }){
-    const [chosenRiders, setChosenRiders] = useState<ChosenRiders[]>([])
+export default function HomogenizeGame({ race, users, riders, template }: { race: string, users: User[], riders: Rider[], template: User[] }){
+    const [teams, setTeams] = useState<Team[]>(users.map(user => {return {user, riders: []}}))
     
     const handleAddGame = async () => {
-        addGame(chosenRace, users, chosenRiders)
+        addGame(race, users, teams)
+    }
+    
+    const [chosingNow, setChosingNow] = useState<number>(0)
+    const incrementChosingNow = () => setChosingNow(p => p+1)
+    const chosingNowUser = () => {
+        const choosingUser = template[chosingNow % template.length]
+        return choosingUser
+    }
+
+    const chooseRider = (rider : Rider) => {
+        const updatedTeams = teams.map((team) => {
+            if (team.user === chosingNowUser()) {
+              return {
+                ...team,
+                riders: [...team.riders, rider],
+              };
+            }
+            return team;
+        });
+        setTeams(updatedTeams)
+        incrementChosingNow()
     }
 
     return (
@@ -44,12 +58,12 @@ export default function HomogenizeGame({ chosenRace, users, startRiders } : { ch
                 users.map(user =>
                     <List
                     key={user.key}
-                    header={<div>{user.username}{user.key}</div>}
+                    header={<div>{user.username}</div>}
                     bordered
-                    dataSource={chosenRiders}
-                    renderItem={(chose) => chose.user === user &&(
+                    dataSource={teams.find(team => team.user === user)!.riders}
+                    renderItem={rider => (
                         <List.Item>
-                            {chose.rider.rider_name}
+                            {rider.rider_name}
                         </List.Item>
                     )}
                     />
@@ -61,11 +75,11 @@ export default function HomogenizeGame({ chosenRace, users, startRiders } : { ch
                 <List
                 header={<div>Start Riders</div>}
                 bordered
-                dataSource={startRiders}
-                renderItem={(rider) => (
-                    <List.Item>
-                        {rider.rider_name}
-                        <button onClick={}>ADD</button>
+                dataSource={riders}
+                renderItem={rider => (
+                    <List.Item className=" justify-between">
+                        <div>{rider.rider_name}</div>
+                        <button className="border p-1" onClick={() => chooseRider(rider)}>ADD</button>
                     </List.Item>
                 )}
                 />
@@ -79,16 +93,16 @@ export default function HomogenizeGame({ chosenRace, users, startRiders } : { ch
 
 
 
-const addGame = async (chosenRace:string , chosenUsers: User[], chosenRiders: ChosenRider[]) => {
-    const chosenUsersUpdate = chosenUsers.map(user => user.key)
-    const chosenRidersUpdate = chosenRiders.map(chosenRider => {return { user_key: chosenRider.user.key }})
+const addGame = async (race:string , users: User[], teams: Team[]) => {
+    const usersUpdate = users.map(user => user.key)
+    const teamsUpdate = teams.map(team => {return { user_key: team.user.key }})
     fetch('/api/addgame', {
         method: 'POST',
         headers: {
             'X-CSRFToken': Cookies.get('csrftoken')!,
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ chosenRace, chosenUsersUpdate, chosenRidersUpdate })
+        body: JSON.stringify({ race, usersUpdate, teamsUpdate })
     })
     .catch(error => {
         console.error('Add game error:', error);

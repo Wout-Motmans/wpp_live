@@ -64,24 +64,6 @@ def add_game(request):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #wannes stuff (not touched)
 @api_view(['GET'])
 def get_race_info(request):

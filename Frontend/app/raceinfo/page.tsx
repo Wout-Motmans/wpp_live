@@ -6,7 +6,7 @@ interface RaceInfo {
   name: string;
   nationality: string;
   year: number;
-  stages: { stage_name: string, stage_url: string, rider_name: string }[];
+  stages: { stage_name: string; stage_url: string; rider_name: string }[];
 }
 
 interface StageInfo {
@@ -57,6 +57,7 @@ function RaceInfoPage() {
   };
 
   const fetchRaceInfo = () => {
+    setStageInfo(null);
     if (!raceName || !raceYear) {
       setError('Race name and year are required.');
       setRaceInfo(null);
@@ -65,6 +66,7 @@ function RaceInfoPage() {
       const fullRaceName = `race/${formattedRaceName}/${raceYear}`;
       axios.get(`api/getraceinfo?race_name=${fullRaceName}`)
         .then((response) => {
+          console.log(response.data);
           setRaceInfo(response.data);
           setError(null);
         })
@@ -96,7 +98,7 @@ function RaceInfoPage() {
         </div>
         <button
           onClick={fetchRaceInfo}
-          className="w-full px-4 py-2 mt-4 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600"
+          className="w-full px-4 py-2 mt-4 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover-bg-gray-600 focus:outline-none focus:bg-gray-600"
         >
           Get Race Info
         </button>
@@ -104,30 +106,43 @@ function RaceInfoPage() {
           <p className="text-red-500 mt-4">{error}</p>
         )}
         {selectedStage && stageInfo && (
-        <div>
-          <p className="text-lg">Stage Info:</p>
-          <p className="text-lg">Name: {stageInfo.name}</p>
-          <p className="text-lg">Date: {stageInfo.date}</p>
-          <p className="text-lg">Distance: {stageInfo.distance}</p>
-          <p className="text-lg">Stage Type: {stageInfo.stage_type}</p>
-          <p className="text-lg">Departure: {stageInfo.depart}</p>
-          <p className="text-lg">Arrival: {stageInfo.arrival}</p>
-          {stageInfo.results && (
-            <ul>
-              {stageInfo.results.map((result, index) => (
-                <li key={index}>
-                  <p>Rider Name: {result.rider_name}</p>
-                  <p>Rider Number: {result.rider_number}</p>
-                  <p>Rank: {result.rank}</p>
-                  <p>UCI Points: {result.uci_points}</p>
-                </li>
-              ))}
-            </ul>
-          )}
-          <button onClick={() => setSelectedStage(null)}>Back to Race Info</button>
-        </div>
-      )}
+          <div>
+            <p className="text-lg">Stage Info:</p>
+            <p className="text-lg">Name: {stageInfo.name}</p>
+            <p className="text-lg">Date: {stageInfo.date}</p>
+            <p className="text-lg">Distance: {stageInfo.distance}</p>
+            <p className="text-lg">Stage Type: {stageInfo.stage_type}</p>
+            <p className="text-lg">Departure: {stageInfo.depart}</p>
+            <p className="text-lg">Arrival: {stageInfo.arrival}</p>
+            {stageInfo.results && (
+              <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+                <thead>
+                  <tr>
+                    <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rider Name</th>
+                    <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rider Number</th>
+                    <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rank</th>
+                    <th style={{ border: '1px solid #ddd', padding: '8px' }}>UCI Points</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stageInfo.results
+                    .sort((a, b) => parseInt(a.rank) - parseInt(b.rank))
+                    .map((result, index) => (
+                      <tr key={index}>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_name}</td>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_number}</td>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rank}</td>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.uci_points}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            )}
 
+
+            <button onClick={() => setSelectedStage(null)}>Back to Race Info</button>
+          </div>
+        )}
 
         {raceInfo && (
           <div className="mt-4">
@@ -142,12 +157,11 @@ function RaceInfoPage() {
                   <p>Stage Winner: {stage.rider_name}</p>
                   <div>
                     <button
-                      className="w-full px-15 py-2 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600"
+                      className="w-full px-15 py-2 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover-bg-gray-600 focus:outline-none focus-bg-gray-600"
                       onClick={() => handleShowStageInfo(stage)}
                     >
                       Show Stage Info
                     </button>
-                    
                   </div>
                 </li>
               ))}
