@@ -1,6 +1,7 @@
 import { List } from "antd"
 import Cookies from 'js-cookie';
 import React, { useState } from 'react';
+import Template from "./Template";
 
 
 interface User {
@@ -18,8 +19,9 @@ interface Team {
 }
 
 
-export default function HomogenizeGame({ race, users, riders, template }: { race: string, users: User[], riders: Rider[], template: User[] }){
+export default function HomogenizeGame({ race, users, riders }: { race: string, users: User[], riders: Rider[] }){
     const [teams, setTeams] = useState<Team[]>(users.map(user => {return {user, riders: []}}))
+    const [template, setTemplate] = useState<User[]>([])
     
     const handleAddGame = async () => {
         addGame(race, users, teams)
@@ -43,6 +45,7 @@ export default function HomogenizeGame({ race, users, riders, template }: { race
             return team;
         });
         setTeams(updatedTeams)
+        riders.splice(riders.findIndex((rider) => rider === rider), 1)
         incrementChosingNow()
     }
 
@@ -57,12 +60,13 @@ export default function HomogenizeGame({ race, users, riders, template }: { race
             {
                 users.map(user =>
                     <List
+                    className={user === chosingNowUser() ? " bg-green-100" : ""}
                     key={user.key}
-                    header={<div>{user.username}</div>}
+                    header={<div className="">{user.username}</div>}
                     bordered
                     dataSource={teams.find(team => team.user === user)!.riders}
                     renderItem={rider => (
-                        <List.Item>
+                        <List.Item className=" h-20">
                             {rider.rider_name}
                         </List.Item>
                     )}
@@ -70,20 +74,21 @@ export default function HomogenizeGame({ race, users, riders, template }: { race
                 )
             }
             </div>
-            <div>
             {
                 <List
                 header={<div>Start Riders</div>}
                 bordered
                 dataSource={riders}
                 renderItem={rider => (
-                    <List.Item className=" justify-between">
+                    <List.Item className=" justify-between ">
                         <div>{rider.rider_name}</div>
                         <button className="border p-1" onClick={() => chooseRider(rider)}>ADD</button>
                     </List.Item>
                 )}
                 />
             }
+            <Template users={users} template={template} setTemplate={setTemplate}/>
+            <div>
             </div>
         </div>
         </div>

@@ -33,7 +33,6 @@ export default function Home() {
     const [startRiders, setStartRiders] = useState<Rider[]>([])
 
     const [displayGame, setDisplayGame] = useState<boolean>(false)
-    const [template, setTemplate] = useState<User[]>([])
 
     const startGame = async () => {
         setStartRiders(await getStartRiders(chosenRace))
@@ -54,8 +53,8 @@ export default function Home() {
                     :
                     <div className='flex flex-col'>
                         <div className='flex'>
-                            <HomogenizeGame race={chosenRace} users={chosenUsers} riders={startRiders} template={template}/>
-                            <Template users={chosenUsers} template={template} setTemplate={setTemplate}/>
+                            <HomogenizeGame race={chosenRace} users={chosenUsers} riders={startRiders}/>
+                            
                         </div>
                     </div>
                     
