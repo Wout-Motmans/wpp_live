@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth import  get_user_model
 from procyclingstats import Race, RaceStartlist, Stage
-from Cycling.models import RiderDB, RaceDB, GameDB, ChosenRidersDB
+from Cycling.models import Renner, Tour, Team
 
 
 giro_latest = Race('/'.join(max(Race('/race/giro-d-italia/2020').prev_editions_select(), key=lambda entry: int(entry["text"]))['value'].split('/')[0:3]))
