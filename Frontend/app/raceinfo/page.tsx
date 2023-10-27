@@ -34,12 +34,20 @@ function RaceInfoPage() {
     setNameSuggestions(suggestions);
   };
   
-  
-
   const handleRaceNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const name = event.target.value;
     setRaceName(name);
     fetchNameSuggestions(name);
+  };
+ 
+  const fetchStageInfo = (stage) => {
+    axios.get(`api/getstageinfo?stage_name=${stage.stage_url}`)
+      .then((response) => {
+        setStageInfo(response.data);
+      })
+      .catch((error) => {
+        // Voeg hier een error toe
+      });
   };
 
   const handleRaceYearChange = (value: string) => {
