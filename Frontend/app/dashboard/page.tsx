@@ -48,7 +48,13 @@ function Dashboard() {
             <div className="col-span-2 bg-white p-4 flex flex-col">
                 {/* Content for left panel */}
                 {/* ... */}
-                <div className="text-2xl font-bold mb-4">{currentRace} {currentYear}</div>
+                <div className="flex items-baseline">
+                    <div className="text-2xl font-bold mb-4">{currentRace} {currentYear}</div>
+                    <div className="flex items-center ml-2">
+                        <div className="w-3 h-3 bg-green-500 rounded-full mr-1"></div> {/* Green Dot */}
+                        <div className="text-green-500 font-bold">Live</div>
+                    </div>
+                </div>
                 <div className="bg-orange-200 rounded-md">
                     {/* Display total points of all riders in your team */}
                     <div className="text-lg font-bold mb-4 text-right pt-8 pr-8">
@@ -144,7 +150,7 @@ function Dashboard() {
                                 </tr>
                             ))}
                         </tbody>
-                        <tfoot className="">
+                        <tfoot className="items-center">
                             <a href="" className="">See All Stages</a>
                         </tfoot>
                     </table>
