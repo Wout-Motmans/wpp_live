@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
 import axios from 'axios';
 
 interface RaceInfo {
@@ -25,17 +25,39 @@ interface StageInfo {
 }
 
 function RaceInfoPage() {
+  const races = ["Tour de France", "Giro d'Italia", "La Vuelta Ciclista a España"];
   const [raceName, setRaceName] = useState('');
   const [raceYear, setRaceYear] = useState('');
   const [raceInfo, setRaceInfo] = useState<RaceInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedStage, setSelectedStage] = useState(null);
   const [stageInfo, setStageInfo] = useState(null);
+  const [nameSuggestions, setNameSuggestions] = useState<string[]>([]);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState<number>(-1);
 
   const handleShowStageInfo = (stage) => {
     setSelectedStage(stage);
     setStageInfo(null);
     fetchStageInfo(stage);
+  };
+
+  const fetchNameSuggestions = (input: string) => {
+    // Don't show suggestions if the name field is empty
+    if (input.trim() === '') {
+      setNameSuggestions([]);
+      return;
+    }
+  
+    // Filter race names based on input
+    const matchingRace = races.find(race => race.toLowerCase().startsWith(input.toLowerCase()));
+    const suggestions = matchingRace ? [matchingRace] : [];
+    setNameSuggestions(suggestions);
+  };
+
+  const handleRaceNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const name = event.target.value;
+    setRaceName(name);
+    fetchNameSuggestions(name);
   };
 
   const fetchStageInfo = (stage) => {
@@ -48,12 +70,33 @@ function RaceInfoPage() {
       });
   };
 
-  const handleRaceNameChange = (event) => {
-    setRaceName(event.target.value);
-  };
-
   const handleRaceYearChange = (event) => {
     setRaceYear(event.target.value);
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setRaceName(suggestion);
+    setNameSuggestions([]); // Clear suggestions after selecting one
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setSelectedSuggestionIndex(prevIndex => Math.min(prevIndex + 1, nameSuggestions.length - 1));
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setSelectedSuggestionIndex(prevIndex => Math.max(prevIndex - 1, -1));
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      if (selectedSuggestionIndex !== -1) {
+        setRaceName(nameSuggestions[selectedSuggestionIndex]);
+        setNameSuggestions([]);
+      } else if (nameSuggestions.length === 1) {
+        // If there's only one suggestion, autofill it
+        setRaceName(nameSuggestions[0]);
+        setNameSuggestions([]);
+      }
+    }
   };
 
   const fetchRaceInfo = () => {
@@ -78,23 +121,37 @@ function RaceInfoPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6">
-      <div className="w-full p-6 bg-white rounded-md shadow-md lg:max-w-xl">
-        <div className="flex flex-row">
+<div className="flex flex-col items-center justify-center min-h-screen p-6">
+      <div className="w-full p-6 bg-white rounded-md shadow-md lg:max-w-xl relative">
+        <div className="flex flex-row mb-4">
           <input
             type="text"
             value={raceName}
             onChange={handleRaceNameChange}
+            onKeyDown={handleKeyDown}
             placeholder="Enter race name"
-            className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40 mr-2"
+            className="flex-1 px-4 py-2 text-gray-700 bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40 mr-2"
           />
           <input
-            type="text"
+            type="number"
             value={raceYear}
-            onChange={handleRaceYearChange}
-            placeholder="Enter race year"
-            className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40"
+            onChange={(e) => handleRaceYearChange(e)}
+            min="1903"
+            max={new Date().getFullYear().toString()}
+            placeholder="Year"
+            className="w-20 px-4 py-2 text-gray-700 bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40"
           />
+        </div>
+        <div className="absolute left-0 w-full bg-white border rounded-md shadow-lg z-10">
+          {nameSuggestions.map((suggestion, index) => (
+            <div
+              key={index}
+              className={`cursor-pointer py-2 px-4 hover:bg-gray-200 ${selectedSuggestionIndex === index ? 'bg-gray-200' : ''}`}
+              onClick={() => handleSuggestionClick(suggestion)}
+            >
+              {suggestion}
+            </div>
+          ))}
         </div>
         <button
           onClick={fetchRaceInfo}
