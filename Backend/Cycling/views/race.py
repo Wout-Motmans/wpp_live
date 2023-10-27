@@ -43,48 +43,10 @@ def get_start_riders(request, race_url):
 def add_game(request):
     if request.user.is_staff:
         print(request.data)
-
-
-
-
-        
-        
         return Response(status=status.HTTP_200_OK)
     return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
-
-
-#for rider in startlist:
-#    if not RiderDB.objects.get(url=rider['rider_url']):
-#        rider = RiderDB(url=rider['rider_url'])
-#        rider.save()
-
-
-
-
-
-#wannes stuff (not touched)
-@api_view(['GET'])
-def get_race_info(request):
-    print("here")
-    race_name = request.GET.get('race_name')
-
-    if race_name:
-        try:
-            race = Race(race_name)
-            name = race.name()
-            nationality = race.nationality()
-
-            return Response({'name': name, 'nationality': nationality}, status=200)
-        except Exception as e:
-            return Response({'error': str(e)}, status=400)
-    else:
-        return Response({'error': 'race_name parameter is required'}, status=400)
-    
-
-
-#Jordy stuff
 @api_view(['GET'])
 def get_race_info(request):
     race_name = request.GET.get('race_name')
@@ -111,9 +73,65 @@ def get_stage_info(request):
         stage_type = stage.stage_type()
         depart = stage.departure()
         arrival = stage.arrival()
-        print("HEREEEEEEEEEEEEEEEEEEEE")
         results = [{'rider_name': result['rider_name'], 'rider_number': result['rider_number'], 'rank': result['rank'], 'uci_points' : result['uci_points']} for result in stage.results()]
 
         return Response({'name' : stage_name, 'date' : date, 'distance' : distance, "stage_type" : stage_type, "depart" : depart, "arrival" : arrival, "results" : results}, status=200)
     except Exception as e:
         return Response({'error': str(e)}, status=400)
+
+
+@api_view(['GET'])
+def calculate_score(request):
+    
+    stage_name = request.GET.get('stage_name')
+    if stage_name:
+        stage = Stage(stage_name)
+        
+    else:
+        return Response({'error': 'invalid stage data'}, status=400)
+    
+    gc = stage.gc()[0]
+    gc_name = gc['rider_name']
+    kom = stage.kom()[0]
+    kom_name = kom['rider_name']
+    point = stage.points()[0]
+    points_name = point['rider_name']
+    youth_name = ""
+    try:
+        youth = stage.youth()[0]
+        youth_name = youth['rider_name']
+    except:
+        print("no youth found")
+    
+    
+    results = [{'rider_name': result['rider_name'], 'rank': result['rank']} for result in stage.results()]
+    point_array = [100, 80, 70, 65, 55, 45, 35, 30, 25, 20,17,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1]
+
+    def bereken(res):
+        print(res)
+        if(res.get('rank') == None):
+            return 0
+        if (res.get('rank') > len(point_array)):
+            return 0
+       
+        return point_array[res.get('rank')- 1]
+
+    total = [{'rider_name': res.get('rider_name'), 'rider_rank': res.get('rank'),'points':bereken(res),'shirt points':0} for res in results]
+    for renner in total:
+        if renner['rider_name'] == gc_name:
+            renner['shirt points'] += 20
+            renner['points'] += 20
+            
+        if renner['rider_name'] == kom_name:
+            renner['shirt points'] = 10
+            renner['points'] += 10
+            
+        if renner['rider_rank'] == points_name:
+            renner['shirt points'] = 10
+            renner['points'] += 10    
+            
+        if renner['rider_name'] == youth_name:
+            renner['shirt points'] += 5
+            renner['points'] += 5
+        
+    return Response ({"test" : total}, status=200)
