@@ -105,7 +105,7 @@ function RaceInfoPage() {
       setError('Race name and year are required.');
       setRaceInfo(null);
     } else {
-      const formattedRaceName = raceName.replace(/ /g, '-');
+      const formattedRaceName = raceName.replace(/[^a-zA-Z0-9]/g, '-');
       const fullRaceName = `race/${formattedRaceName}/${raceYear}`;
       axios.get(`api/getraceinfo?race_name=${fullRaceName}`)
         .then((response) => {
