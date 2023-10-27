@@ -44,7 +44,7 @@ function RaceInfoPage() {
         setStageInfo(response.data);
       })
       .catch((error) => {
-        // Handle the error
+        // Voeg hier een error toe
       });
   };
 
