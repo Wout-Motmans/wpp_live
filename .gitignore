@@ -1,5 +1,4 @@
-Backend/__pycache__/
-Backend/**/__pycache__/
+**/__pycache__/
 **/.idea/_
-Backend/Cycling/**/__pycache__/
-Backend/Cycling/database_config.py
+**/.env
+**/node_modules

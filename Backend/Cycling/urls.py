@@ -20,6 +20,8 @@ urlpatterns = [
 
     path('getraceinfo', race.get_race_info),
     path('getstageinfo', race.get_stage_info),
+    
+    path('addgame', race.add_game),
 ]
 
 
