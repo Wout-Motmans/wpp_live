@@ -51,7 +51,7 @@ function Dashboard() {
                 <div className="flex items-baseline">
                     <div className="text-2xl font-bold mb-4">{currentRace} {currentYear}</div>
                     <div className="flex items-center ml-2">
-                        <div className="w-3 h-3 bg-green-500 rounded-full mr-1"></div> {/* Green Dot */}
+                        <div className="w-3 h-3 bg-green-500 rounded-full mr-1 animate-pulse"></div> {/* Green Dot */}
                         <div className="text-green-500 font-bold">Live</div>
                     </div>
                 </div>
@@ -66,7 +66,7 @@ function Dashboard() {
                         {myTopPlayer && (
                             <div className="relative mb-4">
                                 <img src="/img/crown.png" alt="Crown" className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-8 h-8" />
-                                <img src="/img/rider-shirt.png" alt="Rider Shirt" className="w-20 h-20" />
+                                <img src="/img/white_jersey.jpg" alt="Rider Shirt" className="w-20 h-20" />
                                 <div className="mt-2 font-bold">{myTopPlayer.riderName}</div>
                                 <div>{myTopPlayer.totalPoints} Points</div>
                             </div>
@@ -149,10 +149,12 @@ function Dashboard() {
                                     <td className="py-4 px-4">{stage.pointsWinner}</td>
                                 </tr>
                             ))}
+                            <tr>
+                                <td className="py-4 px-4 text-center" colSpan={3}>
+                                    <a href="/stage-overview">See all stages</a>
+                                </td>
+                            </tr>
                         </tbody>
-                        <tfoot className="items-center">
-                            <a href="" className="">See All Stages</a>
-                        </tfoot>
                     </table>
                 </div>
             </div>
