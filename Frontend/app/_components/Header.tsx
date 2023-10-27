@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../_contexts/authContext';
 
-const navigationRoutes = ['testrace','adminpage', 'raceinfo']
+const navigationRoutes = ['dashboard', 'testrace','adminpage', 'raceinfo']
 
 export default function Header(){
     const pathname = usePathname()
