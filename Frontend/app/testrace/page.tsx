@@ -12,12 +12,14 @@ import HomogenizeGame from './_components/HomogenizeGame';
 
 
 interface User {
-	key : number,
-	username : string
+    key: number,
+    username: string
 }
 
 interface Rider {
     rider_name: string,
+    rider_url: string,
+    reserved: boolean
 }
 
 
@@ -37,31 +39,26 @@ export default function Home() {
     const startGame = async () => {
         setStartRiders(await getStartRiders(chosenRace))
     }
-    
 
-	return (
+
+    return (
         <UsersProvider>
             <main className="mx-20 flex m-12">
                 {
                     !displayGame
-                    ?
-                    <>
-                    <DisplayRaces setChosenRace={setChosenRace}/>
-                    <DisplayUsers setChosenUsers={setChosenUsers}/>
-                    <button onClick={() => {startGame(); setDisplayGame(true)}}  className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Start Game</button>
-                    </>
-                    :
-                    <div className='flex flex-col'>
-                        <div className='flex'>
-                            <HomogenizeGame race={chosenRace} users={chosenUsers} riders={startRiders}/>
-                            
-                        </div>
-                    </div>
-                    
+                        ?
+                        <>
+                            <DisplayRaces setChosenRace={setChosenRace} />
+                            <DisplayUsers setChosenUsers={setChosenUsers} />
+                            <button onClick={() => { startGame(); setDisplayGame(true) }} className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Start Game</button>
+                        </>
+                        :
+                        <HomogenizeGame race={chosenRace} users={chosenUsers} riders={startRiders} />
+
                 }
             </main>
         </UsersProvider>
-  	)
+    )
 }
 
 
