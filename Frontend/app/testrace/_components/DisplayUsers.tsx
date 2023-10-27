@@ -1,22 +1,15 @@
 
-import { useMemo, useState } from 'react';
 import { useUsers } from '../../_contexts/usersContext';
 import { Table } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
 
 
-interface User {
+type User = {
 	key : number,
 	username : string
 }
 
-export default function DisplayUsers() {
+export default function DisplayUsers({ setChosenUsers } : { setChosenUsers : (value:User[]) => void }) {
     const { users } = useUsers()
-
-    console.log(users)
-    const [selectedUsers, setSelectedUsers] = useState<User[]>([])
-
-    useMemo(() => console.log('selectedUsers changed:', selectedUsers), [selectedUsers]);
 
     const columns = [
         {
@@ -33,7 +26,7 @@ export default function DisplayUsers() {
         pagination={false}
         rowSelection={{
             type:'checkbox',
-            onChange:(_,records) => setSelectedUsers(records)
+            onChange:(_,records) => setChosenUsers(records)
         }}
         />
     )

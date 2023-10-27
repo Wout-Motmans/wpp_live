@@ -6,9 +6,9 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth import  get_user_model
-from procyclingstats import Race, RaceStartlist, Stage , RiderResults
-import string
-import json
+from procyclingstats import Race, RaceStartlist, Stage
+from Cycling.models import Renner, Tour, Team
+
 
 giro_latest = Race('/'.join(max(Race('/race/giro-d-italia/2020').prev_editions_select(), key=lambda entry: int(entry["text"]))['value'].split('/')[0:3]))
 tour_latest = Race('/'.join(max(Race('/race/tour-de-france/2020').prev_editions_select(), key=lambda entry: int(entry["text"]))['value'].split('/')[0:3]))
@@ -20,12 +20,9 @@ vuelta_latest = Race('/'.join(max(Race('/race/vuelta-a-espana/2020').prev_editio
 @permission_classes([IsAuthenticated])
 def get_popular_races(request):
     if request.user.is_staff:
-
         data = [{'url': x.relative_url(),'name': x.name(),'year': x.year()} for x in [giro_latest, tour_latest, vuelta_latest]]
-
         return Response(status=status.HTTP_200_OK, data=data)
     return Response(status=status.HTTP_401_UNAUTHORIZED)
-
 
 
 @api_view(['GET'])
@@ -33,110 +30,82 @@ def get_popular_races(request):
 @permission_classes([IsAuthenticated])
 def get_start_riders(request, race_url):
     if request.user.is_staff:
-        startlist = RaceStartlist(f"{race_url}/startlist").startlist()
-
-        return Response(status=status.HTTP_200_OK, data=startlist)
+        startlist = RaceStartlist(f"{race_url.replace('_', '/')}/startlist").startlist()
+        selected_keys = ["rider_name", "rider_url", "team_name", "team_url"]
+        result = [{key: item[key] for key in selected_keys} for item in startlist]
+        return Response(status=status.HTTP_200_OK, data=result)
     return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
-
-#wannes stuff (not touched)
-# @api_view(['GET'])
-# def get_race_info(request):
-#     print("here")
-#     race_name = request.GET.get('race_name')
-
-#     if race_name:
-#         try:
-#             race = Race(race_name)
-#             name = race.name()
-#             nationality = race.nationality()
-
-#             return Response({'name': name, 'nationality': nationality}, status=200)
-#         except Exception as e:
-#             return Response({'error': str(e)}, status=400)
-#     else:
-#         return Response({'error': 'race_name parameter is required'}, status=400)
-    
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticated])
+def add_game(request):
+    if request.user.is_staff:
+        print(request.data)
+        return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
-#Jordy stuff
 @api_view(['GET'])
 def get_race_info(request):
     race_name = request.GET.get('race_name')
-
-    if race_name:
-        try:
-            race = Race(race_name)
-            name = race.name()
-            nationality = race.nationality()
-            year = race.year()
-            stages = [{'stage_name': stage['stage_name'], 'stage_url': stage['stage_url'], 'rider_name': stage['rider_name']} for stage in race.stages()]
-
-            return Response({'name': name, 'nationality': nationality, 'year': year, 'stages': stages}, status=200)
-        except Exception as e:
-            return Response({'error': str(e)}, status=400)
-    else:
-        return Response({'error': 'race_name parameter is required'}, status=400)
+    print(race_name)
+    try:
+        race = Race(race_name)
+        name = race.name()
+        nationality = race.nationality()
+        year = race.year()
+        stages = [{'stage_name': stage['stage_name'], 'stage_url': stage['stage_url'], 'rider_name': stage['rider_name']} for stage in race.stages()]
+        return Response({'name': name, 'nationality': nationality, 'year': year, 'stages': stages}, status=200)
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
     
 
 
 @api_view(['GET'])
 def get_stage_info(request):
     stage_name = request.GET.get('stage_name')
+    try:
+        stage = Stage(stage_name)
+        date = stage.date()
+        distance = stage.distance()
+        stage_type = stage.stage_type()
+        depart = stage.departure()
+        arrival = stage.arrival()
+        results = [{'rider_name': result['rider_name'], 'rider_number': result['rider_number'], 'rank': result['rank'], 'uci_points' : result['uci_points']} for result in stage.results()]
 
-    if stage_name:
-        try:
-            stage = Stage(stage_name)
-            date = stage.date()
-            distance = stage.distance()
-            stage_type = stage.stage_type()
-            depart = stage.departure()
-            arrival = stage.arrival()
-            results = [{'rider_name': result['rider_name'], 'rider_number': result['rider_number'], 'rank': result['rank'], 'uci_points' : result['uci_points']} for result in stage.results()]
+        return Response({'name' : stage_name, 'date' : date, 'distance' : distance, "stage_type" : stage_type, "depart" : depart, "arrival" : arrival, "results" : results}, status=200)
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
 
-            return Response({'name' : stage_name, 'date' : date, 'distance' : distance, "stage_type" : stage_type, "depart" : depart, "arrival" : arrival, "results" : results}, status=200)
-        except Exception as e:
-            return Response({'error': str(e)}, status=400)
-    else:
-        return Response({'error': 'invalid stage data'}, status=400)
 
 @api_view(['GET'])
 def calculate_score(request):
     
     stage_name = request.GET.get('stage_name')
-    print(stage_name)
     if stage_name:
-        
         stage = Stage(stage_name)
-
+        
     else:
         return Response({'error': 'invalid stage data'}, status=400)
-
-    def shirt_color(stage):
-        if stage.gc()[0] == 1:
-            return "shirt_yellow"
-        elif stage.points()[0] == 1:
-            return "shirt_green"
-        elif stage.kom()[0] == 1:
-            return "shirt_polka"
-        else :
-            return "no shirt"
-        
-    def shirt_points():
-        if stage.gc()[0] == 1:
-            return 20
-        elif stage.points()[0] == 1:
-            return 20
-        elif stage.kom()[0] == 1:
-            return 20
-        
-        else:
-            return 0
+    
+    gc = stage.gc()[0]
+    gc_name = gc['rider_name']
+    kom = stage.kom()[0]
+    kom_name = kom['rider_name']
+    point = stage.points()[0]
+    points_name = point['rider_name']
+    youth_name = ""
+    try:
+        youth = stage.youth()[0]
+        youth_name = youth['rider_name']
+    except:
+        print("no youth found")
+    
     
     results = [{'rider_name': result['rider_name'], 'rank': result['rank']} for result in stage.results()]
     point_array = [100, 80, 70, 65, 55, 45, 35, 30, 25, 20,17,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1]
-
 
     def bereken(res):
         print(res)
@@ -147,9 +116,22 @@ def calculate_score(request):
        
         return point_array[res.get('rank')- 1]
 
-    total = [{'rider_name': res.get('rider_name'), 'rider_rank': res.get('rank'),'points':bereken(res),'GC':shirt_color(stage),'shirt points':shirt_points()} for res in results]
-    print(total)        
-
+    total = [{'rider_name': res.get('rider_name'), 'rider_rank': res.get('rank'),'points':bereken(res),'shirt points':0} for res in results]
+    for renner in total:
+        if renner['rider_name'] == gc_name:
+            renner['shirt points'] += 20
+            renner['points'] += 20
+            
+        if renner['rider_name'] == kom_name:
+            renner['shirt points'] = 10
+            renner['points'] += 10
+            
+        if renner['rider_rank'] == points_name:
+            renner['shirt points'] = 10
+            renner['points'] += 10    
+            
+        if renner['rider_name'] == youth_name:
+            renner['shirt points'] += 5
+            renner['points'] += 5
+        
     return Response ({"test" : total}, status=200)
-
-    
