@@ -1,14 +1,13 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import { useAuth } from '../_contexts/authContext';
 import { useAuthCheck } from '../_hooks/useAuthCheck';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
+import { UsersProvider } from '../_contexts/usersContext';
+import HomogenizeGame from './_components/HomogenizeGame';
 import DisplayRaces from './_components/DisplayRaces';
 import DisplayUsers from './_components/DisplayUsers';
-import { UsersProvider } from '../_contexts/usersContext';
-import { InputNumber, List } from 'antd';
 import { TemplateSetter } from './_components/Template';
-import HomogenizeGame from './_components/HomogenizeGame';
+import { InputNumber } from 'antd';
 
 
 interface User {
@@ -19,7 +18,6 @@ interface User {
 interface Rider {
     rider_name: string,
     rider_url: string,
-    reserved: boolean
 }
 
 
@@ -84,4 +82,3 @@ const getStartRiders = async (race: string): Promise<Rider[]> => {
         throw error;
     }
 };
-
