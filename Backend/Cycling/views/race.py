@@ -47,24 +47,26 @@ def add_game(request):
 		activeAmount = data.get('activeAmount')
 		teams = data.get('teams')
 		# Save the tour if not already there
-		if not Tour.objects.get(url=race):
+		if not Tour.objects.filter(url=race).exists():
 			tour = Tour(url=race)
 			tour.save()
 		# Get tour object
 		tour = Tour.objects.get(url=race)
 
 		for team in teams:
-			team = Team(team_name=f"{user}s team", tour=tour, user=team.get('user'))
+			user = User.objects.get(id=team.get('user'))
+			user_team = Team(team_name=f"{user}s team", tour=tour, user=user)
+			user_team.save()
 			for i, rider in enumerate(team.get('riders')):
-				if not Renner.objects.get(url=rider):
+				if not Renner.objects.filter(url=rider).exists():
 					renner = Renner(url=rider)
 					renner.save()
 				renner = Renner.objects.get(url=rider)
 				if i < activeAmount:
-					team.renners.add(renner)
+					user_team.renners.add(renner)
 				else:
-					team.reserves.add(renner)
-		
+					user_team.reserves.add(renner)
+			user_team.save()
 		return Response(status=status.HTTP_200_OK)
 	return Response(status=status.HTTP_401_UNAUTHORIZED)
 
