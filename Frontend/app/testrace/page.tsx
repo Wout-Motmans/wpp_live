@@ -1,13 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import { useAuth } from '../_contexts/authContext';
 import { useAuthCheck } from '../_hooks/useAuthCheck';
 import React, { useMemo, useState } from 'react';
 import DisplayRaces from './_components/DisplayRaces';
 import DisplayUsers from './_components/DisplayUsers';
 import { UsersProvider } from '../_contexts/usersContext';
-import { List } from 'antd';
-import Template from './_components/Template';
 import HomogenizeGame from './_components/HomogenizeGame';
 
 
@@ -23,10 +19,8 @@ interface Rider {
 
 
 export default function Home() {
-    //const { authenticate } = useAuth();
-    //const { requireAuth } = useAuthCheck();
-    //useEffect(() => {authenticate()}, [])
-    //requireAuth();
+    const { requireAuth } = useAuthCheck();
+    requireAuth();
 
     const [chosenRace, setChosenRace] = useState<string>('')
     const [chosenUsers, setChosenUsers] = useState<User[]>([])

@@ -9,19 +9,19 @@ interface Auth {
 	authenticate: () => void;
 }
 
-const initiaState = {
+const initialState = {
     user: '',
     isLoggedIn: false,
-    login: () => undefined,
-    logout: () => undefined,
-    authenticate: () => undefined,
+    login: (username : string, password : string) => {},
+    logout: () => {},
+    authenticate: () => {},
 };
 
-const AuthContext = createContext<Auth>(initiaState);
+const AuthContext = createContext<Auth>(initialState);
 
 export function AuthProvider({ children } : { children: ReactNode }) {
-    const [user, setUser] = useState<string>('');
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [user, setUser] = useState<string>(initialState.user);
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(initialState.isLoggedIn);
 
     const login = async (username: string, password: string) => {
         fetch('/api/login', {
@@ -46,7 +46,7 @@ export function AuthProvider({ children } : { children: ReactNode }) {
         });
     };
 
-    const authenticate = async () => {
+    const authenticate = () => {
         fetch('/api/authenticate')
         .then(res => {
             if (!res.ok) {
