@@ -1,5 +1,5 @@
 'use client'
-import { List, Input, Modal } from "antd"
+import { List, Input } from "antd"
 import Cookies from 'js-cookie';
 import React, { useState } from 'react';
 import { Template } from "./Template";
@@ -26,8 +26,6 @@ interface Team {
 export default function HomogenizeGame({ race, users, riders, template, activeAmount, totalAmount }: { race: string, users: User[], riders: Rider[], template : User[], activeAmount : number, totalAmount : number }) {
 	const [teams, setTeams] = useState<Team[]>(users.map(user => { return { user, riders: [] } }))
 	const [filterRider, setFilterRider] = useState<string>('')
-
-	const [modalOpen, setModalOpen] = useState(false);
 
 	const handleAddGame = async () => {
 		if (teams.some(team => team.riders.length < totalAmount)) return
@@ -110,21 +108,11 @@ export default function HomogenizeGame({ race, users, riders, template, activeAm
 						/>
 					}
 					<div className="flex flex-col space-y-2">
-						<button onClick={() => setModalOpen(true)} className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Start Game</button>
+						<button onClick={handleAddGame} className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Start Game</button>
 						<button onClick={() => undo()} className=' underline underline-offset-2 text-red-500'>Undo</button>
 						<Template template={template}/>
 					</div>
 				</div>
-				<Modal
-					title="Vertically centered modal dialog"
-					centered
-					
-					open={modalOpen}
-					onOk={() => setModalOpen(false)}
-					onCancel={() => setModalOpen(false)}
-				>
-					<p>After</p>
-				</Modal>
 			</div>
 	)
 }
