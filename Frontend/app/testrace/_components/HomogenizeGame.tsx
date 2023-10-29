@@ -29,7 +29,7 @@ export default function HomogenizeGame({ race, users, riders, template, activeAm
 
     const handleAddGame = async () => {
         if (teams.some(team => team.riders.length < totalAmount)) return
-        addGame(race, teams)
+        addGame(race, teams, activeAmount)
     }
 
     const [chosingNow, setChosingNow] = useState<number>(0)
@@ -120,7 +120,7 @@ export default function HomogenizeGame({ race, users, riders, template, activeAm
 
 
 
-const addGame = async (race: string, teams: Team[]) => {
+const addGame = async (race: string, teams: Team[], activeAmount: number) => {
 
     const teamsUpdate = teams.map(team => { return { user: team.user.key, riders: team.riders.map(rider => rider.rider_url) } })
     fetch('/api/addgame', {
@@ -129,7 +129,7 @@ const addGame = async (race: string, teams: Team[]) => {
             'X-CSRFToken': Cookies.get('csrftoken')!,
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ race, teams: teamsUpdate })
+        body: JSON.stringify({ race, teams: teamsUpdate, activeAmount })
     })
         .catch(error => {
             console.error('Add game error:', error);
