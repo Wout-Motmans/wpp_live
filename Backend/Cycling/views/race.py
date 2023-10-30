@@ -103,55 +103,51 @@ def get_stage_info(request):
 
 @api_view(['GET'])
 def calculate_score(request):
-    
     stage_name = request.GET.get('stage_name')
-    if stage_name:
-        stage = Stage(stage_name)
-        
-    else:
+    if not stage_name:
         return Response({'error': 'invalid stage data'}, status=400)
+
+    stage = Stage(stage_name)
+    gc = stage.gc()[0]['rider_name']
+    kom = stage.kom()[0]['rider_name']
+    point = stage.points()[0]['rider_name']
     
-    gc = stage.gc()[0]
-    gc_name = gc['rider_name']
-    kom = stage.kom()[0]
-    kom_name = kom['rider_name']
-    point = stage.points()[0]
-    points_name = point['rider_name']
-    youth_name = ""
     try:
-        youth = stage.youth()[0]
-        youth_name = youth['rider_name']
-    except:
-        print("no youth found")
-    
-    results = [{'rider_name': result['rider_name'], 'rank': result['rank']} for result in stage.results()]
-    point_array = [100, 80, 70, 65, 55, 45, 35, 30, 25, 20,17,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1]
+        youth_data = stage.youth()[0]
+        youth_name = youth_data['rider_name']
+    except IndexError:
+        youth_name = ""
 
-    def bereken(res):
-        print(res)
-        if(res.get('rank') == None):
-            return 0
-        if (res.get('rank') > len(point_array)):
-            return 0
-       
-        return point_array[res.get('rank')- 1]
+    point_array = [100, 80, 65, 55, 45, 35, 30, 25, 20, 17, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
-    total = [{'rider_name': res.get('rider_name'), 'rider_rank': res.get('rank'),'points':bereken(res),'shirt points':0} for res in results]
-    for renner in total:
-        if renner['rider_name'] == gc_name:
-            renner['shirt points'] += 20
-            renner['points'] += 20
-            
-        if renner['rider_name'] == kom_name:
-            renner['shirt points'] = 10
-            renner['points'] += 10
-            
-        if renner['rider_rank'] == points_name:
-            renner['shirt points'] = 10
-            renner['points'] += 10    
-            
-        if renner['rider_name'] == youth_name:
-            renner['shirt points'] += 5
-            renner['points'] += 5
-        
-    return Response ({"test" : total}, status=200)
+    def calculate_points(rank):
+        if rank is not None and 1 <= rank <= len(point_array):
+            return point_array[rank - 1]
+        return 0
+
+    total = []
+
+    for rider in stage.results():
+        points = calculate_points(rider['rank'])
+        shirt_points = 0
+
+        if rider['rider_name'] == gc:
+            shirt_points += 20
+            points += 20
+
+        if rider['rider_name'] == kom:
+            shirt_points += 10
+            points += 10
+
+        if rider['rider_name'] == point:
+            shirt_points += 10
+            points += 10
+
+        if rider['rider_name'] == youth_name:
+            shirt_points += 5
+            points += 5
+
+        total.append({'rider_name': rider['rider_name'], 'rider_rank': rider['rank'], 'points': points, 'shirt points': shirt_points})
+
+    return Response({"test": total}, status=200)
+
