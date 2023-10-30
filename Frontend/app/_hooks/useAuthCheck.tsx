@@ -1,22 +1,18 @@
 'use client'
-import { useEffect } from 'react';
 import { useAuth } from '../_contexts/authContext';
 import { useRouter } from 'next/navigation';
 
 export function useAuthCheck() {
-    const { isLoggedIn, authenticate } = useAuth();
-    const router = useRouter();
+	const { authenticate } = useAuth();
+	const router = useRouter();
 
-    
+	const isAuthenticated = async () : Promise<boolean> => await authenticate();
 
-    const isAuthenticated = () => isLoggedIn;
+	const requireAuth = async () => {
+		if (! await isAuthenticated()) {
+			router.push('/login');
+		}
+	};
 
-    const requireAuth = () => {
-        authenticate()
-        if (!isAuthenticated()) {
-            router.push('/login');
-        }
-    };
-
-    return { isAuthenticated, requireAuth };
+	return { isAuthenticated, requireAuth };
 }

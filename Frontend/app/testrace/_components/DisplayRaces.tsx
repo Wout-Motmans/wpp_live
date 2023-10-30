@@ -14,10 +14,13 @@ export default function DisplayRaces({ setChosenRace } : { setChosenRace : (valu
     const [races, setRaces] = useState<RaceInfo[]>([]);
 
     useEffect(() => {
-        const fetchRaces = async () => {
-            setRaces(await getNewestRaces());
-        };
-        fetchRaces();
+        getNewestRaces()
+            .then((result) => {
+                setRaces(result);
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            });
     }, []);
 
     const columns: ColumnsType<RaceInfo> = [

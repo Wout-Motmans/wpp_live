@@ -4,85 +4,95 @@ import { ReactNode, createContext, useContext, useState } from 'react';
 interface Auth {
 	user: string;
 	isLoggedIn: boolean;
-	login: (username: string, password: string) => void;
-	logout: () => void;
-	authenticate: () => void;
+	login: (username: string, password: string) => Promise<boolean>;
+	logout: () => Promise<boolean>;
+	authenticate: () => Promise<boolean>;
+	error: string | null;
 }
 
-const initialState = {
-    user: '',
-    isLoggedIn: false,
-    login: (username : string, password : string) => {},
-    logout: () => {},
-    authenticate: () => {},
-};
-
-const AuthContext = createContext<Auth>(initialState);
+const AuthContext = createContext<Auth | undefined>(undefined);
 
 export function AuthProvider({ children } : { children: ReactNode }) {
-    const [user, setUser] = useState<string>(initialState.user);
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(initialState.isLoggedIn);
+	const [user, setUser] = useState<string>('');
+	const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+	const [error, setError] = useState<string | null>(null);
 
-    const login = async (username: string, password: string) => {
-        fetch('/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username, password })
-        })
-        .then(res => {
-            if (!res.ok) {
-                throw new Error('Login error');
-            }
-            return res.json();
-        })
-        .then(res => {
-            setUser(res.username);
-            setIsLoggedIn(true);
-        })
-        .catch(error => {
-            console.error('Login error:', error);
-        });
-    };
+	const login = async (username: string, password: string): Promise<boolean> => {
+		try {
+			const response = await fetch('/api/login', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ username, password }),
+			});
 
-    const authenticate = () => {
-        fetch('/api/authenticate')
-        .then(res => {
-            if (!res.ok) {
-                throw new Error('Authentication error');
-            }
-            return res.json();
-        })
-        .then(res => {
-            setUser(res.username);
-            setIsLoggedIn(true);
-        })
-        .catch(error => {
-            console.error('Authentication error:', error);
-        });
-    };
+			if (!response.ok) {
+				setError('Login failed');
+				return false;
+			}
 
-    const logout = async () => {
-        fetch('/api/logout')
-        .then(res => {
-            if (!res.ok) {
-                throw new Error('Logout error');
-            }
-            return res.json();
-        })
-        .catch(error => {
-            console.error('Logout error:', error);
-        });
-        setUser('');
-        setIsLoggedIn(false);
-    };
+			const data = await response.json();
+			setUser(data.username);
+			setIsLoggedIn(true);
+			setError(null);
+			return true;
+		} catch (error) {
+			console.error('Login error:', error);
+			setError('Login error');
+			setIsLoggedIn(false);
+			return false;
+		}
+	};
 
-    return (
-        <AuthContext.Provider value={{ user, isLoggedIn, login, logout, authenticate }}>
-            {children}
-        </AuthContext.Provider>
-    );
+	const authenticate = async (): Promise<boolean> => {
+		try {
+			const response = await fetch('/api/authenticate');
+
+			if (!response.ok) {
+				setError('Authentication failed');
+				return false;
+			}
+
+			const data = await response.json();
+			setUser(data.username);
+			setIsLoggedIn(true);
+			setError(null);
+			return true;
+		} catch (error) {
+			console.error('Authentication error:', error);
+			setError('Authentication error');
+			setIsLoggedIn(false);
+			return false;
+		}
+	};
+
+	const logout = async (): Promise<boolean> => {
+		try {
+			const response = await fetch('/api/logout');
+
+			if (!response.ok) {
+				setError('Logout failed');
+				return false;
+			}
+
+			await response.json();
+			setUser('');
+			setIsLoggedIn(false);
+			setError(null);
+			return true;
+		} catch (error) {
+			console.error('Logout error:', error);
+			setError('Logout error');
+			return false;
+		}
+	};
+
+	return (
+		<AuthContext.Provider value={{ user, isLoggedIn, login, logout, authenticate, error }}>
+			{children}
+		</AuthContext.Provider>
+	);
 }
 
 
