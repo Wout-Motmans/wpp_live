@@ -11,8 +11,13 @@ export default function Home() {
 
 	const [username, setUsername] = useState<string>('')
 	const [password, setPassword] = useState<string>('')
-  
-	if ( isAuthenticated() ) router.push('/adminpage')
+
+    async function checkAuthenticated() {
+        if (await isAuthenticated()) {
+            router.push('/adminpage');
+        }
+    }
+    checkAuthenticated();
 
 	return (
 		<main className="relative flex flex-col items-center justify-center h-full overflow-hidden flex-grow">
