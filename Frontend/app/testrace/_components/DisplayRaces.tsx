@@ -38,6 +38,7 @@ export default function DisplayRaces({ setChosenRace } : { setChosenRace : (valu
     return (
         <Table
         columns={columns}
+        bordered
         dataSource={races}
         pagination={false}
         rowSelection={{

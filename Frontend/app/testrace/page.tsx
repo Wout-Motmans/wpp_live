@@ -66,4 +66,3 @@ const getStartRiders = async (race: string): Promise<Rider[]> => {
 		throw error;
 	}
 };
-
