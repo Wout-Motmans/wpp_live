@@ -25,7 +25,7 @@ interface StageInfo {
 }
 
 function RaceInfoPage() {
-  const races = ["Tour de France", "Giro d'Italia", "La Vuelta Ciclista a España"];
+  const races = ["Tour de France", "Giro-d-Italia", "Vuelta-a-Espana"];
   const [raceName, setRaceName] = useState('');
   const [raceYear, setRaceYear] = useState('');
   const [raceInfo, setRaceInfo] = useState<RaceInfo | null>(null);
