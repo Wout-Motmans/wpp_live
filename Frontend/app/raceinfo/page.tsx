@@ -357,7 +357,30 @@ function RaceInfoPage() {
       apiFormattedRaceName = "prudential-ride-london-gp-we"
     } else {
       // Convert other race names to API call format (replace spaces with hyphens)
-      apiFormattedRaceName = apiFormattedRaceName.replace(/[^a-zA-Z0-9]/g, '-');
+      apiFormattedRaceName = "";
+      let map = {
+        'é': 'e',
+        'è': 'e',
+        'ê': 'e',
+        'ë': 'e',
+        'â': 'a',
+        'ł': 'l',
+        'ñ': 'n',
+        'à': 'a',
+        'ç': 'c',
+        'ô': 'o',
+        'í': 'i',
+        'ì': 'i',
+        
+
+        
+     };
+     for (let key in map) {
+      let regex = new RegExp(key, 'g');
+      apiFormattedRaceName = apiFormattedRaceName.replace(regex, map[key]);
+    }
+    apiFormattedRaceName = apiFormattedRaceName.replace(/-/g, ' ');
+    apiFormattedRaceName = apiFormattedRaceName.replace(/ +/g, '-').replace(/'/g, '-');
     }
   
     // Construct the full race name for the API call
