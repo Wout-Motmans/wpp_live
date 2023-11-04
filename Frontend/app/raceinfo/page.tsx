@@ -357,32 +357,29 @@ function RaceInfoPage() {
       apiFormattedRaceName = "prudential-ride-london-gp-we"
     } else {
       // Convert other race names to API call format (replace spaces with hyphens)
-      apiFormattedRaceName = "";
-      let map = {
-        'é': 'e',
-        'è': 'e',
-        'ê': 'e',
-        'ë': 'e',
-        'â': 'a',
-        'ł': 'l',
-        'ñ': 'n',
-        'à': 'a',
-        'ç': 'c',
-        'ô': 'o',
-        'í': 'i',
-        'ì': 'i',
-        
+      apiFormattedRaceName = apiFormattedRaceName
+        // Replace non-English alphabet letters with English counterparts
+        .replace(/[^\x00-\x7F]/g, (char) => {
+          const englishEquivalent = {
+            'é': 'e',
+            'è': 'e',
+            'ê': 'e',
+            'â': 'a',
+            'ł': 'l',
+            'à': 'a',
+            'ç': 'c',
+            'ô': 'o',
+            'í': 'i',
 
-        
-     };
-     for (let key in map) {
-      let regex = new RegExp(key, 'g');
-      apiFormattedRaceName = apiFormattedRaceName.replace(regex, map[key]);
+          };
+          return englishEquivalent[char] || char;
+        })
+        // Replace hyphens with a space
+        .replace(/'/g, '-').replace(/´/g, '-').replace(/-/g, ' ')
+        // Replace one or more spaces with a hyphen
+        .replace(/\s+/g, '-');
     }
-    apiFormattedRaceName = apiFormattedRaceName.replace(/-/g, ' ');
-    apiFormattedRaceName = apiFormattedRaceName.replace(/ +/g, '-').replace(/'/g, '-');
-    }
-  
+    
     // Construct the full race name for the API call
     const fullRaceName = `race/${apiFormattedRaceName}/${selectedYear}`;
   
