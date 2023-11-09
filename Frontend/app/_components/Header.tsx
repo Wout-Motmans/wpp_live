@@ -3,12 +3,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../_contexts/authContext';
 
-const navigationRoutes = ['dashboard', 'testrace','adminpage', 'raceinfo']
+
 
 export default function Header(){
-    const pathname = usePathname()
-	const { logout } = useAuth();
-
+    const pathname = usePathname();
+	const { logout, isLoggedIn, isAdmin } = useAuth();
+    const navigationRoutes = ['dashboard', 'testrace','raceinfo']
+    if (isAdmin) navigationRoutes.push('adminpage')
     return (
         <header className=" bg-[#1e1e24]">
             <div className=" mx-auto " >
@@ -29,10 +30,11 @@ export default function Header(){
                     </Link>
                     <nav className='flex flex-row items-center'>
                         {
-                            pathname === '/' &&
-                            <Link href={"/login"} className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Login</Link>
-                            ||
-                            navigationRoutes.map((route) => {
+                            isLoggedIn
+                            ?
+                            <>
+                            {
+                            navigationRoutes.map(route => {
                                 return (
                                     <Link 
                                     key={route} 
@@ -43,10 +45,12 @@ export default function Header(){
                                     </Link>
                                 )
                             })
-                        }
-                        {
-                            pathname !== '/login' &&
+                            }
                             <button onClick={logout}  className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Logout</button>
+                            </>
+                            :
+                            <Link href={"/login"} className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Login</Link>
+
                         }
                     </nav>
                 </div>

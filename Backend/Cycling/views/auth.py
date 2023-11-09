@@ -19,7 +19,7 @@ def my_login(request):
     if user is None:
         return Response({'detail': 'Invalid credentials.'}, status=status.HTTP_400_BAD_REQUEST)
     login(request, user)
-    return Response({'username': user.get_username()}, status=status.HTTP_202_ACCEPTED)
+    return Response({'username': user.get_username(), 'isAdmin': user.is_staff}, status=status.HTTP_202_ACCEPTED)
 
 
 @api_view(['GET'])

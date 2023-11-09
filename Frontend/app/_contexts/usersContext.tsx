@@ -6,11 +6,12 @@ import { ReactNode, createContext, useContext, useEffect, useState } from 'react
 interface User {
     id : number,
     username: string,
-    isStaff: boolean
+    isAdmin: boolean
 }
 
 interface UsersContext {
 	users: User[];
+    getUsers: () => void;
 }
 
 const UsersContext = createContext<UsersContext | undefined>(undefined);
@@ -34,7 +35,7 @@ export function UsersProvider({ children } : { children: ReactNode }) {
     }, []);
 
     return (
-        <UsersContext.Provider value={{ users }}>
+        <UsersContext.Provider value={{ users, getUsers }}>
             {children}
         </UsersContext.Provider>
   );

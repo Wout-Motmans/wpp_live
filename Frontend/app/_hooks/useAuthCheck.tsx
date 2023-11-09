@@ -3,7 +3,7 @@ import { useAuth } from '../_contexts/authContext';
 import { useRouter } from 'next/navigation';
 
 export function useAuthCheck() {
-	const { authenticate } = useAuth();
+	const { authenticate, isAdmin } = useAuth();
 	const router = useRouter();
 
 	const isAuthenticated = async () : Promise<boolean> => await authenticate();
@@ -14,5 +14,11 @@ export function useAuthCheck() {
 		}
 	};
 
-	return { isAuthenticated, requireAuth };
+    const requireAdmin = () => {
+        if (!isAdmin) {
+            router.push('/dashboard');
+        }
+    }
+
+	return { isAuthenticated, requireAuth, requireAdmin };
 }
