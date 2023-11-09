@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
+import React, { useState, KeyboardEvent } from 'react';
 import axios from 'axios';
 
 interface RaceInfo {
@@ -23,6 +23,7 @@ interface StageInfo {
     uci_points: string;
   }[];
 }
+
 
 function RaceInfoPage() {
   const races = ["Tour de France", "Giro-d-Italia", "Vuelta-a-Espana"];
@@ -230,4 +231,3 @@ function RaceInfoPage() {
   );
 }
 
-export default RaceInfoPage;

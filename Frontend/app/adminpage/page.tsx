@@ -4,8 +4,9 @@ import { UsersProvider } from '../_contexts/usersContext';
 import DisplayUsers from './_components/DisplayUsers'
 
 export default function Home() {
-    const { requireAuth } = useAuthCheck();
+    const { requireAuth, requireAdmin } = useAuthCheck();
     requireAuth();
+    requireAdmin();
 
   
   	return (

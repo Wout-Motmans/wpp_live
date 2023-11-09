@@ -1,10 +1,9 @@
 'use client'
 import { useAuthCheck } from '../_hooks/useAuthCheck';
-import { useRouter } from 'next/navigation';
 
-function Dashboard() {
+export default function Dashboard() {
     const { requireAuth } = useAuthCheck();
-    const router = useRouter();
+    requireAuth()
 
     const currentRace = 'Tour de France';
     const currentYear = '2021';
@@ -36,11 +35,6 @@ function Dashboard() {
         { stageNumber: '24', nameWinner: "Roel", pointsWinner: 35 },
         { stageNumber: '23', nameWinner: "Bert", pointsWinner: 25 },
         { stageNumber: '22', nameWinner: "Jeroen", pointsWinner: 15 }]
-
-    router.push('/dashboard')
-
-
-    //requireAuth();
 
     return (
         <div className="grid grid-cols-3 gap-4 h-screen px-10 pt-5">
@@ -161,5 +155,3 @@ function Dashboard() {
         </div>
     )
 }
-
-export default Dashboard;
