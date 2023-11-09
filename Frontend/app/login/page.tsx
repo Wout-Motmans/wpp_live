@@ -20,6 +20,7 @@ export default function Home() {
 
 	useEffect(() => {
 		checkAuthenticated();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	async function handleLogin() {

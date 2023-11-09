@@ -12,9 +12,6 @@ export default function Header(){
 
     const navigationRoutes = useMemo(() => {return ['dashboard', 'testrace', 'raceinfo', ...(isAdmin ? ['adminpage'] : [])]} , [isAdmin]);
 
-    console.log(navigationRoutes)
-
-
     return (
         <header className=" bg-[#1e1e24]">
             <div className=" mx-auto " >
