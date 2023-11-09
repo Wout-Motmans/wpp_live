@@ -2,14 +2,19 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../_contexts/authContext';
+import { useMemo } from 'react';
 
 
 
 export default function Header(){
     const pathname = usePathname();
 	const { logout, isLoggedIn, isAdmin } = useAuth();
-    const navigationRoutes = ['dashboard', 'testrace','raceinfo']
-    if (isAdmin) navigationRoutes.push('adminpage')
+
+    const navigationRoutes = useMemo(() => {return ['dashboard', 'testrace', 'raceinfo', ...(isAdmin ? ['adminpage'] : [])]} , [isAdmin]);
+
+    console.log(navigationRoutes)
+
+
     return (
         <header className=" bg-[#1e1e24]">
             <div className=" mx-auto " >

@@ -52,9 +52,10 @@ export function AuthProvider({ children } : { children: ReactNode }) {
 			}
 
 			const data = await response.json();
+			console.log(data)
 			setUser(data.username);
 			setIsLoggedIn(true);
-			setIsAdmin(data.isAdmin)
+			setIsAdmin(data.isAdmin);
 			return true;
 		} catch (error) {
 			console.error('Authentication error:', error);
