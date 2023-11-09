@@ -93,7 +93,7 @@ export default function DisplayUsers() {
 		}
 		{
 			<Modal
-				title={`Edit ${openEdit!.username}`}
+				title={`Edit user`}
 				open={!!openEdit}
 				onOk={form.submit}
 				confirmLoading={confirmLoadingEdit}
