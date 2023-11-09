@@ -9,8 +9,6 @@ function StageOverview() {
     const [showDetails, setShowDetails] = useState(false);
     const [selectedStage, setSelectedStage] = useState(null);
 
-    router.push('/stage-overview')
-
     const stage_1 = [
         { Positie: 1, Naam: 'Remco Evenepoel', Punten: 100, Truien: 35, Totaal: 135, player: 'Roel' },
         { Positie: 2, Naam: 'Filippo Ganna', Punten: 80, Truien: 0, Totaal: 80, player: 'Dries' },
