@@ -14,7 +14,7 @@ export default function Home() {
 
     async function checkAuthenticated() {
         if (await isAuthenticated()) {
-            router.push('/adminpage');
+            router.push('/dashboard');
         }
     }
     checkAuthenticated();
