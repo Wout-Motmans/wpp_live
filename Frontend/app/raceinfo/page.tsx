@@ -451,7 +451,13 @@ function RaceInfoPage() {
         {selectedStage && stageInfo && (
           <div>
             <p className="text-lg">Stage Info:</p>
-            <p className="text-lg">Name: {stageInfo.name}</p>
+            <p>Name: {
+              // Split the stage URL by '/' and take the last part, then replace hyphens with spaces
+              stageInfo.name.split('/').pop().split('-').map(
+                // Capitalize the first letter of each part and then join them with a space
+                (part, index) => index === 0 ? `${part.charAt(0).toUpperCase() + part.slice(1)}` : part
+              ).join(' ')
+            }</p>
             <p className="text-lg">Date: {stageInfo.date}</p>
             <p className="text-lg">Distance: {stageInfo.distance}</p>
             <p className="text-lg">Stage Type: {stageInfo.stage_type}</p>
