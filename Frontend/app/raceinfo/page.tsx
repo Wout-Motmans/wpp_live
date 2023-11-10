@@ -387,11 +387,14 @@ function RaceInfoPage() {
       .then((response) => {
         console.log(response.data);
         setRaceInfo(response.data);
-        setError('p');
         setError(null);
       })
       .catch((error) => {
-        setError(error);
+        if (error.response && error.response.status === 400) {
+          setError('The race does not exist. Please check the race name and year.');
+        } else {
+          setError('An error occurred while fetching race info.');
+        }
         setRaceInfo(null);
       });
 
