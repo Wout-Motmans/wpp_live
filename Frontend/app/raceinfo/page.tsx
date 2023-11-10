@@ -139,17 +139,22 @@ function RaceInfoPage() {
   const [stageInfo, setStageInfo] = useState(null);
   const [nameSuggestions, setNameSuggestions] = useState<string[]>([]);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState<number>(-1);
+  const [showStageInfo, setShowStageInfo] = useState(false);
 
   const handleShowStageInfo = (stage) => {
-    if (selectedStage === stage) {
-      // If the same stage is clicked again, hide the info
-      setSelectedStage(null);
-      setStageInfo(null);
+    if (selectedStage === stage && showStageInfo) {
+      // Hide the info
+      setShowStageInfo(false);
+      setTimeout(() => {
+        setSelectedStage(null);
+        setStageInfo(null);
+      }); // delay to allow animation to complete
     } else {
-      // Otherwise, show the new stage info
+      // Show the new stage info
       setSelectedStage(stage);
       setStageInfo(null);
       fetchStageInfo(stage);
+      setShowStageInfo(true);
     }
   };
 
@@ -415,6 +420,24 @@ function RaceInfoPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6">
+      <style>
+        {`
+          @keyframes slideDown {
+            from {
+              opacity: 0;
+              transform: translateY(-20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          .slide-down {
+            animation: slideDown 0.5s ease-out forwards;
+          }
+        `}
+      </style>
       <div className="w-full p-6 bg-white rounded-md shadow-md lg:max-w-xl relative">
         <div className="flex flex-row mb-4">
           <input
@@ -475,40 +498,42 @@ function RaceInfoPage() {
                     >
                       {selectedStage === stage ? 'Close Stage Info' : 'Show Stage Info'}
                     </button>
-                    {selectedStage === stage && stageInfo && (
-                      <div className="mt-4 p-4 bg-gray-800 rounded-md border border-gray-700">
-                        <p className="text-lg text-white">Stage Info:</p>
-                        <p className="text-md text-white">Name: {stageInfo.name.split('/').pop().split('-').map((part, index) => index === 0 ? `${part.charAt(0).toUpperCase() + part.slice(1)}` : part).join(' ')}</p>
-                        <p className="text-md text-white">Date: {stageInfo.date}</p>
-                        <p className="text-md text-white">Distance: {stageInfo.distance}</p>
-                        <p className="text-md text-white">Stage Type: {stageInfo.stage_type}</p>
-                        <p className="text-md text-white">Departure: {stageInfo.depart}</p>
-                        <p className="text-md text-white">Arrival: {stageInfo.arrival}</p>
-                        {stageInfo.results && (
-                          <table className="w-full text-white mt-2" style={{ borderCollapse: 'collapse' }}>
-                            <thead>
-                              <tr className="bg-gray-700">
-                                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rider Name</th>
-                                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rider Number</th>
-                                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rank</th>
-                                <th style={{ border: '1px solid #ddd', padding: '8px' }}>UCI Points</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {stageInfo.results
-                                .sort((a, b) => parseInt(a.rank) - parseInt(b.rank))
-                                .slice(0, 25)
-                                .map((result, index) => (
-                                  <tr key={index} className={index % 2 === 0 ? 'bg-gray-700' : 'bg-gray-600'}>
-                                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_name}</td>
-                                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_number}</td>
-                                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rank}</td>
-                                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.uci_points}</td>
-                                  </tr>
-                                ))}
-                            </tbody>
-                          </table>
-                        )}
+                    {selectedStage === stage && showStageInfo && stageInfo && (
+                      <div className={`mt-4 p-4 bg-gray-800 rounded-md border border-gray-700 slide-down`}>
+                        <div className="mt-4 p-4 bg-gray-800 rounded-md border border-gray-700">
+                          <p className="text-lg text-white">Stage Info:</p>
+                          <p className="text-md text-white">Name: {stageInfo.name.split('/').pop().split('-').map((part, index) => index === 0 ? `${part.charAt(0).toUpperCase() + part.slice(1)}` : part).join(' ')}</p>
+                          <p className="text-md text-white">Date: {stageInfo.date}</p>
+                          <p className="text-md text-white">Distance: {stageInfo.distance}</p>
+                          <p className="text-md text-white">Stage Type: {stageInfo.stage_type}</p>
+                          <p className="text-md text-white">Departure: {stageInfo.depart}</p>
+                          <p className="text-md text-white">Arrival: {stageInfo.arrival}</p>
+                          {stageInfo.results && (
+                            <table className="w-full text-white mt-2" style={{ borderCollapse: 'collapse' }}>
+                              <thead>
+                                <tr className="bg-gray-700">
+                                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rider Name</th>
+                                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rider Number</th>
+                                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rank</th>
+                                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>UCI Points</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {stageInfo.results
+                                  .sort((a, b) => parseInt(a.rank) - parseInt(b.rank))
+                                  .slice(0, 25)
+                                  .map((result, index) => (
+                                    <tr key={index} className={index % 2 === 0 ? 'bg-gray-700' : 'bg-gray-600'}>
+                                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_name}</td>
+                                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_number}</td>
+                                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rank}</td>
+                                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.uci_points}</td>
+                                    </tr>
+                                  ))}
+                              </tbody>
+                            </table>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
