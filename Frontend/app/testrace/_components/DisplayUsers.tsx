@@ -11,7 +11,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { ColumnsType } from 'antd/es/table';
 
 type User = {
@@ -46,12 +46,12 @@ const Row = (props: RowProps) => {
 export default function DisplayUsers({ setChosenUsers } : { setChosenUsers : (value:User[]) => void }) {
 	const { users } = useUsers()
 
-	
-	console.log(users)
+	const [dataSource, setDataSource] = useState<User[]>([])
+	const [selectedUsers, setSelectedUsers] = useState<User[]>([])
 
-	const [dataSource, setDataSource] = useState(users.sort((a, b) => a.id - b.id).map(user => {return {key: user.id, username: user.username}}))
-
-	console.log(dataSource)
+	useEffect(() => {
+		setDataSource(users.sort((a, b) => a.id - b.id).map(user => {return {key: user.id, username: user.username}}))
+	}, [users])
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
@@ -61,6 +61,11 @@ export default function DisplayUsers({ setChosenUsers } : { setChosenUsers : (va
 		}),
 	);
 	
+	useEffect(() => {
+		setChosenUsers(dataSource.filter(user => selectedUsers.includes(user)))
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [dataSource, selectedUsers])
+
 	const onDragEnd = ({ active, over }: DragEndEvent) => {
 		if (active.id !== over?.id) {
 		  	setDataSource((prev) => {
@@ -91,7 +96,7 @@ export default function DisplayUsers({ setChosenUsers } : { setChosenUsers : (va
 					pagination = {false}
 					rowSelection={{
 						type:'checkbox',
-						onChange:(_,records) => setChosenUsers(records)
+						onChange:(_,records) => {setSelectedUsers(records)}
 					}}
 				/>
       		</SortableContext>

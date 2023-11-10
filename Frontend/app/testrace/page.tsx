@@ -50,7 +50,7 @@ export default function Home() {
                         <div className='flex space-x-8'>
                             <DisplayRaces setChosenRace={setChosenRace} />
                             <DisplayUsers setChosenUsers={setChosenUsers} />
-                            <TemplateSetter users={chosenUsers} template={template} setTemplate={setTemplate} />
+                            <TemplateSetter selectedUsers={chosenUsers} template={template} setTemplate={setTemplate} />
                             <div className='flex flex-col'>
                                 <label>Amount of riders:</label>
                                 <InputNumber min={1} value={activeAmount} onChange={(e) => setActiveAmount(e!)} />
