@@ -387,7 +387,7 @@ function RaceInfoPage() {
       .then((response) => {
         console.log(response.data);
         setRaceInfo(response.data);
-        setError('');
+        setError('p');
         setError(null);
       })
       .catch((error) => {
