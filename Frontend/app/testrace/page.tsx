@@ -23,10 +23,8 @@ interface Rider {
 
 
 export default function Home() {
-    //const { authenticate } = useAuth();
-    //const { requireAuth } = useAuthCheck();
-    //useEffect(() => {authenticate()}, [])
-    //requireAuth();
+    const { requireAuth } = useAuthCheck();
+    requireAuth();
 
     const [chosenRace, setChosenRace] = useState<string>('')
     const [chosenUsers, setChosenUsers] = useState<User[]>([])

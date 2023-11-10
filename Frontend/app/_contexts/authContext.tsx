@@ -52,7 +52,6 @@ export function AuthProvider({ children } : { children: ReactNode }) {
 			}
 
 			const data = await response.json();
-			console.log(data)
 			setUser(data.username);
 			setIsLoggedIn(true);
 			setIsAdmin(data.isAdmin);
