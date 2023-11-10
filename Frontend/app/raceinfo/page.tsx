@@ -455,49 +455,7 @@ function RaceInfoPage() {
         {error && (
           <p className="text-red-500 mt-4">{error}</p>
         )}
-        {selectedStage && stageInfo && (
-          <div>
-            <p className="text-lg">Stage Info:</p>
-            <p>Name: {
-              // Split the stage URL by '/' and take the last part, then replace hyphens with spaces
-              stageInfo.name.split('/').pop().split('-').map(
-                // Capitalize the first letter of each part and then join them with a space
-                (part, index) => index === 0 ? `${part.charAt(0).toUpperCase() + part.slice(1)}` : part
-              ).join(' ')
-            }</p>
-            <p className="text-lg">Date: {stageInfo.date}</p>
-            <p className="text-lg">Distance: {stageInfo.distance}</p>
-            <p className="text-lg">Stage Type: {stageInfo.stage_type}</p>
-            <p className="text-lg">Departure: {stageInfo.depart}</p>
-            <p className="text-lg">Arrival: {stageInfo.arrival}</p>
-            {stageInfo.results && (
-              <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-                <thead>
-                  <tr>
-                    <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rider Name</th>
-                    <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rider Number</th>
-                    <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rank</th>
-                    <th style={{ border: '1px solid #ddd', padding: '8px' }}>UCI Points</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {stageInfo.results
-                    .sort((a, b) => parseInt(a.rank) - parseInt(b.rank))
-                    .slice(0, 25)
-                    .map((result, index) => (
-                      <tr key={index}>
-                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_name}</td>
-                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_number}</td>
-                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rank}</td>
-                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.uci_points}</td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            )}
 
-          </div>
-        )}
 
         {raceInfo && (
           <div className="mt-4">
@@ -517,6 +475,43 @@ function RaceInfoPage() {
                     >
                       {selectedStage === stage ? 'Close Stage Info' : 'Show Stage Info'}
                     </button>
+                    {selectedStage === stage && stageInfo && (
+                      <div>
+                        <p className="text-lg">Stage Info:</p>
+                        <p>Name: {stageInfo.name.split('/').pop().split('-').map((part, index) => index === 0 ? `${part.charAt(0).toUpperCase() + part.slice(1)}` : part).join(' ')}</p>
+                        <p className="text-lg">Date: {stageInfo.date}</p>
+                        <p className="text-lg">Distance: {stageInfo.distance}</p>
+                        <p className="text-lg">Stage Type: {stageInfo.stage_type}</p>
+                        <p className="text-lg">Departure: {stageInfo.depart}</p>
+                        <p className="text-lg">Arrival: {stageInfo.arrival}</p>
+                        {stageInfo.results && (
+                          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+                            <thead>
+                              <tr>
+                                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rider Name</th>
+                                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rider Number</th>
+                                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rank</th>
+                                <th style={{ border: '1px solid #ddd', padding: '8px' }}>UCI Points</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {stageInfo.results
+                                .sort((a, b) => parseInt(a.rank) - parseInt(b.rank))
+                                .slice(0, 25)
+                                .map((result, index) => (
+                                  <tr key={index}>
+                                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_name}</td>
+                                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_number}</td>
+                                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rank}</td>
+                                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.uci_points}</td>
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </table>
+                        )}
+
+                      </div>
+                    )}
                   </div>
                 </li>
               ))}
