@@ -92,7 +92,9 @@ export default function DisplayUsers() {
 			displayAdd && <AddUser close={closeDisplayAdd}/>
 		}
 		{
+			!!openEdit &&
 			<Modal
+
 				title={`Edit ${openEdit?.username}`}
 				open={!!openEdit}
 				onOk={form.submit}

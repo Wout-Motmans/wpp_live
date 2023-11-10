@@ -52,8 +52,10 @@ export function AuthProvider({ children } : { children: ReactNode }) {
 			}
 
 			const data = await response.json();
+			console.log(data)
 			setUser(data.username);
 			setIsLoggedIn(true);
+			setIsAdmin(data.isAdmin);
 			return true;
 		} catch (error) {
 			console.error('Authentication error:', error);
@@ -73,6 +75,7 @@ export function AuthProvider({ children } : { children: ReactNode }) {
 			await response.json();
 			setUser('');
 			setIsLoggedIn(false);
+			setIsAdmin(false)
 			return true;
 		} catch (error) {
 			console.error('Logout error:', error);

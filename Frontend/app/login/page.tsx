@@ -1,7 +1,7 @@
 'use client'
 import { useAuth } from '../_contexts/authContext';
 import { useAuthCheck } from '../_hooks/useAuthCheck';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
@@ -17,7 +17,16 @@ export default function Home() {
             router.push('/dashboard');
         }
     }
-    checkAuthenticated();
+
+	useEffect(() => {
+		checkAuthenticated();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
+	async function handleLogin() {
+		await login(username, password);
+		await checkAuthenticated();
+	}
 
 	return (
 		<main className="relative flex flex-col items-center justify-center h-full overflow-hidden flex-grow">
@@ -36,7 +45,7 @@ export default function Home() {
 					placeholder='password'
 					className="block w-full px-4 py-2 mt-8 mb-2 text-gray-700 bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40"
 				/>
-				<button onClick={() => login(username, password)} className="w-full px-4 py-2 mt-6 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
+				<button onClick={handleLogin} className="w-full px-4 py-2 mt-6 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
 					Login
 				</button>
 			</div>
