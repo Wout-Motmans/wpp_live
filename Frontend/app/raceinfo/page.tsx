@@ -476,6 +476,7 @@ function RaceInfoPage() {
                 <tbody>
                   {stageInfo.results
                     .sort((a, b) => parseInt(a.rank) - parseInt(b.rank))
+                    .slice(0, 25)
                     .map((result, index) => (
                       <tr key={index}>
                         <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_name}</td>
@@ -489,7 +490,7 @@ function RaceInfoPage() {
             )}
 
 
-            <button onClick={() => setSelectedStage(null)}>Back to Race Info</button>
+            <button onClick={() => setSelectedStage(null)}>Close Stage Info</button>
           </div>
         )}
 
