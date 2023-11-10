@@ -23,6 +23,13 @@ export default function Home() {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
+	function handleKeyPress(e: any){
+        if(e.keyCode === 13){
+            e.preventDefault(); // Ensure it is only this code that runs
+			handleLogin()
+        }
+    }
+
 	async function handleLogin() {
 		await login(username, password);
 		await checkAuthenticated();
@@ -30,7 +37,7 @@ export default function Home() {
 
 	return (
 		<main className="relative flex flex-col items-center justify-center h-full overflow-hidden flex-grow">
-			<div className="w-full p-6 bg-white rounded-md shadow-md lg:max-w-xl">
+			<div className="w-full p-6 bg-white rounded-md shadow-md lg:max-w-xl" onKeyDown={handleKeyPress}>
 				<input
 					type="username"
 					value={username}
@@ -44,6 +51,7 @@ export default function Home() {
 					onChange={(e) => setPassword(e.target.value)}
 					placeholder='password'
 					className="block w-full px-4 py-2 mt-8 mb-2 text-gray-700 bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40"
+
 				/>
 				<button onClick={handleLogin} className="w-full px-4 py-2 mt-6 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
 					Login
