@@ -208,7 +208,10 @@ def calculate_score_per_renner_per_tour(request):
                 rider_summary[rider_name]['shirt_points'] += result['shirt_points']
                 rider_summary[rider_name]['total_points'] += result['total_points']
     
-	# Convert the rider_summary dictionary to a list
+    # Convert the rider_summary dictionary to a list
     rider_summary_list = [{'rider_name': name, **data} for name, data in rider_summary.items()]
 
-    return Response({"rider_summary": rider_summary_list}, status=200)
+    # Sort the list by 'total_points' in descending order
+    sorted_rider_summary = sorted(rider_summary_list, key=lambda x: x['total_points'], reverse=True)
+
+    return Response({"rider_summary": sorted_rider_summary}, status=200)
