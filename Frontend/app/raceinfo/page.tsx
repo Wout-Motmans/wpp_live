@@ -141,9 +141,16 @@ function RaceInfoPage() {
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState<number>(-1);
 
   const handleShowStageInfo = (stage) => {
-    setSelectedStage(stage);
-    setStageInfo(null);
-    fetchStageInfo(stage);
+    if (selectedStage === stage) {
+      // If the same stage is clicked again, hide the info
+      setSelectedStage(null);
+      setStageInfo(null);
+    } else {
+      // Otherwise, show the new stage info
+      setSelectedStage(stage);
+      setStageInfo(null);
+      fetchStageInfo(stage);
+    }
   };
 
   const fetchNameSuggestions = (input: string) => {
@@ -489,8 +496,6 @@ function RaceInfoPage() {
               </table>
             )}
 
-
-            <button onClick={() => setSelectedStage(null)}>Close Stage Info</button>
           </div>
         )}
 
@@ -510,7 +515,7 @@ function RaceInfoPage() {
                       className="w-full px-15 py-2 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover-bg-gray-600 focus:outline-none focus-bg-gray-600"
                       onClick={() => handleShowStageInfo(stage)}
                     >
-                      Show Stage Info
+                      {selectedStage === stage ? 'Close Stage Info' : 'Show Stage Info'}
                     </button>
                   </div>
                 </li>
