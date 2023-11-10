@@ -94,7 +94,8 @@ export default function DisplayUsers() {
 		{
 			!!openEdit &&
 			<Modal
-				title={`Edit ${openEdit.username}`}
+
+				title={`Edit ${openEdit?.username}`}
 				open={!!openEdit}
 				onOk={form.submit}
 				confirmLoading={confirmLoadingEdit}
@@ -106,7 +107,7 @@ export default function DisplayUsers() {
 					labelCol={{ span: 8 }}
 					wrapperCol={{ span: 16 }}
 					style={{ maxWidth: 600 }}
-					initialValues={{ username: openEdit.username }}
+					initialValues={{ username: openEdit?.username }}
 					onFinish={handleSubmitEdit}
 					autoComplete="off"
 				>
