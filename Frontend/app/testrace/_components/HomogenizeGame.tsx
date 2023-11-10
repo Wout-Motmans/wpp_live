@@ -135,4 +135,3 @@ const addGame = async (race: string, teams: Team[], activeAmount: number) => {
 			console.error('Add game error:', error);
 		});
 }
-
