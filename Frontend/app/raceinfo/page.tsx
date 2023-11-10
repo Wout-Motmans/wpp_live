@@ -476,18 +476,18 @@ function RaceInfoPage() {
                       {selectedStage === stage ? 'Close Stage Info' : 'Show Stage Info'}
                     </button>
                     {selectedStage === stage && stageInfo && (
-                      <div>
-                        <p className="text-lg">Stage Info:</p>
-                        <p>Name: {stageInfo.name.split('/').pop().split('-').map((part, index) => index === 0 ? `${part.charAt(0).toUpperCase() + part.slice(1)}` : part).join(' ')}</p>
-                        <p className="text-lg">Date: {stageInfo.date}</p>
-                        <p className="text-lg">Distance: {stageInfo.distance}</p>
-                        <p className="text-lg">Stage Type: {stageInfo.stage_type}</p>
-                        <p className="text-lg">Departure: {stageInfo.depart}</p>
-                        <p className="text-lg">Arrival: {stageInfo.arrival}</p>
+                      <div className="mt-4 p-4 bg-gray-800 rounded-md border border-gray-700">
+                        <p className="text-lg text-white">Stage Info:</p>
+                        <p className="text-md text-white">Name: {stageInfo.name.split('/').pop().split('-').map((part, index) => index === 0 ? `${part.charAt(0).toUpperCase() + part.slice(1)}` : part).join(' ')}</p>
+                        <p className="text-md text-white">Date: {stageInfo.date}</p>
+                        <p className="text-md text-white">Distance: {stageInfo.distance}</p>
+                        <p className="text-md text-white">Stage Type: {stageInfo.stage_type}</p>
+                        <p className="text-md text-white">Departure: {stageInfo.depart}</p>
+                        <p className="text-md text-white">Arrival: {stageInfo.arrival}</p>
                         {stageInfo.results && (
-                          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+                          <table className="w-full text-white mt-2" style={{ borderCollapse: 'collapse' }}>
                             <thead>
-                              <tr>
+                              <tr className="bg-gray-700">
                                 <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rider Name</th>
                                 <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rider Number</th>
                                 <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rank</th>
@@ -499,7 +499,7 @@ function RaceInfoPage() {
                                 .sort((a, b) => parseInt(a.rank) - parseInt(b.rank))
                                 .slice(0, 25)
                                 .map((result, index) => (
-                                  <tr key={index}>
+                                  <tr key={index} className={index % 2 === 0 ? 'bg-gray-700' : 'bg-gray-600'}>
                                     <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_name}</td>
                                     <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_number}</td>
                                     <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rank}</td>
@@ -509,7 +509,6 @@ function RaceInfoPage() {
                             </tbody>
                           </table>
                         )}
-
                       </div>
                     )}
                   </div>
