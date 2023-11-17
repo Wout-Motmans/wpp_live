@@ -1,7 +1,9 @@
 'use client'
+import { Carousel } from 'antd';
 import { useAuthCheck } from '../_hooks/useAuthCheck';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 
 function Dashboard() {
     const { requireAuth } = useAuthCheck();
@@ -10,23 +12,7 @@ function Dashboard() {
     const currentRace = 'Tour de France';
     const currentYear = '2021';
 
-
-    const [displayedStage, setDisplayedStage] = useState('1');
-
-    const incrementStage = (event) => {
-        event.preventDefault();
-        setDisplayedStage(prevStage => (parseInt(prevStage) + 1).toString());
-    };
-      
-    const decrementStage = (event) => {
-        event.preventDefault();
-        if (parseInt(displayedStage) > 1) {
-          setDisplayedStage(prevStage => (parseInt(prevStage) - 1).toString());
-        }
-    };
-
-    const stages = {
-        '1':
+    const stages = [
         [
             { Position: 1, Naam: 'Remco Evenepoel', Points: 100, Jersey: 35, Total: 135, player: 'Roel' },
             { Position: 2, Naam: 'Filippo Ganna', Points: 80, Jersey: 0, Total: 80, player: 'Dries' },
@@ -54,7 +40,7 @@ function Dashboard() {
             { Position: 24, Naam: 'Eddie Dunbar', Points: 2, Jersey: 0, Total: 2, player: 'Bart' },
             { Position: 25, Naam: 'Edoardo Affini', Points: 1, Jersey: 0, Total: 1, player: 'Roel' }
         ],
-        '2' : [
+        [
             { Position: 1, Naam: 'Coole Gast', Points: 100, Jersey: 35, Total: 135, player: 'Dries' },
             { Position: 2, Naam: 'Gekke Gast', Points: 80, Jersey: 0, Total: 80, player: 'Dries' },
             { Position: 3, Naam: 'Wacko Gast', Points: 65, Jersey: 0, Total: 65, player: '' },
@@ -81,39 +67,24 @@ function Dashboard() {
             { Position: 24, Naam: 'Eddie Dunbar', Points: 2, Jersey: 0, Total: 2, player: 'Bart' },
             { Position: 25, Naam: 'Edoardo Affini', Points: 1, Jersey: 0, Total: 1, player: 'Roel' }
         ]
-    }
+    ]
 
     const maxStage = Object.keys(stages).length;
 
+    const [currentStage, setCurrentStage] = useState(0);
 
-    const myTeam = stages[displayedStage].filter(rider => rider.player === 'Roel');
-
-    const myTeamSorted = [...myTeam].sort((a, b) => b.Total - a.Total);
-    const myTopPlayer = myTeamSorted[0];
-    const totalPointsMyTeam = myTeam.reduce((total, player) => total + player.Total, 0);
+    //const myTeamSorted = [...myTeam].sort((a, b) => b.Total - a.Total);
+    //const myTopPlayer = myTeamSorted[0];
 
     // Initialize an object to hold the total points for each player
     let playerPoints = {
-        'Roel': 0,
-        'Dries': 0,
-        'Jordy': 0,
-        'Bart': 0
+        'Roel': stages[currentStage].filter(rider => rider.player === 'Roel').reduce((total, player) => total + player.Total, 0),
+        'Dries': stages[currentStage].filter(rider => rider.player === 'Dries').reduce((total, player) => total + player.Total, 0),
+        'Jordy': stages[currentStage].filter(rider => rider.player === 'Jordy').reduce((total, player) => total + player.Total, 0),
+        'Bart': stages[currentStage].filter(rider => rider.player === 'Bart').reduce((total, player) => total + player.Total, 0)
     };
 
-    // Loop through each stage from 1 to the current stage
-    for (let stage = 1; stage <= parseInt(displayedStage); stage++) {
-        // Calculate the total points for each player in the current stage
-        let stagePoints = stages[stage].reduce((points, rider) => {
-        points[rider.player] = (points[rider.player] || 0) + rider.Total;
-        return points;
-        }, {});
-    
-        // Add the stage points to the total points for each player
-        for (let player in stagePoints) {
-        playerPoints[player] += stagePoints[player];
-        }
-    }
-    
+
 
     // Convert the object to an array of players and their total points
     let players = Object.keys(playerPoints).map(name => ({ name, points: playerPoints[name] }));
@@ -131,6 +102,7 @@ function Dashboard() {
 
     //requireAuth();
 
+
     return (
         <div className="grid grid-cols-3 gap-4 h-screen px-10 pt-5">
             {/* Left Panel */}
@@ -144,53 +116,51 @@ function Dashboard() {
                         <div className="text-green-500 font-bold">Live</div>
                     </div>
                 </div>
-                <div className="bg-orange-200 rounded-md relative">
-                <div className="absolute left-0 top-1/2 transform -translate-y-1/2">
-                    {parseInt(displayedStage) > 1 && <button className="hover:opacity-75 hover:scale-110" onClick={(event) => decrementStage(event)}>
-                            <img src="/img/decrement.png" alt="Decrement arrow" className="w-20 h-20" />
-                        </button>}
-                </div>
+                <Carousel afterChange={e => setCurrentStage(e)} className="bg-orange-200" arrows={true} prevArrow={<LeftOutlined />} nextArrow={<RightOutlined style={{ color: 'black' }} />}>
 
-                <div className="absolute right-0 top-1/2 transform -translate-y-1/2">
-                    {parseInt(displayedStage) < maxStage && <button className="hover:opacity-75 hover:scale-110" onClick={(event) => incrementStage(event)}>
-                            <img src="/img/increment.png" alt="Increment arrow" className="w-20 h-20" />
-                        </button>}
-                </div>
-                    
-                <div className="flex justify-between text-lg font-bold mb-4 pt-8 pr-8 pl-8">
-                    <div>Stage: {displayedStage}</div>
-                    <div>Total Points: {totalPointsMyTeam}</div>
-                </div>
-                    <div className="text-lg font-bold mb-4 text-center pt-5">My Team</div>
-                    <div className="flex flex-col items-center pt-10">
-                        {/* Player with the most points (Top Player) */}
-                        {myTopPlayer && (
-                            <div className="relative mb-4">
-                                <img src="/img/crown.png" alt="Crown" className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-8 h-8" />
-                                <img src="/img/white_jersey.jpg" alt="Rider Shirt" className="w-20 h-20" />
-                                <div className="mt-2 font-bold">{myTopPlayer.Naam}</div>
-                                <div>{myTopPlayer.Total} Points</div>
-                            </div>
-                        )}
-                        {/* Other Players */}
-                        <div className="flex flex-wrap justify-center pb-8" style={{ maxWidth: '375px' }}>
-                            {myTeamSorted.slice(1).map((player, index) => (
-                                <div key={index} className="mx-2 my-2 text-center">
-                                    <img src="/img/rider-shirt.png" alt="Rider Shirt" className="w-16 h-16" />
-                                    <div className="mt-2">{player.Naam}</div>
-                                    <div>{player.Total} Points</div>
-                                </div>
-                            ))}
+                    {stages.map((stage, index) => (<>
+
+
+
+                        <div className="flex justify-between text-lg font-bold mb-4 pt-8 pr-8 pl-8">
+                            <div>Stage:{index + 1}</div>
+                            <div>Total Points: {stage.filter(rider => rider.player === 'Roel').reduce((total, player) => total + player.Total, 0)}</div>
                         </div>
-                    </div>
-                </div>
+                        <div className="text-lg font-bold mb-4 text-center pt-5">My Team</div>
+                        <div className="flex flex-col items-center pt-10">
+                            {/* Player with the most points (Top Player) */}
+                            {stage.filter(rider => rider.player === 'Roel').sort((a, b) => b.Total - a.Total)[0] && (
+                                <div className="relative mb-4">
+                                    <img src="/img/crown.png" alt="Crown" className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-8 h-8" />
+                                    <img src="/img/yellow_jersey.png" alt="Rider Shirt" className="relative left-1/2 transform -translate-x-1/2 w-20 h-20" />
+                                    <div className="mt-2 font-bold">{stage.filter(rider => rider.player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Naam}</div>
+                                    <div className="ml-8">{stage.filter(rider => rider.player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Total} Points</div>
+                                </div>
+                            )}
+                            {/* Other Players */}
+                            <div className="flex flex-wrap justify-center pb-8" style={{ maxWidth: '375px' }}>
+                                {stage.filter(rider => rider.player === 'Roel').sort((a, b) => b.Total - a.Total).slice(1).map((player, index) => (
+                                    <div key={index} className="mx-2 my-2 text-center flex-1 p-4">
+                                        <img src="/img/rider-shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
+                                        <div className="mt-2">{player.Naam}</div>
+                                        <div>{player.Total} Points</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </>
+                    ))}
+
+                </Carousel>
+
+
             </div>
 
             {/* Right Panels */}
             <div className="col-span-1 grid grid-cols-1 gap-4">
-                
 
-                {/* Bottom Right Panel */}
+
+                {/* Top Right Panel */}
                 <div className="white p-4">
                     {/* Content for bottom right panel */}
                     {/* ... */}
@@ -223,7 +193,7 @@ function Dashboard() {
                     </table>
                 </div>
 
-                {/* Top Right Panel (Leaderboard) */}
+                {/* Bottom Right Panel (Leaderboard) */}
                 <div className="white p-4">
                     <div className="text-2xl font-bold mb-4">Intermediate leaderboard { }</div>
                     <table className="min-w-full">
@@ -251,6 +221,7 @@ function Dashboard() {
                                             </>
                                         ) : (
                                             index + 1
+
                                         )}
                                     </td>
                                     <td className="py-2 px-4">{player.name}</td>
