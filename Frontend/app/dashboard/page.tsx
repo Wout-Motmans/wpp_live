@@ -3,7 +3,7 @@ import { Carousel } from 'antd';
 import { useAuthCheck } from '../_hooks/useAuthCheck';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { LeftCircleOutlined, LeftOutlined, RightCircleOutlined, RightOutlined } from '@ant-design/icons';
 
 function Dashboard() {
     const { requireAuth } = useAuthCheck();
@@ -77,6 +77,19 @@ function Dashboard() {
     //const myTopPlayer = myTeamSorted[0];
 
     // Initialize an object to hold the total points for each player
+
+
+    // Calculate the total points for each player across all stages
+    const totalPlayerPoints = {
+        'Roel': stages.reduce((total, stage) => total + stage.filter(rider => rider.player === 'Roel').reduce((sum, player) => sum + player.Total, 0), 0),
+        'Dries': stages.reduce((total, stage) => total + stage.filter(rider => rider.player === 'Dries').reduce((sum, player) => sum + player.Total, 0), 0),
+        'Jordy': stages.reduce((total, stage) => total + stage.filter(rider => rider.player === 'Jordy').reduce((sum, player) => sum + player.Total, 0), 0),
+        'Bart': stages.reduce((total, stage) => total + stage.filter(rider => rider.player === 'Bart').reduce((sum, player) => sum + player.Total, 0), 0)
+    };
+
+
+    console.log(totalPlayerPoints);
+
     let playerPoints = {
         'Roel': stages[currentStage].filter(rider => rider.player === 'Roel').reduce((total, player) => total + player.Total, 0),
         'Dries': stages[currentStage].filter(rider => rider.player === 'Dries').reduce((total, player) => total + player.Total, 0),
@@ -85,6 +98,11 @@ function Dashboard() {
     };
 
 
+    // Convert the object to an array of players and their total points
+    let totalPlayers = Object.keys(totalPlayerPoints).map(name => ({ name, points: totalPlayerPoints[name] }));
+
+    // Sort the array in descending order of total points
+    let totalSortedPlayers = totalPlayers.sort((a, b) => b.points - a.points);
 
     // Convert the object to an array of players and their total points
     let players = Object.keys(playerPoints).map(name => ({ name, points: playerPoints[name] }));
@@ -116,7 +134,7 @@ function Dashboard() {
                         <div className="text-green-500 font-bold">Live</div>
                     </div>
                 </div>
-                <Carousel afterChange={e => setCurrentStage(e)} className="bg-orange-200" arrows={true} prevArrow={<LeftOutlined />} nextArrow={<RightOutlined style={{ color: 'black' }} />}>
+                <Carousel afterChange={e => setCurrentStage(e)} className="bg-orange-200" arrows={true} prevArrow={<LeftCircleOutlined />} nextArrow={<RightCircleOutlined />} waitForAnimate={true} easing="easeIn" speed={1000}>
 
                     {stages.map((stage, index) => (<>
 
@@ -164,38 +182,42 @@ function Dashboard() {
                 <div className="white p-4">
                     {/* Content for bottom right panel */}
                     {/* ... */}
-                    <div className="text-2xl font-bold mb-4">Recent Stages</div>
+                    <div className="text-2xl font-bold mb-4">Overall Leaderboard</div>
                     <table className="min-w-full table-fixed">
                         <thead>
                             <tr className="bg-[#1e1e24] text-white">
-                                <th className="py-2 px-4 w-3/12">Stage Number</th>
-                                <th className="py-2 px-4 w-6/12">Winner</th>
+                                <th className="py-2 px-4 w-3/12">Ranking</th>
+                                <th className="py-2 px-4 w-6/12">Name</th>
                                 <th className="py-2 px-4 w-3/12">Points</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {recentStages.map((stage, index) => (
+
+                            {totalSortedPlayers.map((player, index) => (
                                 <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
-                                    <td className="py-4 px-4">{stage.stageNumber}</td>
-                                    <td className="py-4 px-4 flex">
-                                        <img src="/img/medal-1.png" alt="Gold Medal" className="w-6 h-9 mr-2" />
-                                        {stage.nameWinner}
+                                    <td className="py-2 px-4 whitespace-nowrap">
+                                        {index < 3 ? (
+                                            <>
+                                                {index === 0 && <img src="/img/medal-1.png" alt="Gold Medal" className="w-6 h-9 mr-2" />}
+                                                {index === 1 && <img src="/img/medal-2.png" alt="Silver Medal" className="w-6 h-9 mr-2" />}
+                                                {index === 2 && <img src="/img/medal-3.png" alt="Bronze Medal" className="w-6 h-9 mr-2" />}
+                                            </>
+                                        ) : (
+                                            index + 1
+
+                                        )}
                                     </td>
-                                    <td className="py-4 px-4">{stage.pointsWinner}</td>
+                                    <td className="py-2 px-4">{player.name}</td>
+                                    <td className="py-2 px-4">{player.points}</td>
                                 </tr>
                             ))}
-                            <tr>
-                                <td className="py-4 px-4 text-center" colSpan={3}>
-                                    <a href="/stage-overview">See all stages</a>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
 
                 {/* Bottom Right Panel (Leaderboard) */}
                 <div className="white p-4">
-                    <div className="text-2xl font-bold mb-4">Intermediate leaderboard { }</div>
+                    <div className="text-2xl font-bold mb-4">Stage Leaderboard { }</div>
                     <table className="min-w-full">
                         {/*         <thead>
             <tr className="bg-[#1e1e24] col-span-3">
@@ -232,7 +254,7 @@ function Dashboard() {
                     </table>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 
