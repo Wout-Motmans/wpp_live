@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.ant-carousel .slick-prev,
+.ant-carousel .slick-prev:hover,
+.ant-carousel .slick-prev:focus {
+    font-size: inherit;
+    left: 10px;
+    z-index: 2;
+    color: blueviolet;
+}
+
+.ant-carousel .slick-next,
+.ant-carousel .slick-next:hover,
+.ant-carousel .slick-next:focus {
+    font-size: inherit;
+    right: 10px;
+    z-index: 2;
+    color: blueviolet;
+}
