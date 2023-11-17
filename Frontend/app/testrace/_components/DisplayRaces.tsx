@@ -1,5 +1,5 @@
 
-import { useEffect, useMemo, useState } from 'react';
+import {  useEffect, useState } from 'react';
 import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 
@@ -10,12 +10,8 @@ interface RaceInfo {
     year: number;
 }
 
-export default function DisplayRaces() {
+export default function DisplayRaces({ setChosenRace } : { setChosenRace : (value:string) => void }) {
     const [races, setRaces] = useState<RaceInfo[]>([]);
-    const [selectedRace, setSelectedRace] = useState<RaceInfo>()
-
-    
-    useMemo(() => console.log('selectedRace changed:', selectedRace), [selectedRace]);
 
     useEffect(() => {
         const fetchRaces = async () => {
@@ -39,11 +35,12 @@ export default function DisplayRaces() {
     return (
         <Table
         columns={columns}
+        bordered
         dataSource={races}
         pagination={false}
         rowSelection={{
             type:'radio',
-            onSelect:(record) => setSelectedRace(record)
+            onSelect:(record) => setChosenRace(record.key)
         }}
         />
     )
@@ -57,8 +54,7 @@ const getNewestRaces = async (): Promise<RaceInfo[]> => {
         if (!response.ok) throw new Error('popraces error');
         
         const data = await response.json();
-        console.log(data)
-        const modifiedData: RaceInfo[] = data.map((race: { url: any; name: any; year: any; }) => ({
+        const modifiedData: RaceInfo[] = data.map((race: { url: string; name: string; year: string; }) => ({
             key: race.url,
             name: race.name,
             year: race.year,

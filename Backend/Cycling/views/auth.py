@@ -19,7 +19,7 @@ def my_login(request):
     if user is None:
         return Response({'detail': 'Invalid credentials.'}, status=status.HTTP_400_BAD_REQUEST)
     login(request, user)
-    return Response({'username': user.get_username()}, status=status.HTTP_202_ACCEPTED)
+    return Response({'username': user.get_username(), 'isAdmin': user.is_staff}, status=status.HTTP_202_ACCEPTED)
 
 
 @api_view(['GET'])
@@ -35,7 +35,7 @@ def my_logout(request):
 def my_authenticate(request):
     if not request.user.is_authenticated:
         return Response({'isAuthenticated': False}, status=status.HTTP_401_UNAUTHORIZED)
-    return Response({"isAuthenticated": True}, status=status.HTTP_200_OK)
+    return Response({'username': request.user.get_username(), 'isAdmin': request.user.is_staff}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

@@ -1,11 +1,10 @@
 'use client'
 import { useState } from 'react';
 import { useAuthCheck } from '../_hooks/useAuthCheck';
-import { useRouter } from 'next/navigation';
 
-function StageOverview() {
+export default function StageOverview() {
     const { requireAuth } = useAuthCheck();
-    const router = useRouter();
+    requireAuth()
     const [showDetails, setShowDetails] = useState(false);
     const [selectedStage, setSelectedStage] = useState(null);
 
@@ -149,5 +148,3 @@ function StageOverview() {
         </div>
     );
 }
-
-export default StageOverview;

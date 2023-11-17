@@ -6,25 +6,15 @@ import { ReactNode, createContext, useContext, useEffect, useState } from 'react
 interface User {
     id : number,
     username: string,
-    isStaff: boolean
+    isAdmin: boolean
 }
 
-interface UsersContextType {
+interface UsersContext {
 	users: User[];
     getUsers: () => void;
 }
 
-const UsersContext = createContext<UsersContextType | undefined>(undefined);
-
-export function useUsers() {
-	const context = useContext(UsersContext);
-	if (context === undefined) {
-		throw new Error('useUsers must be used within an UsersProvider');
-	}
-	return context;
-}
-
-
+const UsersContext = createContext<UsersContext | undefined>(undefined);
 
 export function UsersProvider({ children } : { children: ReactNode }) {
     const [users, setUsers] = useState<User[]>([]);
@@ -49,4 +39,13 @@ export function UsersProvider({ children } : { children: ReactNode }) {
             {children}
         </UsersContext.Provider>
   );
+}
+
+
+export function useUsers() {
+	const context = useContext(UsersContext);
+	if (context === undefined) {
+		throw new Error('useUsers must be used within an UsersProvider');
+	}
+	return context;
 }

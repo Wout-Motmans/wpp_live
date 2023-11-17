@@ -2,9 +2,9 @@
 import { useAuthCheck } from './_hooks/useAuthCheck';
 
 export default function Home() {
-  const { requireAuth } = useAuthCheck();
+	const { requireAuth } = useAuthCheck();
+	requireAuth();
 
-  //requireAuth();
 
   return (
     <main className="">
