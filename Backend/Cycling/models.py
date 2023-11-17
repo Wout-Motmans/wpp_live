@@ -1,9 +1,22 @@
 from django.db import models
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 
 class Stage(models.Model):
     url = models.CharField(max_length=255)
     is_klassieker = models.BooleanField(default=False)
+    stage_type = models.CharField(
+        max_length=20,
+        choices=[
+            ('not_defined', _('Not defined')),
+            ('bergrit', _('Bergrit')),
+            ('tijdrit', _('Tijdrit')),
+            ('heuvels', _('Heuvels')),
+            ('teamtijdrit', _('Teamtijdrit')),
+            ('finish_op_berg', _('Finish op Berg'))
+        ],
+        default='non_defined'
+    )
 
 class Tour(models.Model):
     is_klassieker = models.BooleanField(default=False)
@@ -24,10 +37,20 @@ class Rider(models.Model):
 class RiderGameTeam(models.Model):
     game_team = models.ForeignKey(GameTeam, on_delete=models.CASCADE)
     rider = models.ForeignKey(Rider, on_delete=models.CASCADE)
+    status = models.CharField(
+        max_length=10,
+        choices=[
+            ('active', _('Active')),
+            ('sub', _('Substitute')),
+            ('non_active', _('Non Active'))
+        ],
+        default='non_active'
+    )
 
 class StageTour(models.Model):
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
+    stage_number = models.IntegerField()
 
 class RiderStage(models.Model):
     point = models.IntegerField()
@@ -35,6 +58,15 @@ class RiderStage(models.Model):
     total_points = models.IntegerField()
     cumulative_total_points = models.IntegerField()
     position = models.IntegerField()
-    shirts = models.JSONField()  # Assuming it's an array of strings
+    shirts = models.JSONField()  
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
     rider = models.ForeignKey(Rider, on_delete=models.CASCADE)
+    status = models.CharField(
+        max_length=10,
+        choices=[
+            ('active', _('Active')),
+            ('sub', _('Substitute')),
+            ('non_active', _('Non Active'))
+        ],
+        default='non_active'
+    )
