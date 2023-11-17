@@ -35,7 +35,7 @@ function Dashboard() {
             { Position: 10, Naam: 'Alexandr Vlasov', Points: 17, Jersey: 0, Total: 17, Player: 'Dries' },
             { Position: 11, Naam: 'Bruno Armirail', Points: 15, Jersey: 0, Total: 15, Player: 'Jordy' },
             { Position: 12, Naam: 'Mads Pedersen', Points: 14, Jersey: 0, Total: 14, Player: 'Bart' },
-            { Position: 13, Naam: 'Michael Matthews', Points: 13, Jersey: 0, Total: 13, Player: 'Roel' },
+            { Position: 13, Naam: 'Michael Matthews', Points: 113, Jersey: 0, Total: 113, Player: 'Roel' },
             { Position: 14, Naam: 'Michael Hepburn', Points: 12, Jersey: 0, Total: 12, Player: 'Dries' },
             { Position: 15, Naam: 'William Barta', Points: 11, Jersey: 0, Total: 11, Player: 'Jordy' },
             { Position: 16, Naam: 'Ilan Van Wilder', Points: 10, Jersey: 0, Total: 10, Player: 'Bart' },
@@ -76,6 +76,7 @@ function Dashboard() {
             { Position: 24, Naam: 'Eddie Dunbar', Points: 2, Jersey: 0, Total: 2, Player: 'Bart' },
             { Position: 25, Naam: 'Edoardo Affini', Points: 1, Jersey: 0, Total: 1, Player: 'Roel' }
         ],
+        []
     ]
 
 
@@ -124,19 +125,30 @@ function Dashboard() {
     const cumPointsPerStage: { [key: string]: number } = {}
     for (let i = 0; i <= currentStage; i++) {
         for (let rider of stages[i]) {
-            if (cumPointsPerStage[rider.Naam] === undefined) {
-                cumPointsPerStage[rider.Naam] = rider.Total;
+            if (rider.Player === "Roel") {
+                if (cumPointsPerStage[rider.Naam] === undefined) {
+                    cumPointsPerStage[rider.Naam] = rider.Total;
 
-            } else {
-                cumPointsPerStage[rider.Naam] += rider.Total;
+                } else {
+                    cumPointsPerStage[rider.Naam] += rider.Total;
+                }
             }
         }
-
     }
 
+    function convert(obj: { [key: string]: number }) {
+        return Object.keys(obj).map(key => ({
+            name: key,
+            points: obj[key]
+        }));
+    }
 
-    console.log(cumPointsPerStage);
+    var sortedCumPointsPerStage = convert(cumPointsPerStage).sort((a, b) => b.points - a.points);
+    var nieuwe = sortedCumPointsPerStage.slice(1)
+    var topPlayerCum = sortedCumPointsPerStage[0]
 
+
+    console.log(nieuwe);
     const [cumPoints, setCumPoints] = useState(false);
 
     const onChange = (checked: boolean) => {
@@ -165,31 +177,32 @@ function Dashboard() {
 
                         <div className="flex justify-between text-lg font-bold mb-4 pt-8 pr-8 pl-8">
                             <div>Stage:{index + 1}</div>
-                            <div>Total Points: {stage.filter(rider => rider.Player === 'Roel').reduce((total, player) => total + player.Total, 0)}</div>
+                            <div>Total Points: {(cumPoints) ? sortedCumPointsPerStage.reduce((sum, rider) => sum + rider.points, 0) : stage.filter(rider => rider.Player === 'Roel').reduce((total, player) => total + player.Total, 0)}
+                            </div>
                         </div>
                         <div className="text-lg font-bold mb-4 text-center pt-5">My Team</div>
                         <div className="flex flex-col items-center pt-10">
                             {/* Player with the most points (Top Player) */}
                             {stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0] && (
-                                <div className="relative mb-4">
+                                <div className="relative mb-4 text-lg">
                                     <img src="/img/crown.png" alt="Crown" className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-8 h-8" />
                                     <img src="/img/yellow_jersey.png" alt="Rider Shirt" className="relative left-1/2 transform -translate-x-1/2 w-20 h-20" />
-                                    <div className="mt-2 font-bold">{stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Naam}</div>
-                                    <div className="ml-8">{(cumPoints) ? cumPointsPerStage[stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Naam] : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Total} Points</div>
+                                    <div className="mt-2 font-bold">{(cumPoints) ? topPlayerCum.name : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Naam}</div>
+                                    <div className="italic font-semibold">{(cumPoints) ? topPlayerCum.points : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Total} Points</div>
                                 </div>
                             )}
                             {/* Other Players */}
-                            <div className="flex flex-wrap justify-center pb-8" style={{ maxWidth: '375px' }}>
+                            <div className="flex flex-wrap justify-center pb-8 text-lg font-semibold" style={{ maxWidth: '55rem' }}>
                                 {stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total).slice(1).map((player, index) => (
                                     <div key={index} className="mx-2 my-2 text-center flex-1 p-4">
                                         <img src="/img/rider-shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
-                                        <div className="mt-2">{player.Naam}</div>
-                                        <div>{(cumPoints) ? cumPointsPerStage[player.Naam] : player.Total} Points</div>
+                                        <div className="mt-2">{(cumPoints) ? nieuwe[index].name : player.Naam}</div>
+                                        <div className=' italic '>{(cumPoints) ? nieuwe[index].points : player.Total} Points</div>
                                     </div>
                                 ))}
                             </div>
                         </div>
-                        <Switch checkedChildren="cumulative points" unCheckedChildren="stage points" onChange={onChange} />
+                        <Switch checkedChildren="cumulative points" unCheckedChildren="stage points" onChange={onChange} className='bottom-0 absolute bg-black' />
                     </>
                     ))}
 
@@ -237,6 +250,10 @@ function Dashboard() {
                         </tbody>
                     </table>
                 </div>
+
+
+                <a href='/stage-overview' ><Button type="primary" shape="round" className=' bg-black'>View all stages</Button></a>
+
 
                 {/* Bottom Right Panel (Leaderboard) */}
                 <div className="white p-4">
