@@ -16,7 +16,7 @@ export function useAuthCheck() {
 
     const requireAdmin = () => {
         if (!isAdmin) {
-            router.push('/dashboard');
+            router.push('/');
         }
     }
 
