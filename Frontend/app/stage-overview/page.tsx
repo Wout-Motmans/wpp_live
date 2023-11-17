@@ -9,59 +9,59 @@ export default function StageOverview() {
     const [selectedStage, setSelectedStage] = useState(null);
 
     const stage_1 = [
-        { Positie: 1, Naam: 'Remco Evenepoel', Punten: 100, Truien: 35, Totaal: 135, player: 'Roel' },
-        { Positie: 2, Naam: 'Filippo Ganna', Punten: 80, Truien: 0, Totaal: 80, player: 'Dries' },
-        { Positie: 3, Naam: 'Joao Almeida', Punten: 65, Truien: 0, Totaal: 65, player: 'Jordy' },
-        { Positie: 4, Naam: 'Tao Hart', Punten: 55, Truien: 10, Totaal: 65, player: 'Bart' },
-        { Positie: 5, Naam: 'Stefan Kung', Punten: 45, Truien: 0, Totaal: 45, player: 'Roel' },
-        { Positie: 6, Naam: 'Primoz Roglic', Punten: 35, Truien: 0, Totaal: 35, player: 'Dries' },
-        { Positie: 7, Naam: 'Jay Vine', Punten: 30, Truien: 0, Totaal: 30, player: 'Jordy' },
-        { Positie: 8, Naam: 'Brandon McNulty', Punten: 25, Truien: 0, Totaal: 25, player: 'Bart' },
-        { Positie: 9, Naam: 'Geraint Thomas', Punten: 20, Truien: 0, Totaal: 20, player: 'Roel' },
-        { Positie: 10, Naam: 'Alexandr Vlasov', Punten: 17, Truien: 0, Totaal: 17, player: 'Dries' },
-        { Positie: 11, Naam: 'Bruno Armirail', Punten: 15, Truien: 0, Totaal: 15, player: 'Jordy' },
-        { Positie: 12, Naam: 'Mads Pedersen', Punten: 14, Truien: 0, Totaal: 14, player: 'Bart' },
-        { Positie: 13, Naam: 'Michael Matthews', Punten: 13, Truien: 0, Totaal: 13, player: 'Roel' },
-        { Positie: 14, Naam: 'Michael Hepburn', Punten: 12, Truien: 0, Totaal: 12, player: 'Dries' },
-        { Positie: 15, Naam: 'William Barta', Punten: 11, Truien: 0, Totaal: 11, player: 'Jordy' },
-        { Positie: 16, Naam: 'Ilan Van Wilder', Punten: 10, Truien: 0, Totaal: 10, player: 'Bart' },
-        { Positie: 17, Naam: 'Stefan De Bod', Punten: 9, Truien: 0, Totaal: 9, player: 'Roel' },
-        { Positie: 18, Naam: 'Daan Hoole', Punten: 8, Truien: 0, Totaal: 8, player: 'Dries' },
-        { Positie: 19, Naam: 'Pavel Sivakov', Punten: 7, Truien: 0, Totaal: 7, player: 'Jordy' },
-        { Positie: 20, Naam: 'Andreas Leknessund', Punten: 6, Truien: 0, Totaal: 6, player: 'Bart' },
-        { Positie: 21, Naam: 'Mattia Cattaneo', Punten: 5, Truien: 0, Totaal: 5, player: 'Roel' },
-        { Positie: 22, Naam: 'Lennard Kamna', Punten: 4, Truien: 0, Totaal: 4, player: 'Dries' },
-        { Positie: 23, Naam: 'Nico Denz', Punten: 3, Truien: 0, Totaal: 3, player: 'Jordy' },
-        { Positie: 24, Naam: 'Eddie Dunbar', Punten: 2, Truien: 0, Totaal: 2, player: 'Bart' },
-        { Positie: 25, Naam: 'Edoardo Affini', Punten: 1, Truien: 0, Totaal: 1, player: 'Roel' }
+        { Position: 1, Naam: 'Remco Evenepoel', Points: 100, Jersey: 35, Total: 135, player: 'Roel' },
+        { Position: 2, Naam: 'Filippo Ganna', Points: 80, Jersey: 0, Total: 80, player: 'Dries' },
+        { Position: 3, Naam: 'Joao Almeida', Points: 65, Jersey: 0, Total: 65, player: 'Jordy' },
+        { Position: 4, Naam: 'Tao Hart', Points: 55, Jersey: 10, Total: 65, player: 'Bart' },
+        { Position: 5, Naam: 'Stefan Kung', Points: 45, Jersey: 0, Total: 45, player: 'Roel' },
+        { Position: 6, Naam: 'Primoz Roglic', Points: 35, Jersey: 0, Total: 35, player: 'Dries' },
+        { Position: 7, Naam: 'Jay Vine', Points: 30, Jersey: 0, Total: 30, player: 'Jordy' },
+        { Position: 8, Naam: 'Brandon McNulty', Points: 25, Jersey: 0, Total: 25, player: 'Bart' },
+        { Position: 9, Naam: 'Geraint Thomas', Points: 20, Jersey: 0, Total: 20, player: 'Roel' },
+        { Position: 10, Naam: 'Alexandr Vlasov', Points: 17, Jersey: 0, Total: 17, player: 'Dries' },
+        { Position: 11, Naam: 'Bruno Armirail', Points: 15, Jersey: 0, Total: 15, player: 'Jordy' },
+        { Position: 12, Naam: 'Mads Pedersen', Points: 14, Jersey: 0, Total: 14, player: 'Bart' },
+        { Position: 13, Naam: 'Michael Matthews', Points: 13, Jersey: 0, Total: 13, player: 'Roel' },
+        { Position: 14, Naam: 'Michael Hepburn', Points: 12, Jersey: 0, Total: 12, player: 'Dries' },
+        { Position: 15, Naam: 'William Barta', Points: 11, Jersey: 0, Total: 11, player: 'Jordy' },
+        { Position: 16, Naam: 'Ilan Van Wilder', Points: 10, Jersey: 0, Total: 10, player: 'Bart' },
+        { Position: 17, Naam: 'Stefan De Bod', Points: 9, Jersey: 0, Total: 9, player: 'Roel' },
+        { Position: 18, Naam: 'Daan Hoole', Points: 8, Jersey: 0, Total: 8, player: 'Dries' },
+        { Position: 19, Naam: 'Pavel Sivakov', Points: 7, Jersey: 0, Total: 7, player: 'Jordy' },
+        { Position: 20, Naam: 'Andreas Leknessund', Points: 6, Jersey: 0, Total: 6, player: 'Bart' },
+        { Position: 21, Naam: 'Mattia Cattaneo', Points: 5, Jersey: 0, Total: 5, player: 'Roel' },
+        { Position: 22, Naam: 'Lennard Kamna', Points: 4, Jersey: 0, Total: 4, player: 'Dries' },
+        { Position: 23, Naam: 'Nico Denz', Points: 3, Jersey: 0, Total: 3, player: 'Jordy' },
+        { Position: 24, Naam: 'Eddie Dunbar', Points: 2, Jersey: 0, Total: 2, player: 'Bart' },
+        { Position: 25, Naam: 'Edoardo Affini', Points: 1, Jersey: 0, Total: 1, player: 'Roel' }
     ];
 
     const stage_2 = [
-        { Positie: 1, Naam: 'Coole Gast', Punten: 100, Truien: 35, Totaal: 135, player: 'Dries' },
-        { Positie: 2, Naam: 'Gekke Gast', Punten: 80, Truien: 0, Totaal: 80, player: 'Dries' },
-        { Positie: 3, Naam: 'Wacko Gast', Punten: 65, Truien: 0, Totaal: 65, player: '' },
-        { Positie: 4, Naam: 'Tao Hart', Punten: 55, Truien: 10, Totaal: 65, player: 'Bart' },
-        { Positie: 5, Naam: 'Stefan Kung', Punten: 45, Truien: 0, Totaal: 45, player: 'Roel' },
-        { Positie: 6, Naam: 'Primoz Roglic', Punten: 35, Truien: 0, Totaal: 35, player: 'Dries' },
-        { Positie: 7, Naam: 'Jay Vine', Punten: 30, Truien: 0, Totaal: 30, player: 'Jordy' },
-        { Positie: 8, Naam: 'Brandon McNulty', Punten: 25, Truien: 0, Totaal: 25, player: 'Bart' },
-        { Positie: 9, Naam: 'Geraint Thomas', Punten: 20, Truien: 0, Totaal: 20, player: 'Roel' },
-        { Positie: 10, Naam: 'Alexandr Vlasov', Punten: 17, Truien: 0, Totaal: 17, player: 'Dries' },
-        { Positie: 11, Naam: 'Bruno Armirail', Punten: 15, Truien: 0, Totaal: 15, player: 'Jordy' },
-        { Positie: 12, Naam: 'Mads Pedersen', Punten: 14, Truien: 0, Totaal: 14, player: 'Bart' },
-        { Positie: 13, Naam: 'Michael Matthews', Punten: 13, Truien: 0, Totaal: 13, player: 'Roel' },
-        { Positie: 14, Naam: 'Michael Hepburn', Punten: 12, Truien: 0, Totaal: 12, player: 'Dries' },
-        { Positie: 15, Naam: 'William Barta', Punten: 11, Truien: 0, Totaal: 11, player: 'Jordy' },
-        { Positie: 16, Naam: 'Ilan Van Wilder', Punten: 10, Truien: 0, Totaal: 10, player: 'Bart' },
-        { Positie: 17, Naam: 'Stefan De Bod', Punten: 9, Truien: 0, Totaal: 9, player: 'Roel' },
-        { Positie: 18, Naam: 'Daan Hoole', Punten: 8, Truien: 0, Totaal: 8, player: 'Dries' },
-        { Positie: 19, Naam: 'Pavel Sivakov', Punten: 7, Truien: 0, Totaal: 7, player: 'Jordy' },
-        { Positie: 20, Naam: 'Andreas Leknessund', Punten: 6, Truien: 0, Totaal: 6, player: 'Bart' },
-        { Positie: 21, Naam: 'Mattia Cattaneo', Punten: 5, Truien: 0, Totaal: 5, player: 'Roel' },
-        { Positie: 22, Naam: 'Lennard Kamna', Punten: 4, Truien: 0, Totaal: 4, player: 'Dries' },
-        { Positie: 23, Naam: 'Nico Denz', Punten: 3, Truien: 0, Totaal: 3, player: 'Jordy' },
-        { Positie: 24, Naam: 'Eddie Dunbar', Punten: 2, Truien: 0, Totaal: 2, player: 'Bart' },
-        { Positie: 25, Naam: 'Edoardo Affini', Punten: 1, Truien: 0, Totaal: 1, player: 'Roel' }
+        { Position: 1, Naam: 'Coole Gast', Points: 100, Jersey: 35, Total: 135, player: 'Dries' },
+        { Position: 2, Naam: 'Gekke Gast', Points: 80, Jersey: 0, Total: 80, player: 'Dries' },
+        { Position: 3, Naam: 'Wacko Gast', Points: 65, Jersey: 0, Total: 65, player: '' },
+        { Position: 4, Naam: 'Tao Hart', Points: 55, Jersey: 10, Total: 65, player: 'Bart' },
+        { Position: 5, Naam: 'Stefan Kung', Points: 45, Jersey: 0, Total: 45, player: 'Roel' },
+        { Position: 6, Naam: 'Primoz Roglic', Points: 35, Jersey: 0, Total: 35, player: 'Dries' },
+        { Position: 7, Naam: 'Jay Vine', Points: 30, Jersey: 0, Total: 30, player: 'Jordy' },
+        { Position: 8, Naam: 'Brandon McNulty', Points: 25, Jersey: 0, Total: 25, player: 'Bart' },
+        { Position: 9, Naam: 'Geraint Thomas', Points: 20, Jersey: 0, Total: 20, player: 'Roel' },
+        { Position: 10, Naam: 'Alexandr Vlasov', Points: 17, Jersey: 0, Total: 17, player: 'Dries' },
+        { Position: 11, Naam: 'Bruno Armirail', Points: 15, Jersey: 0, Total: 15, player: 'Jordy' },
+        { Position: 12, Naam: 'Mads Pedersen', Points: 14, Jersey: 0, Total: 14, player: 'Bart' },
+        { Position: 13, Naam: 'Michael Matthews', Points: 13, Jersey: 0, Total: 13, player: 'Roel' },
+        { Position: 14, Naam: 'Michael Hepburn', Points: 12, Jersey: 0, Total: 12, player: 'Dries' },
+        { Position: 15, Naam: 'William Barta', Points: 11, Jersey: 0, Total: 11, player: 'Jordy' },
+        { Position: 16, Naam: 'Ilan Van Wilder', Points: 10, Jersey: 0, Total: 10, player: 'Bart' },
+        { Position: 17, Naam: 'Stefan De Bod', Points: 9, Jersey: 0, Total: 9, player: 'Roel' },
+        { Position: 18, Naam: 'Daan Hoole', Points: 8, Jersey: 0, Total: 8, player: 'Dries' },
+        { Position: 19, Naam: 'Pavel Sivakov', Points: 7, Jersey: 0, Total: 7, player: 'Jordy' },
+        { Position: 20, Naam: 'Andreas Leknessund', Points: 6, Jersey: 0, Total: 6, player: 'Bart' },
+        { Position: 21, Naam: 'Mattia Cattaneo', Points: 5, Jersey: 0, Total: 5, player: 'Roel' },
+        { Position: 22, Naam: 'Lennard Kamna', Points: 4, Jersey: 0, Total: 4, player: 'Dries' },
+        { Position: 23, Naam: 'Nico Denz', Points: 3, Jersey: 0, Total: 3, player: 'Jordy' },
+        { Position: 24, Naam: 'Eddie Dunbar', Points: 2, Jersey: 0, Total: 2, player: 'Bart' },
+        { Position: 25, Naam: 'Edoardo Affini', Points: 1, Jersey: 0, Total: 1, player: 'Roel' }
     ];
 
     const stages = [
@@ -121,22 +121,22 @@ export default function StageOverview() {
                         <table className="w-full border-collapse">
                             <thead>
                                 <tr>
-                                    <th className="py-2 px-4">Positie</th>
+                                    <th className="py-2 px-4">Position</th>
                                     <th className="py-2 px-4">Naam</th>
-                                    <th className="py-2 px-4">Punten</th>
-                                    <th className="py-2 px-4">Truien</th>
-                                    <th className="py-2 px-4">Totaal</th>
+                                    <th className="py-2 px-4">Points</th>
+                                    <th className="py-2 px-4">Jersey</th>
+                                    <th className="py-2 px-4">Total</th>
                                     <th className="py-2 px-4">Player</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {selectedStage.map((stageData) => (
-                                    <tr key={stageData.Positie} className={getRowClassName(stageData.player)}>
-                                        <td className="py-2 px-4">{stageData.Positie}</td>
+                                    <tr key={stageData.Position} className={getRowClassName(stageData.player)}>
+                                        <td className="py-2 px-4">{stageData.Position}</td>
                                         <td className="py-2 px-4">{stageData.Naam}</td>
-                                        <td className="py-2 px-4">{stageData.Punten}</td>
-                                        <td className="py-2 px-4">{stageData.Truien}</td>
-                                        <td className="py-2 px-4">{stageData.Totaal}</td>
+                                        <td className="py-2 px-4">{stageData.Points}</td>
+                                        <td className="py-2 px-4">{stageData.Jersey}</td>
+                                        <td className="py-2 px-4">{stageData.Total}</td>
                                         <td className="py-2 px-4">{stageData.player}</td>
                                     </tr>
                                 ))}
