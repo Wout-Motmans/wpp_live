@@ -25,6 +25,7 @@ interface StageInfo {
 }
 
 function RaceInfoPage() {
+  
   const races = [
     "Tour de France",
     "Giro d'Italia",

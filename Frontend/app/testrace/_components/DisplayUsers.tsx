@@ -22,6 +22,7 @@ export default function DisplayUsers({ setChosenUsers } : { setChosenUsers : (va
     return (
 		<Table
         columns={columns}
+        bordered
         dataSource={data}
         pagination={false}
         rowSelection={{

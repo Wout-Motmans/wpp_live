@@ -17,9 +17,12 @@ urlpatterns = [
     
     path('popraces', race.get_popular_races),
     path('startriders/<str:race_url>', race.get_start_riders),
+    path('getresultsrace', race.calculate_score_per_renner_per_stage),
 
     path('getraceinfo', race.get_race_info),
     path('getstageinfo', race.get_stage_info),
+    path('getstageshirt', race.calculate_score_per_renner_per_stage),
+    path('getresultstour', race.calculate_score_per_renner_per_tour),
     
     path('addgame', race.add_game),
 ]
