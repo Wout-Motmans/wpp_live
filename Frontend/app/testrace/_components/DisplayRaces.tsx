@@ -1,8 +1,9 @@
 
 import {  useEffect, useState } from 'react';
-import { Button, Table, Input } from 'antd';
+import { Button, Table, Input, Modal } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { SearchProps } from 'antd/es/input/Search';
+import CustomTour from './CustomTour';
 const { Search } = Input;
 
 
@@ -14,6 +15,8 @@ interface RaceInfo {
 
 export default function DisplayRaces({ setChosenRace } : { setChosenRace : (value:string) => void }) {
     const [races, setRaces] = useState<RaceInfo[]>([]);
+
+    
 
     useEffect(() => {
         const fetchRaces = async () => {
@@ -33,18 +36,13 @@ export default function DisplayRaces({ setChosenRace } : { setChosenRace : (valu
         },
     ];
 
-    function handleCreateCustomTour() {
-
-    }
-
-    
     const onSearch: SearchProps['onSearch'] = (value, _e, info) => {
 
     }
 
     return (
         <div className='flex flex-col space-y-2'>
-            <Button onClick={handleCreateCustomTour} >Create Custom Tour</Button>
+            <CustomTour/>
             <Search placeholder='add race' onSearch={onSearch} enterButton/>
             <Table
                 
@@ -57,6 +55,7 @@ export default function DisplayRaces({ setChosenRace } : { setChosenRace : (valu
                     onSelect:(record) => setChosenRace(record.key)
                 }}
             />
+            
         </div>
     )
 }
@@ -83,23 +82,3 @@ const getNewestRaces = async (): Promise<RaceInfo[]> => {
     }
 };
 
-const findRace = async (race : string): Promise<RaceInfo[]> => {
-    try {
-        const response = await fetch('/api/popraces');
-    
-        if (!response.ok) throw new Error('popraces error');
-        
-        const data = await response.json();
-        const modifiedData: RaceInfo[] = data.map((race: { url: string; name: string; year: string; }) => ({
-            key: race.url,
-            name: race.name,
-            year: race.year,
-        }));
-        
-        return modifiedData;
-
-    } catch (error) {
-        console.error('Popraces error:', error);
-        throw error;
-    }
-};

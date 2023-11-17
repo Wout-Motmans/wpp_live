@@ -43,7 +43,7 @@ export default function Home() {
 
     return (
         <UsersProvider>
-            <main className="mx-20 flex m-12">
+            <main className="mx-20 flex m-12 ">
                 {
                     !displayGame
                         ?

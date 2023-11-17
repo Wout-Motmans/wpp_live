@@ -15,6 +15,12 @@ giro_latest = Race('/'.join(max(Race('/race/giro-d-italia/2020').prev_editions_s
 tour_latest = Race('/'.join(max(Race('/race/tour-de-france/2020').prev_editions_select(), key=lambda entry: int(entry["text"]))['value'].split('/')[0:3]))
 vuelta_latest = Race('/'.join(max(Race('/race/vuelta-a-espana/2020').prev_editions_select(), key=lambda entry: int(entry["text"]))['value'].split('/')[0:3]))
 
+def find_latest_race(race_name):
+    race_name = f"race/{race_name.replace(' ', '-')}/2020"
+    try:
+        return Race('/'.join(max(Race(race_name).prev_editions_select(), key=lambda entry: int(entry["text"]))['value'].split('/')[0:3]))
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
 
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication])
@@ -70,6 +76,37 @@ def add_game(request):
 			user_team.save()
 		return Response(status=status.HTTP_200_OK)
 	return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['GET'])
+def find_one_day_race(request):
+    race_name = request.GET.get('race_name')
+    try:
+        race = find_latest_race(race_name)
+        if race.is_one_day_race():
+            print(race.url.split('/')[-2:])
+            return Response({'name': race.name(), 'url': '/'.join(race.url.split('/')[-2:])}, status=200)
+        return Response({'error': str(e)}, status=400)
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
+
+
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticated])
+def add_tour(request):
+    races = request.data.get('races')
+    try:
+        # frontend: return list of all stages that are one day races (klassiekers) when making a new tour instead of adding the klassiekers every time manually
+        # frontend: make custom tour klassiekers deletable
+        # finish custom tour name getting and then make the tour in the db
+        for race in races:
+            # if race not in db -> add it
+            # if race now in db connect it the tour
+            pass
+        return Response(True, status=200)
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
 
 
 @api_view(['GET'])

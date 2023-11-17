@@ -33,6 +33,7 @@ export function TemplateSetter({ selectedUsers, template, setTemplate }: { selec
         if (!checked) setTemplateType('none')
     }
 
+
     return (
         <div className='flex flex-row space-x-2'>
             <Template template={template}/>
@@ -56,9 +57,9 @@ export function Template({ template } : { template: User[] }){
         <List
             header={<div>Order</div>}
             bordered
-            dataSource={template}
+            dataSource={[...template]}
             renderItem={user=> (
-                <List.Item className=" h-20">
+                <List.Item key={user.key} className=" h-20">
                     {user.username}
                 </List.Item>
             )}
