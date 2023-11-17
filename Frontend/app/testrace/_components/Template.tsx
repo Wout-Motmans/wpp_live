@@ -1,7 +1,7 @@
 
 'use client'
-import React from 'react';
-import { List } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { List, Switch } from 'antd';
 
 
 interface User {
@@ -11,21 +11,33 @@ interface User {
 
 export function TemplateSetter({ selectedUsers, template, setTemplate }: { selectedUsers: User[], template: User[], setTemplate: (value: User[]) => void }) {
 
+    const [templateType, setTemplateType] = useState('none')
+
     const handleAddUser = (user: User) => {
         setTemplate([...template, user])
     }
 
-    function handleSlangMaker(){
-        setTemplate([...selectedUsers, ...[...selectedUsers].reverse()])
+    useEffect(() => {
+        if (templateType === 'none') {
+            setTemplate([])
+        }
+        if (templateType === 'slang') {
+            setTemplate([...selectedUsers, ...[...selectedUsers].reverse()])
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[selectedUsers, templateType])
+
+
+    const onChangeSlang = (checked : boolean) => {
+        if (checked) setTemplateType('slang')
+        if (!checked) setTemplateType('none')
     }
 
     return (
         <div className='flex flex-row space-x-2'>
-            <div className='flex flex-col'>
-                <button className='border-4' onClick={handleSlangMaker}>Slang</button>
-                <Template template={template}/>
-            </div>
+            <Template template={template}/>
             <div className='flex flex-col space-y-2'>
+                <Switch className='border-4' onChange={onChangeSlang} checkedChildren="Slang" unCheckedChildren="None"/>
                 {
                     selectedUsers.map(user =>
                         <button key={user.key} className='border-2 rounded-full p-2' onClick={() => handleAddUser(user)}>{user.username}</button>
@@ -45,8 +57,8 @@ export function Template({ template } : { template: User[] }){
             header={<div>Order</div>}
             bordered
             dataSource={template}
-            renderItem={(user, i) => (
-                <List.Item className=" h-20" key={i}>
+            renderItem={user=> (
+                <List.Item className=" h-20">
                     {user.username}
                 </List.Item>
             )}
