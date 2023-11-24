@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth import  get_user_model
 from procyclingstats import Race, RaceStartlist, Stage
-from Cycling.models import Rider, Tour, GameTeam
+from Cycling.models import *
 from django.http import QueryDict
 from django.http import HttpRequest
 
@@ -106,9 +106,13 @@ def add_tour(request):
             
             # if race not in db -> add it
             # if race now in db connect it the tour
+            print(one_day_race['url'])
+            
             if not Stage.objects.filter(url=one_day_race['url']).exists():
-                stage = Stage(url=one_day_race['url'],is_klasieker=True)
-                Stage.save()
+                print("test")
+                stage = Stage(url=one_day_race['url'])
+                print(stage)
+                stage.save()
                 
                 print(stage)
                 
