@@ -25,7 +25,7 @@ interface StageInfo {
 }
 
 function RaceInfoPage() {
-  
+
   const races = [
     "Tour de France",
     "Giro d'Italia",
@@ -538,7 +538,7 @@ function RaceInfoPage() {
                                   <tr key={index} className={index % 2 === 0 ? 'bg-gray-700' : 'bg-gray-600'}>
                                     <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_name}</td>
                                     <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_number}</td>
-                                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rank}</td>
+                                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{index + 1}</td>
                                     <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.uci_points}</td>
                                   </tr>
                                 ))}
