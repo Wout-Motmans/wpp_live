@@ -43,7 +43,7 @@ export default function DisplayRaces({ setChosenRace } : { setChosenRace : (valu
     return (
         <div className='flex flex-col space-y-2'>
             <CustomTour/>
-            <Search placeholder='add race' onSearch={onSearch} enterButton/>
+            <Search   placeholder='add race' onSearch={onSearch} enterButton/>
             <Table
                 
                 columns={columns}
@@ -63,7 +63,7 @@ export default function DisplayRaces({ setChosenRace } : { setChosenRace : (valu
 
 const getNewestRaces = async (): Promise<RaceInfo[]> => {
     try {
-        const response = await fetch('/api/get_future_races+customs');
+        const response = await fetch('/api/get_future_races_customs');
     
         if (!response.ok) throw new Error('popraces error');
         
