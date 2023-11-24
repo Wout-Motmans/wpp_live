@@ -36,6 +36,7 @@ export default function CustomTour() {
         if (!races.some(race => race.url.split('/')[0] === value.replaceAll(' ', '-').toLowerCase())) {
             const x = await findRace(value.toLowerCase())
             setRaces(p => [...p, x])
+            
         }
     }
 
@@ -57,6 +58,7 @@ export default function CustomTour() {
                     dataSource={races}
                     renderItem={race => (
                         <List.Item>{race.name}</List.Item>
+                        
                     )}
                     className=" mb-8"
                 />
@@ -70,9 +72,12 @@ export default function CustomTour() {
 
 const findRace = async (race : string): Promise<RaceInfo> => {
     try {
+        console.log(race)
         const response = await fetch(`/api/findOneDayRace?race_name=${race}`);
+        console.log(response)
         if (!response.ok) throw new Error('findOneDayRace error');
         const data = await response.json();
+        
         return data;
 
     } catch (error) {
