@@ -70,21 +70,23 @@ export default function StageOverview() {
         // Add more stages as needed
     ];
 
-    const getRowClassName = (name) => {
-        switch (name) {
-            case 'Roel':
-                return 'bg-green-100'; // Replace with the desired class for Roel.
-            case 'Dries':
-                return 'bg-blue-100'; // Replace with the desired class for Dries.
-            case 'Jordy':
-                return 'bg-red-100'; // Replace with the desired class for Jordy.
-            case 'Bart':
-                return 'bg-yellow-100'; // Replace with the desired class for Bart.
-            default:
-                return '';
+    const getRowClassName = (name, column) => {
+        if (column === 'Position' || column === 'Naam') {
+            switch (name) {
+                case 'Roel':
+                    return 'bg-green-100'; // Replace with the desired class for Roel.
+                case 'Dries':
+                    return 'bg-blue-100'; // Replace with the desired class for Dries.
+                case 'Jordy':
+                    return 'bg-red-100'; // Replace with the desired class for Jordy.
+                case 'Bart':
+                    return 'bg-yellow-100'; // Replace with the desired class for Bart.
+                default:
+                    return '';
+            }
         }
+        return '';
     };
-    
 
     const handleStageClick = (stage) => {
         if (showDetails === stage.id) {
@@ -131,15 +133,15 @@ export default function StageOverview() {
                             </thead>
                             <tbody>
                                 {selectedStage.map((stageData) => (
-                                    <tr key={stageData.Position} className={getRowClassName(stageData.player)}>
-                                        <td className="py-2 px-4">{stageData.Position}</td>
-                                        <td className="py-2 px-4">{stageData.Naam}</td>
+                                    <tr key={stageData.Position}>
+                                        <td className={`py-2 px-4 ${getRowClassName(stageData.player, 'Position')}`}>{stageData.Position}</td>
+                                        <td className={`py-2 px-4 ${getRowClassName(stageData.player, 'Naam')}`}>{stageData.Naam}</td>
                                         <td className="py-2 px-4">{stageData.Points}</td>
                                         <td className="py-2 px-4">{stageData.Jersey}</td>
                                         <td className="py-2 px-4">{stageData.Total}</td>
                                         <td className="py-2 px-4">{stageData.player}</td>
                                     </tr>
-                                ))}
+))}
                             </tbody>
                         </table>
                     </div>
