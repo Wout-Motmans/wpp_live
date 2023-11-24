@@ -12,7 +12,8 @@ interface Rider {
     Points: number,
     Jersey: number,
     Total: number,
-    Player: string
+    Player: string,
+    Reserved: boolean
 }
 
 function Dashboard() {
@@ -24,6 +25,7 @@ function Dashboard() {
 
     const stages: Rider[][] = [
         [
+
             { Position: 1, Naam: 'Remco Evenepoel',Team: "Soudal-Quick Step", Points: 100, Jersey: 35, Total: 135, Player: 'Roel' },
             { Position: 2, Naam: 'Filippo Ganna', Team: "Soudal-Quick Step", Points: 80, Jersey: 0, Total: 80, Player: 'Dries' },
             { Position: 3, Naam: 'Joao Almeida', Team: "Soudal-Quick Step", Points: 65, Jersey: 0, Total: 65, Player: 'Jordy' },
@@ -106,10 +108,12 @@ function Dashboard() {
 
 
     // Convert the object to an array of players and their total points
-    let totalPlayers = Object.keys(totalPlayerPoints).map(name => ({ name, points: totalPlayerPoints[name] }));
+    let totalPlayers = Object.keys(totalPlayerPoints).map(name => ({ name, points: totalPlayerPoints[name], reserved: false }));
 
     // Sort the array in descending order of total points
     let totalSortedPlayers = totalPlayers.sort((a, b) => b.points - a.points);
+
+
 
     // Convert the object to an array of players and their total points
     let players = Object.keys(playerPoints).map(name => ({ name, points: playerPoints[name] }));
@@ -208,12 +212,22 @@ function Dashboard() {
                             )}
                             {/* Other Players */}
                             <div className="flex flex-wrap justify-center pb-8 text-lg font-semibold" style={{ maxWidth: '55rem' }}>
-                                {stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total).slice(1).map((player, index) => (
+                                {stage.filter(rider => rider.Player === 'Roel').filter(rider => rider.Reserved === false).sort((a, b) => b.Total - a.Total).slice(1).map((player, index) => (
                                     <div key={index} className="mx-2 my-2 text-center flex-1 p-4">
                                         <img src="/img/rider-shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
                                         <div className="mt-2">{(cumPoints) ? nieuwe[index].name : player.Naam}</div>
                                         <div style={{ fontSize: '0.7em' }}>({(cumPoints) ? nieuwe[index].team : player.Team})</div>
                                         <div className=' italic '>{(cumPoints) ? nieuwe[index].points : player.Total} Points</div>
+                                    </div>
+                                ))}
+                            </div>
+                            {/* Reserved */}
+                            <div className="flex flex-wrap justify-center pb-8 text-lg font-semibold" style={{ maxWidth: '55rem' }}>
+                                {stage.filter(rider => rider.Player === 'Roel').filter(rider => rider.Reserved === true).map((player, index) => (
+                                    <div key={index} className="mx-2 my-2 text-center flex-1 p-4">
+                                        <img src="/img/sub_shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
+                                        <div className="mt-2">{(cumPoints) ? nieuwe[index].name : player.Naam}</div>
+                                        <div className=' italic '>{(cumPoints) ? 0 : 0} Points</div>
                                     </div>
                                 ))}
                             </div>
