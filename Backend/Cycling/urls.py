@@ -23,7 +23,12 @@ urlpatterns = [
     path('getstageinfo', race.get_stage_info),
     path('getstageshirt', race.calculate_score_per_renner_per_stage),
     path('getresultstour', race.calculate_score_per_renner_per_tour),
+    path('getteamriders', race.get_team_riders),
+    path('calculateteamscoreperstage', race.get_team_scores_per_stage),
     
+
+    path('findOneDayRace', race.find_one_day_race),
+    path('addTour', race.add_tour),
     path('addgame', race.add_game),
 ]
 

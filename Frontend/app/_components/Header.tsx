@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../_contexts/authContext';
 import { useMemo } from 'react';
+import Dashboard from '../page';
 
 
 
@@ -30,6 +31,7 @@ export default function Header(){
                             </path>
                         </svg>
                     </Link>
+
                     <nav className='flex flex-row items-center'>
                         {
                             isLoggedIn
@@ -37,21 +39,35 @@ export default function Header(){
                             <>
                             {
                             navigationRoutes.map(route => {
-                                return (
-                                    <Link 
-                                    key={route} 
-                                    href={`/${route}`}
-                                    className={`text-xl pr-3 text-white ${pathname === `/${route}`? "underline" : ""} `}
-                                    >
-                                    {route}
-                                    </Link>
-                                )
+                                if (route == 'dashboard'){
+                                    return (
+                                        <Link 
+                                        key={route} 
+                                        href={`/`}
+                                        className={`text-xl pr-3 text-white ${pathname === `/${route}`? "underline" : ""} `}
+                                        >
+                                        {route}
+                                        </Link>
+                                    )
+                                }
+                                else{
+                                    return (
+                                        <Link 
+                                        key={route} 
+                                        href={`/${route}`}
+                                        className={`text-xl pr-3 text-white ${pathname === `/${route}`? "underline" : ""} `}
+                                        >
+                                        {route}
+                                        </Link>
+                                    )
+                                }
+
                             })
                             }
-                            <button onClick={logout}  className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Logout</button>
+                            <button onClick={logout}  className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black">Logout</button>
                             </>
                             :
-                            <Link href={"/login"} className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Login</Link>
+                            <Link href={"/login"} className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black">Login</Link>
 
                         }
                     </nav>

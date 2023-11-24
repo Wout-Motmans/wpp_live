@@ -7,14 +7,21 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth import  get_user_model
 from procyclingstats import Race, RaceStartlist, Stage
-from Cycling.models import Renner, Tour, Team
+from Cycling.models import Rider, Tour, GameTeam
 from django.http import QueryDict
+from django.http import HttpRequest
 
 
 giro_latest = Race('/'.join(max(Race('/race/giro-d-italia/2020').prev_editions_select(), key=lambda entry: int(entry["text"]))['value'].split('/')[0:3]))
 tour_latest = Race('/'.join(max(Race('/race/tour-de-france/2020').prev_editions_select(), key=lambda entry: int(entry["text"]))['value'].split('/')[0:3]))
 vuelta_latest = Race('/'.join(max(Race('/race/vuelta-a-espana/2020').prev_editions_select(), key=lambda entry: int(entry["text"]))['value'].split('/')[0:3]))
 
+def find_latest_race(race_name):
+    race_name = f"race/{race_name.replace(' ', '-')}/2020"
+    try:
+        return Race('/'.join(max(Race(race_name).prev_editions_select(), key=lambda entry: int(entry["text"]))['value'].split('/')[0:3]))
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
 
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication])
@@ -59,7 +66,7 @@ def add_game(request):
 			user_team = Team(team_name=f"{user}s team", tour=tour, user=user)
 			user_team.save()
 			for i, rider in enumerate(team.get('riders')):
-				if not Renner.objects.filter(url=rider).exists():
+				if not Rider.objects.filter(url=rider).exists():
 					renner = Renner(url=rider)
 					renner.save()
 				renner = Renner.objects.get(url=rider)
@@ -70,6 +77,37 @@ def add_game(request):
 			user_team.save()
 		return Response(status=status.HTTP_200_OK)
 	return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['GET'])
+def find_one_day_race(request):
+    race_name = request.GET.get('race_name')
+    try:
+        race = find_latest_race(race_name)
+        if race.is_one_day_race():
+            print(race.url.split('/')[-2:])
+            return Response({'name': race.name(), 'url': '/'.join(race.url.split('/')[-2:])}, status=200)
+        return Response({'error': str(e)}, status=400)
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
+
+
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticated])
+def add_tour(request):
+    races = request.data.get('races')
+    try:
+        # frontend: return list of all stages that are one day races (klassiekers) when making a new tour instead of adding the klassiekers every time manually
+        # frontend: make custom tour klassiekers deletable
+        # finish custom tour name getting and then make the tour in the db
+        for race in races:
+            # if race not in db -> add it
+            # if race now in db connect it the tour
+            pass
+        return Response(True, status=200)
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
 
 
 @api_view(['GET'])
@@ -215,3 +253,78 @@ def calculate_score_per_renner_per_tour(request):
     sorted_rider_summary = sorted(rider_summary_list, key=lambda x: x['total_points'], reverse=True)
 
     return Response({"rider_summary": sorted_rider_summary}, status=200)
+
+@api_view(['GET'])
+def get_team_riders(request):
+    # Extract the team ID from the request query parameters
+    team_id = request.GET.get('team_id')
+    if not team_id:
+        return Response({'error': 'Team ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Fetch the team with the given ID
+        team = Team.objects.get(id=team_id)
+
+        # Get all the riders in the team
+        renners = team.renners.all()
+        reserves = team.reserves.all()
+
+        # Serialize the riders' data
+        renners_data = [{'url': renner.url} for renner in renners]
+        reserves_data = [{'url': renner.url} for renner in reserves]
+
+        # Return the riders' data in the response
+        return Response({
+            'team_name': team.team_name,
+            'renners': renners_data,
+            'reserves': reserves_data
+        }, status=status.HTTP_200_OK)
+    except Team.DoesNotExist:
+        return Response({'error': 'Team not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(['GET'])
+def get_team_scores_per_stage(request):
+    team_id = request.GET.get('team_id')
+    stage_name = request.GET.get('stage_name')
+
+    if not team_id or not stage_name:
+        return Response({'error': 'Both Team ID and Stage Name are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Create a new HttpRequest object for get_team_riders
+    team_request = HttpRequest()
+    team_request.method = 'GET'
+    team_request.GET = request.GET.copy()
+    team_request.GET['team_id'] = team_id
+
+    # Call get_team_riders with the new HttpRequest
+    team_response = get_team_riders(team_request)
+    if team_response.status_code != status.HTTP_200_OK:
+        return team_response
+    team_riders = team_response.data['renners'] + team_response.data['reserves']
+
+    # Reformat rider names from URLs to handle complex last names
+    def format_name(url):
+        parts = url.split('/')[-1].split('-')
+        first_name = parts[-1].capitalize()
+        last_name = ' '.join(parts[:-1]).upper()
+        return f"{last_name} {first_name}"
+
+    team_rider_names = [format_name(rider['url']) for rider in team_riders]
+    print(team_rider_names)
+
+    # Create a new HttpRequest object for calculate_score_per_renner_per_stage
+    stage_request = HttpRequest()
+    stage_request.method = 'GET'
+    stage_request.GET = request.GET.copy()
+    stage_request.GET['stage_name'] = stage_name
+
+    # Call calculate_score_per_renner_per_stage with the new HttpRequest
+    scores_response = calculate_score_per_renner_per_stage(stage_request)
+    if scores_response.status_code != status.HTTP_200_OK:
+        return scores_response
+    all_scores = scores_response.data.get('test', [])
+
+    # Filter scores for team riders
+    team_scores = [score for score in all_scores if score['rider_name'] in team_rider_names]
+
+    return Response({'team_name': team_response.data['team_name'], 'scores': team_scores}, status=status.HTTP_200_OK)
