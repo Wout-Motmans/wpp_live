@@ -63,11 +63,12 @@ export default function DisplayRaces({ setChosenRace } : { setChosenRace : (valu
 
 const getNewestRaces = async (): Promise<RaceInfo[]> => {
     try {
-        const response = await fetch('/api/popraces');
+        const response = await fetch('/api/get_future_races+customs');
     
         if (!response.ok) throw new Error('popraces error');
         
         const data = await response.json();
+
         const modifiedData: RaceInfo[] = data.map((race: { url: string; name: string; year: string; }) => ({
             key: race.url,
             name: race.name,
