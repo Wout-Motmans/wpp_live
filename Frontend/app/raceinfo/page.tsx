@@ -167,7 +167,7 @@ function RaceInfoPage() {
     }
 
     // Filter race names based on input
-    const inputRegex = new RegExp(`${input.toLowerCase().replace(/\s/g, '.*')}`);
+    const inputRegex = new RegExp(`${input.toLowerCase().replace(/\s/g, '[.]*')}`);
 
     const matchingRaces = races.filter(race => race.toLowerCase().match(inputRegex));
     const suggestions = matchingRaces.length > 0 ? matchingRaces : [];
