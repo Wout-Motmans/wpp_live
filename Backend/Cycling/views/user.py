@@ -24,7 +24,7 @@ from django.contrib.auth import  get_user_model
 def get_all_users(request):
     if request.user.is_staff:
         users = get_user_model().objects.values_list("id", "username", "is_superuser")
-        data = [{"id": value[0], "username": value[1], "superuser": value[2]} for value in users if value[0] != 1]
+        data = [{"id": value[0], "username": value[1], "isAdmin": value[2]} for value in users if value[0] != 1]
         return Response(status=status.HTTP_200_OK, data=data)
     return Response(status=status.HTTP_401_UNAUTHORIZED)
 
@@ -35,7 +35,7 @@ def get_all_users(request):
 def change_user_role(request):
     if request.user.is_staff:
         user_id = request.data.get("id")
-        new_is_staff = request.data.get("staff")
+        new_is_staff = request.data.get("isAdmin")
         user = get_user_model().objects.get(id=user_id)
         user.is_staff = new_is_staff
         user.save()

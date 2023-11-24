@@ -23,10 +23,8 @@ interface Rider {
 
 
 export default function Home() {
-    //const { authenticate } = useAuth();
-    //const { requireAuth } = useAuthCheck();
-    //useEffect(() => {authenticate()}, [])
-    //requireAuth();
+    const { requireAuth } = useAuthCheck();
+    requireAuth();
 
     const [chosenRace, setChosenRace] = useState<string>('')
     const [chosenUsers, setChosenUsers] = useState<User[]>([])
@@ -45,14 +43,14 @@ export default function Home() {
 
     return (
         <UsersProvider>
-            <main className="mx-20 flex m-12">
+            <main className="mx-20 flex m-12 ">
                 {
                     !displayGame
                         ?
                         <div className='flex space-x-8'>
                             <DisplayRaces setChosenRace={setChosenRace} />
                             <DisplayUsers setChosenUsers={setChosenUsers} />
-                            <TemplateSetter users={chosenUsers} template={template} setTemplate={setTemplate} />
+                            <TemplateSetter selectedUsers={chosenUsers} template={template} setTemplate={setTemplate} />
                             <div className='flex flex-col'>
                                 <label>Amount of riders:</label>
                                 <InputNumber min={1} value={activeAmount} onChange={(e) => setActiveAmount(e!)} />

@@ -26,6 +26,9 @@ urlpatterns = [
     path('getteamriders', race.get_team_riders),
     path('calculateteamscoreperstage', race.get_team_scores_per_stage),
     
+
+    path('findOneDayRace', race.find_one_day_race),
+    path('addTour', race.add_tour),
     path('addgame', race.add_game),
 ]
 

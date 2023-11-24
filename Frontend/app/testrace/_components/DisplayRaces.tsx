@@ -1,7 +1,10 @@
 
 import {  useEffect, useState } from 'react';
-import { Table } from 'antd';
+import { Button, Table, Input, Modal } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import { SearchProps } from 'antd/es/input/Search';
+import CustomTour from './CustomTour';
+const { Search } = Input;
 
 
 interface RaceInfo {
@@ -12,6 +15,8 @@ interface RaceInfo {
 
 export default function DisplayRaces({ setChosenRace } : { setChosenRace : (value:string) => void }) {
     const [races, setRaces] = useState<RaceInfo[]>([]);
+
+    
 
     useEffect(() => {
         const fetchRaces = async () => {
@@ -31,18 +36,27 @@ export default function DisplayRaces({ setChosenRace } : { setChosenRace : (valu
         },
     ];
 
+    const onSearch: SearchProps['onSearch'] = (value, _e, info) => {
+
+    }
 
     return (
-        <Table
-        columns={columns}
-        bordered
-        dataSource={races}
-        pagination={false}
-        rowSelection={{
-            type:'radio',
-            onSelect:(record) => setChosenRace(record.key)
-        }}
-        />
+        <div className='flex flex-col space-y-2'>
+            <CustomTour/>
+            <Search placeholder='add race' onSearch={onSearch} enterButton/>
+            <Table
+                
+                columns={columns}
+                bordered
+                dataSource={races}
+                pagination={false}
+                rowSelection={{
+                    type:'radio',
+                    onSelect:(record) => setChosenRace(record.key)
+                }}
+            />
+            
+        </div>
     )
 }
 
@@ -67,3 +81,4 @@ const getNewestRaces = async (): Promise<RaceInfo[]> => {
         throw error;
     }
 };
+
