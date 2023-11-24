@@ -15,6 +15,7 @@ export default function CustomTour() {
     const [open, setOpen] = useState<boolean>(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [races, setRaces] = useState<RaceInfo[]>([])
+    const [tourName, setTourName] = useState<string>('')
   
     const showModal = () => {
       setOpen(true);
@@ -22,8 +23,9 @@ export default function CustomTour() {
   
     const handleOk = async () => {
       setConfirmLoading(true);
-      setOpen(!await addTour(races))
+      setOpen(!await  addTour(tourName,races))
       setConfirmLoading(false);
+
     };
   
     const handleCancel = () => {
@@ -53,7 +55,7 @@ export default function CustomTour() {
                 onCancel={handleCancel}
             >
                 <List
-                    header={<Input placeholder="Enter name of tour" />}
+                    header={<Input value={tourName} onChange={e => setTourName(e.target.value)} placeholder="Enter name of tour" />}
                     bordered
                     dataSource={races}
                     renderItem={race => (
@@ -88,7 +90,7 @@ const findRace = async (race : string): Promise<RaceInfo> => {
 
 
 
-const addTour = async (races : RaceInfo[]): Promise<boolean> => {
+const addTour = async (tourname:string,races : RaceInfo[]): Promise<boolean> => {
     try {
         const response = await fetch('/api/addTour', {
             method: 'POST',
@@ -96,7 +98,7 @@ const addTour = async (races : RaceInfo[]): Promise<boolean> => {
 				'X-CSRFToken': Cookies.get('csrftoken')!,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ races }),
+            body: JSON.stringify({tourname, races }),
         });
 
 
