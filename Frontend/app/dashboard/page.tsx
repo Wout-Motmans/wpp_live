@@ -149,15 +149,24 @@ function Dashboard() {
 
 
     console.log(nieuwe);
+
     const [cumPoints, setCumPoints] = useState(false);
 
     const onChange = (checked: boolean) => {
-        setCumPoints(checked);
+        if (checked)
+            setCumPoints(checked);
     };
     //router.push('/dashboard')
 
     //requireAuth();
+    const [isSwitchOn, setIsSwitchOn] = useState(false);
 
+    const handleSwitchChange = (checked: boolean) => {
+        setIsSwitchOn(checked);
+
+        setCumPoints(checked);
+
+    };
 
     return (
         <div className="grid grid-cols-3 gap-4 h-screen px-10 pt-5">
@@ -172,6 +181,9 @@ function Dashboard() {
                         <div className="text-green-500 font-bold">Live</div>
                     </div>
                 </div>
+
+
+
                 <Carousel afterChange={e => setCurrentStage(e)} className="bg-orange-200" arrows={true} prevArrow={<LeftCircleOutlined />} nextArrow={<RightCircleOutlined />} waitForAnimate={true} easing="easeIn" speed={1000} style={{}}>
                     {stages.map((stage, index) => (<>
 
@@ -202,7 +214,14 @@ function Dashboard() {
                                 ))}
                             </div>
                         </div>
-                        <Switch checkedChildren="cumulative points" unCheckedChildren="stage points" onChange={onChange} className='bottom-0 absolute bg-black' />
+
+                        <Switch
+                            checked={isSwitchOn}
+                            onChange={handleSwitchChange}
+                            checkedChildren="cumulative points"
+                            unCheckedChildren="stage points"
+                            className='bottom-0 absolute bg-black'
+                        />
                     </>
                     ))}
 
