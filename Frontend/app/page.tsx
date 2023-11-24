@@ -29,58 +29,58 @@ function Dashboard() {
     const stages = {
         '1':
         [
-            { Position: 1, Naam: 'Remco Evenepoel', Points: 100, Jersey: 35, Total: 135, player: 'Roel' },
-            { Position: 2, Naam: 'Filippo Ganna', Points: 80, Jersey: 0, Total: 80, player: 'Dries' },
-            { Position: 3, Naam: 'Joao Almeida', Points: 65, Jersey: 0, Total: 65, player: 'Jordy' },
-            { Position: 4, Naam: 'Tao Hart', Points: 55, Jersey: 10, Total: 65, player: 'Bart' },
-            { Position: 5, Naam: 'Stefan Kung', Points: 45, Jersey: 0, Total: 45, player: 'Roel' },
-            { Position: 6, Naam: 'Primoz Roglic', Points: 35, Jersey: 0, Total: 35, player: 'Dries' },
-            { Position: 7, Naam: 'Jay Vine', Points: 30, Jersey: 0, Total: 30, player: 'Jordy' },
-            { Position: 8, Naam: 'Brandon McNulty', Points: 25, Jersey: 0, Total: 25, player: 'Bart' },
-            { Position: 9, Naam: 'Geraint Thomas', Points: 20, Jersey: 0, Total: 20, player: 'Roel' },
-            { Position: 10, Naam: 'Alexandr Vlasov', Points: 17, Jersey: 0, Total: 17, player: 'Dries' },
-            { Position: 11, Naam: 'Bruno Armirail', Points: 15, Jersey: 0, Total: 15, player: 'Jordy' },
-            { Position: 12, Naam: 'Mads Pedersen', Points: 14, Jersey: 0, Total: 14, player: 'Bart' },
-            { Position: 13, Naam: 'Michael Matthews', Points: 13, Jersey: 0, Total: 13, player: 'Roel' },
-            { Position: 14, Naam: 'Michael Hepburn', Points: 12, Jersey: 0, Total: 12, player: 'Dries' },
-            { Position: 15, Naam: 'William Barta', Points: 11, Jersey: 0, Total: 11, player: 'Jordy' },
-            { Position: 16, Naam: 'Ilan Van Wilder', Points: 10, Jersey: 0, Total: 10, player: 'Bart' },
-            { Position: 17, Naam: 'Stefan De Bod', Points: 9, Jersey: 0, Total: 9, player: 'Roel' },
-            { Position: 18, Naam: 'Daan Hoole', Points: 8, Jersey: 0, Total: 8, player: 'Dries' },
-            { Position: 19, Naam: 'Pavel Sivakov', Points: 7, Jersey: 0, Total: 7, player: 'Jordy' },
-            { Position: 20, Naam: 'Andreas Leknessund', Points: 6, Jersey: 0, Total: 6, player: 'Bart' },
-            { Position: 21, Naam: 'Mattia Cattaneo', Points: 5, Jersey: 0, Total: 5, player: 'Roel' },
-            { Position: 22, Naam: 'Lennard Kamna', Points: 4, Jersey: 0, Total: 4, player: 'Dries' },
-            { Position: 23, Naam: 'Nico Denz', Points: 3, Jersey: 0, Total: 3, player: 'Jordy' },
-            { Position: 24, Naam: 'Eddie Dunbar', Points: 2, Jersey: 0, Total: 2, player: 'Bart' },
-            { Position: 25, Naam: 'Edoardo Affini', Points: 1, Jersey: 0, Total: 1, player: 'Roel' }
+            { Position: 1, Naam: 'Remco Evenepoel',Team:"Soudal-Quick Step", Points: 100, Jersey: 35, Total: 135, player: 'Roel' },
+            { Position: 2, Naam: 'Filippo Ganna', Team:"**TEAMNAME**", Points: 80, Jersey: 0, Total: 80, player: 'Dries' },
+            { Position: 3, Naam: 'Joao Almeida', Team:"**TEAMNAME**", Points: 65, Jersey: 0, Total: 65, player: 'Jordy' },
+            { Position: 4, Naam: 'Tao Hart', Team:"**TEAMNAME**", Points: 55, Jersey: 10, Total: 65, player: 'Bart' },
+            { Position: 5, Naam: 'Stefan Kung', Team:"**TEAMNAME**", Points: 45, Jersey: 0, Total: 45, player: 'Roel' },
+            { Position: 6, Naam: 'Primoz Roglic', Team:"**TEAMNAME**", Points: 35, Jersey: 0, Total: 35, player: 'Dries' },
+            { Position: 7, Naam: 'Jay Vine', Team:"**TEAMNAME**", Points: 30, Jersey: 0, Total: 30, player: 'Jordy' },
+            { Position: 8, Naam: 'Brandon McNulty', Team:"**TEAMNAME**", Points: 25, Jersey: 0, Total: 25, player: 'Bart' },
+            { Position: 9, Naam: 'Geraint Thomas', Team:"**TEAMNAME**", Points: 20, Jersey: 0, Total: 20, player: 'Roel' },
+            { Position: 10, Naam: 'Alexandr Vlasov', Team:"**TEAMNAME**", Points: 17, Jersey: 0, Total: 17, player: 'Dries' },
+            { Position: 11, Naam: 'Bruno Armirail', Team:"**TEAMNAME**", Points: 15, Jersey: 0, Total: 15, player: 'Jordy' },
+            { Position: 12, Naam: 'Mads Pedersen', Team:"**TEAMNAME**", Points: 14, Jersey: 0, Total: 14, player: 'Bart' },
+            { Position: 13, Naam: 'Michael Matthews', Team:"**TEAMNAME**", Points: 13, Jersey: 0, Total: 13, player: 'Roel' },
+            { Position: 14, Naam: 'Michael Hepburn', Team:"**TEAMNAME**", Points: 12, Jersey: 0, Total: 12, player: 'Dries' },
+            { Position: 15, Naam: 'William Barta', Team:"**TEAMNAME**", Points: 11, Jersey: 0, Total: 11, player: 'Jordy' },
+            { Position: 16, Naam: 'Ilan Van Wilder', Team:"**TEAMNAME**", Points: 10, Jersey: 0, Total: 10, player: 'Bart' },
+            { Position: 17, Naam: 'Stefan De Bod', Team:"**TEAMNAME**", Points: 9, Jersey: 0, Total: 9, player: 'Roel' },
+            { Position: 18, Naam: 'Daan Hoole', Team:"**TEAMNAME**", Points: 8, Jersey: 0, Total: 8, player: 'Dries' },
+            { Position: 19, Naam: 'Pavel Sivakov', Team:"**TEAMNAME**", Points: 7, Jersey: 0, Total: 7, player: 'Jordy' },
+            { Position: 20, Naam: 'Andreas Leknessund', Team:"**TEAMNAME**", Points: 6, Jersey: 0, Total: 6, player: 'Bart' },
+            { Position: 21, Naam: 'Mattia Cattaneo', Team:"**TEAMNAME**", Points: 5, Jersey: 0, Total: 5, player: 'Roel' },
+            { Position: 22, Naam: 'Lennard Kamna', Team:"**TEAMNAME**", Points: 4, Jersey: 0, Total: 4, player: 'Dries' },
+            { Position: 23, Naam: 'Nico Denz', Team:"**TEAMNAME**", Points: 3, Jersey: 0, Total: 3, player: 'Jordy' },
+            { Position: 24, Naam: 'Eddie Dunbar', Team:"**TEAMNAME**", Points: 2, Jersey: 0, Total: 2, player: 'Bart' },
+            { Position: 25, Naam: 'Edoardo Affini', Team:"**TEAMNAME**", Points: 1, Jersey: 0, Total: 1, player: 'Roel' }
         ],
         '2' : [
-            { Position: 1, Naam: 'Coole Gast', Points: 100, Jersey: 35, Total: 135, player: 'Dries' },
-            { Position: 2, Naam: 'Gekke Gast', Points: 80, Jersey: 0, Total: 80, player: 'Dries' },
-            { Position: 3, Naam: 'Wacko Gast', Points: 65, Jersey: 0, Total: 65, player: '' },
-            { Position: 4, Naam: 'Tao Hart', Points: 55, Jersey: 10, Total: 65, player: 'Bart' },
-            { Position: 5, Naam: 'Stefan Kung', Points: 45, Jersey: 0, Total: 45, player: 'Roel' },
-            { Position: 6, Naam: 'Primoz Roglic', Points: 35, Jersey: 0, Total: 35, player: 'Dries' },
-            { Position: 7, Naam: 'Jay Vine', Points: 30, Jersey: 0, Total: 30, player: 'Jordy' },
-            { Position: 8, Naam: 'Brandon McNulty', Points: 25, Jersey: 0, Total: 25, player: 'Bart' },
-            { Position: 9, Naam: 'Geraint Thomas', Points: 20, Jersey: 0, Total: 20, player: 'Roel' },
-            { Position: 10, Naam: 'Alexandr Vlasov', Points: 17, Jersey: 0, Total: 17, player: 'Dries' },
-            { Position: 11, Naam: 'Bruno Armirail', Points: 15, Jersey: 0, Total: 15, player: 'Jordy' },
-            { Position: 12, Naam: 'Mads Pedersen', Points: 14, Jersey: 0, Total: 14, player: 'Bart' },
-            { Position: 13, Naam: 'Michael Matthews', Points: 13, Jersey: 0, Total: 13, player: 'Roel' },
-            { Position: 14, Naam: 'Michael Hepburn', Points: 12, Jersey: 0, Total: 12, player: 'Dries' },
-            { Position: 15, Naam: 'William Barta', Points: 11, Jersey: 0, Total: 11, player: 'Jordy' },
-            { Position: 16, Naam: 'Ilan Van Wilder', Points: 10, Jersey: 0, Total: 10, player: 'Bart' },
-            { Position: 17, Naam: 'Stefan De Bod', Points: 9, Jersey: 0, Total: 9, player: 'Roel' },
-            { Position: 18, Naam: 'Daan Hoole', Points: 8, Jersey: 0, Total: 8, player: 'Dries' },
-            { Position: 19, Naam: 'Pavel Sivakov', Points: 7, Jersey: 0, Total: 7, player: 'Jordy' },
-            { Position: 20, Naam: 'Andreas Leknessund', Points: 6, Jersey: 0, Total: 6, player: 'Bart' },
-            { Position: 21, Naam: 'Mattia Cattaneo', Points: 5, Jersey: 0, Total: 5, player: 'Roel' },
-            { Position: 22, Naam: 'Lennard Kamna', Points: 4, Jersey: 0, Total: 4, player: 'Dries' },
-            { Position: 23, Naam: 'Nico Denz', Points: 3, Jersey: 0, Total: 3, player: 'Jordy' },
-            { Position: 24, Naam: 'Eddie Dunbar', Points: 2, Jersey: 0, Total: 2, player: 'Bart' },
-            { Position: 25, Naam: 'Edoardo Affini', Points: 1, Jersey: 0, Total: 1, player: 'Roel' }
+            { Position: 1, Naam: 'Coole Gast', Team:"**TEAMNAME**", Points: 100, Jersey: 35, Total: 135, player: 'Dries' },
+            { Position: 2, Naam: 'Gekke Gast', Team:"**TEAMNAME**", Points: 80, Jersey: 0, Total: 80, player: 'Dries' },
+            { Position: 3, Naam: 'Wacko Gast', Team:"**TEAMNAME**", Points: 65, Jersey: 0, Total: 65, player: '' },
+            { Position: 4, Naam: 'Tao Hart', Team:"**TEAMNAME**", Points: 55, Jersey: 10, Total: 65, player: 'Bart' },
+            { Position: 5, Naam: 'Stefan Kung', Team:"**TEAMNAME**", Points: 45, Jersey: 0, Total: 45, player: 'Roel' },
+            { Position: 6, Naam: 'Primoz Roglic', Team:"**TEAMNAME**", Points: 35, Jersey: 0, Total: 35, player: 'Dries' },
+            { Position: 7, Naam: 'Jay Vine', Team:"**TEAMNAME**", Points: 30, Jersey: 0, Total: 30, player: 'Jordy' },
+            { Position: 8, Naam: 'Brandon McNulty', Team:"**TEAMNAME**", Points: 25, Jersey: 0, Total: 25, player: 'Bart' },
+            { Position: 9, Naam: 'Geraint Thomas', Team:"**TEAMNAME**", Points: 20, Jersey: 0, Total: 20, player: 'Roel' },
+            { Position: 10, Naam: 'Alexandr Vlasov', Team:"**TEAMNAME**", Points: 17, Jersey: 0, Total: 17, player: 'Dries' },
+            { Position: 11, Naam: 'Bruno Armirail', Team:"**TEAMNAME**", Points: 15, Jersey: 0, Total: 15, player: 'Jordy' },
+            { Position: 12, Naam: 'Mads Pedersen', Team:"**TEAMNAME**", Points: 14, Jersey: 0, Total: 14, player: 'Bart' },
+            { Position: 13, Naam: 'Michael Matthews', Team:"**TEAMNAME**", Points: 13, Jersey: 0, Total: 13, player: 'Roel' },
+            { Position: 14, Naam: 'Michael Hepburn', Team:"**TEAMNAME**", Points: 12, Jersey: 0, Total: 12, player: 'Dries' },
+            { Position: 15, Naam: 'William Barta', Team:"**TEAMNAME**", Points: 11, Jersey: 0, Total: 11, player: 'Jordy' },
+            { Position: 16, Naam: 'Ilan Van Wilder', Team:"**TEAMNAME**", Points: 10, Jersey: 0, Total: 10, player: 'Bart' },
+            { Position: 17, Naam: 'Stefan De Bod', Team:"**TEAMNAME**", Points: 9, Jersey: 0, Total: 9, player: 'Roel' },
+            { Position: 18, Naam: 'Daan Hoole', Team:"**TEAMNAME**", Points: 8, Jersey: 0, Total: 8, player: 'Dries' },
+            { Position: 19, Naam: 'Pavel Sivakov', Team:"**TEAMNAME**", Points: 7, Jersey: 0, Total: 7, player: 'Jordy' },
+            { Position: 20, Naam: 'Andreas Leknessund', Team:"**TEAMNAME**", Points: 6, Jersey: 0, Total: 6, player: 'Bart' },
+            { Position: 21, Naam: 'Mattia Cattaneo', Team:"**TEAMNAME**", Points: 5, Jersey: 0, Total: 5, player: 'Roel' },
+            { Position: 22, Naam: 'Lennard Kamna', Team:"**TEAMNAME**", Points: 4, Jersey: 0, Total: 4, player: 'Dries' },
+            { Position: 23, Naam: 'Nico Denz', Team:"**TEAMNAME**", Points: 3, Jersey: 0, Total: 3, player: 'Jordy' },
+            { Position: 24, Naam: 'Eddie Dunbar', Team:"**TEAMNAME**", Points: 2, Jersey: 0, Total: 2, player: 'Bart' },
+            { Position: 25, Naam: 'Edoardo Affini', Team:"**TEAMNAME**", Points: 1, Jersey: 0, Total: 1, player: 'Roel' }
         ]
     }
 
@@ -170,6 +170,7 @@ function Dashboard() {
                                 <img src="/img/crown.png" alt="Crown" className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-8 h-8" />
                                 <img src="/img/white_jersey.jpg" alt="Rider Shirt" className="w-20 h-20" />
                                 <div className="mt-2 font-bold">{myTopPlayer.Naam}</div>
+                                <div className='mt-2'>({myTopPlayer.Team})</div>
                                 <div>{myTopPlayer.Total} Points</div>
                             </div>
                         )}
@@ -179,6 +180,7 @@ function Dashboard() {
                                 <div key={index} className="mx-2 my-2 text-center">
                                     <img src="/img/rider-shirt.png" alt="Rider Shirt" className="w-16 h-16" />
                                     <div className="mt-2">{player.Naam}</div>
+                                    <div className='mt-2'>({player.Team})</div>
                                     <div>{player.Total} Points</div>
                                 </div>
                             ))}
