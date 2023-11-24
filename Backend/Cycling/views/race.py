@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth import  get_user_model
 from procyclingstats import Race, RaceStartlist, Stage
-from Cycling.models import Rider, Tour, GameTeam
+from Cycling.models import *
 from django.http import QueryDict
 from django.http import HttpRequest
 
@@ -97,28 +97,39 @@ def find_one_day_race(request):
 @permission_classes([IsAuthenticated])
 def add_tour(request):
     one_day_races = request.data.get('races')
+    custom_tour_name = request.data.get('tourname')
     try:
         # frontend: return list of all stages that are one day races (klassiekers) when making a new tour instead of adding the klassiekers every time manually
         # frontend: make custom tour klassiekers deletable
         # finish custom tour name getting and then make the tour in the db
+        print(custom_tour_name)
+        if not Tour.objects.filter(url=custom_tour_name).exists():
+            tour = Tour(url=custom_tour_name)
+            tour.save()
         
+        else:
+            
+            return Response({'error': "Tour already exists"}, status=400)
+        # Get tour object
+        tour = Tour.objects.get(url=custom_tour_name)
+        
+            
         for one_day_race in one_day_races:
             
             # if race not in db -> add it
             # if race now in db connect it the tour
             if not Stage.objects.filter(url=one_day_race['url']).exists():
-                stage = Stage(url=one_day_race['url'],is_klasieker=True)
-                Stage.save()
-                
-                print(stage)
-                
-            
-      
-          
-            
-            pass
+                stage = Stage(url=one_day_race['url'],is_klassieker=True)
+                stage.save()
+                print("A")
+            stage_tour = StageTour(stage=Stage.objects.get(url=one_day_race['url']), tour=tour,stage_number=0)
+            stage_tour.save()
+            print("B")
+            print(stage_tour)
+        
         return Response(True, status=200)
     except Exception as e:
+        print(e)
         return Response({'error': str(e)}, status=400)
 
 
