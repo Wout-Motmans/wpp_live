@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth import  get_user_model
 from procyclingstats import Race, RaceStartlist, Stage
-from Cycling.models import Renner, Tour, Team
+from Cycling.models import Rider, Tour, GameTeam
 from django.http import QueryDict
 from django.http import HttpRequest
 
@@ -66,7 +66,7 @@ def add_game(request):
 			user_team = Team(team_name=f"{user}s team", tour=tour, user=user)
 			user_team.save()
 			for i, rider in enumerate(team.get('riders')):
-				if not Renner.objects.filter(url=rider).exists():
+				if not Rider.objects.filter(url=rider).exists():
 					renner = Renner(url=rider)
 					renner.save()
 				renner = Renner.objects.get(url=rider)
