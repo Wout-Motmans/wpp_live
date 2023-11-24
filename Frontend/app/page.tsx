@@ -218,7 +218,7 @@ function Dashboard() {
                                     </div>
                                 ))}
                             </div>
-                            {/* Subs */}
+                            {/* Reserved */}
                             <div className="flex flex-wrap justify-center pb-8 text-lg font-semibold" style={{ maxWidth: '55rem' }}>
                                 {stage.filter(rider => rider.Player === 'Roel').filter(rider => rider.Reserved === true).map((player, index) => (
                                     <div key={index} className="mx-2 my-2 text-center flex-1 p-4">
