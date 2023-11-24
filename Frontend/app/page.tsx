@@ -16,6 +16,14 @@ interface Rider {
     Reserved: boolean
 }
 
+interface RiderData {
+    naam: string;
+    total: number;
+    team: string;
+    reserved: boolean;
+    player: string;
+}
+
 function Dashboard() {
     const { requireAuth } = useAuthCheck();
     const router = useRouter();
@@ -26,63 +34,62 @@ function Dashboard() {
     const stages: Rider[][] = [
         [
             { Position: 1, Naam: 'Remco Evenepoel', Team: "Soudal-Quick Step", Points: 100, Jersey: 35, Total: 135, Player: 'Roel', Reserved: false },
-            { Position: 2, Naam: 'Filippo Ganna', Team: "Soudal-Quick Step",Points: 80, Jersey: 0, Total: 80, Player: 'Dries', Reserved: false },
-            { Position: 3, Naam: 'Joao Almeida',Team: "Soudal-Quick Step", Points: 65, Jersey: 0, Total: 65, Player: 'Jordy', Reserved: false },
-            { Position: 4, Naam: 'Tao Hart',Team: "Soudal-Quick Step", Points: 55, Jersey: 10, Total: 65, Player: 'Bart', Reserved: false },
-            { Position: 5, Naam: 'Stefan Kung',Team: "Soudal-Quick Step", Points: 45, Jersey: 0, Total: 45, Player: 'Roel', Reserved: false },
-            { Position: 6, Naam: 'Primoz Roglic',Team: "Soudal-Quick Step", Points: 35, Jersey: 0, Total: 35, Player: 'Dries', Reserved: false },
-            { Position: 7, Naam: 'Jay Vine',Team: "Soudal-Quick Step", Points: 30, Jersey: 0, Total: 30, Player: 'Jordy', Reserved: false },
-            { Position: 8, Naam: 'Brandon McNulty',Team: "Soudal-Quick Step", Points: 25, Jersey: 0, Total: 25, Player: 'Bart', Reserved: false },
-            { Position: 9, Naam: 'Geraint Thomas', Team: "Soudal-Quick Step",Points: 20, Jersey: 0, Total: 20, Player: 'Roel', Reserved: true },
-            { Position: 10, Naam: 'Alexandr Vlasov',Team: "Soudal-Quick Step", Points: 17, Jersey: 0, Total: 17, Player: 'Dries', Reserved: false },
-            { Position: 11, Naam: 'Bruno Armirail',Team: "Soudal-Quick Step", Points: 15, Jersey: 0, Total: 15, Player: 'Jordy', Reserved: false },
-            { Position: 12, Naam: 'Mads Pedersen',Team: "Soudal-Quick Step", Points: 14, Jersey: 0, Total: 14, Player: 'Bart', Reserved: false },
-            { Position: 13, Naam: 'Michael Matthews',Team: "Soudal-Quick Step", Points: 113, Jersey: 0, Total: 113, Player: 'Roel', Reserved: false },
-            { Position: 14, Naam: 'Michael Hepburn',Team: "Soudal-Quick Step", Points: 12, Jersey: 0, Total: 12, Player: 'Dries', Reserved: false },
-            { Position: 15, Naam: 'William Barta',Team: "Soudal-Quick Step", Points: 11, Jersey: 0, Total: 11, Player: 'Jordy', Reserved: false },
-            { Position: 16, Naam: 'Ilan Van Wilder',Team: "Soudal-Quick Step", Points: 10, Jersey: 0, Total: 10, Player: 'Bart', Reserved: false },
-            { Position: 17, Naam: 'Stefan De Bod',Team: "Soudal-Quick Step", Points: 9, Jersey: 0, Total: 9, Player: 'Roel', Reserved: false },
-            { Position: 18, Naam: 'Daan Hoole',Team: "Soudal-Quick Step", Points: 8, Jersey: 0, Total: 8, Player: 'Dries', Reserved: false },
-            { Position: 19, Naam: 'Pavel Sivakov',Team: "Soudal-Quick Step", Points: 7, Jersey: 0, Total: 7, Player: 'Jordy', Reserved: false },
-            { Position: 20, Naam: 'Andreas Leknessund',Team: "Soudal-Quick Step", Points: 6, Jersey: 0, Total: 6, Player: 'Bart', Reserved: false },
-            { Position: 21, Naam: 'Mattia Cattaneo',Team: "Soudal-Quick Step", Points: 5, Jersey: 0, Total: 5, Player: 'Roel', Reserved: true },
-            { Position: 22, Naam: 'Lennard Kamna',Team: "Soudal-Quick Step", Points: 4, Jersey: 0, Total: 4, Player: 'Dries', Reserved: false },
-            { Position: 23, Naam: 'Nico Denz',Team: "Soudal-Quick Step", Points: 3, Jersey: 0, Total: 3, Player: 'Jordy', Reserved: false },
-            { Position: 24, Naam: 'Eddie Dunbar',Team: "Soudal-Quick Step", Points: 2, Jersey: 0, Total: 2, Player: 'Bart', Reserved: false },
-            { Position: 25, Naam: 'Edoardo Affini',Team: "Soudal-Quick Step", Points: 1, Jersey: 0, Total: 1, Player: 'Roel', Reserved: false }
+            { Position: 2, Naam: 'Filippo Ganna', Team: "Soudal-Quick Step", Points: 80, Jersey: 0, Total: 80, Player: 'Dries', Reserved: false },
+            { Position: 3, Naam: 'Joao Almeida', Team: "Soudal-Quick Step", Points: 65, Jersey: 0, Total: 65, Player: 'Jordy', Reserved: false },
+            { Position: 4, Naam: 'Tao Hart', Team: "Soudal-Quick Step", Points: 55, Jersey: 10, Total: 65, Player: 'Bart', Reserved: false },
+            { Position: 5, Naam: 'Stefan Kung', Team: "Soudal-Quick Step", Points: 45, Jersey: 0, Total: 45, Player: 'Roel', Reserved: false },
+            { Position: 6, Naam: 'Primoz Roglic', Team: "Soudal-Quick Step", Points: 35, Jersey: 0, Total: 35, Player: 'Dries', Reserved: false },
+            { Position: 7, Naam: 'Jay Vine', Team: "Soudal-Quick Step", Points: 30, Jersey: 0, Total: 30, Player: 'Jordy', Reserved: false },
+            { Position: 8, Naam: 'Brandon McNulty', Team: "Soudal-Quick Step", Points: 25, Jersey: 0, Total: 25, Player: 'Bart', Reserved: false },
+            { Position: 9, Naam: 'Geraint Thomas', Team: "Soudal-Quick Step", Points: 20, Jersey: 0, Total: 20, Player: 'Roel', Reserved: true },
+            { Position: 10, Naam: 'Alexandr Vlasov', Team: "Soudal-Quick Step", Points: 17, Jersey: 0, Total: 17, Player: 'Dries', Reserved: false },
+            { Position: 11, Naam: 'Bruno Armirail', Team: "Soudal-Quick Step", Points: 15, Jersey: 0, Total: 15, Player: 'Jordy', Reserved: false },
+            { Position: 12, Naam: 'Mads Pedersen', Team: "Soudal-Quick Step", Points: 14, Jersey: 0, Total: 14, Player: 'Bart', Reserved: false },
+            { Position: 13, Naam: 'Michael Matthews', Team: "Soudal-Quick Step", Points: 113, Jersey: 0, Total: 113, Player: 'Roel', Reserved: false },
+            { Position: 14, Naam: 'Michael Hepburn', Team: "Soudal-Quick Step", Points: 12, Jersey: 0, Total: 12, Player: 'Dries', Reserved: false },
+            { Position: 15, Naam: 'William Barta', Team: "Soudal-Quick Step", Points: 11, Jersey: 0, Total: 11, Player: 'Jordy', Reserved: false },
+            { Position: 16, Naam: 'Ilan Van Wilder', Team: "Soudal-Quick Step", Points: 10, Jersey: 0, Total: 10, Player: 'Bart', Reserved: false },
+            { Position: 17, Naam: 'Stefan De Bod', Team: "Soudal-Quick Step", Points: 9, Jersey: 0, Total: 9, Player: 'Roel', Reserved: false },
+            { Position: 18, Naam: 'Daan Hoole', Team: "Soudal-Quick Step", Points: 8, Jersey: 0, Total: 8, Player: 'Dries', Reserved: false },
+            { Position: 19, Naam: 'Pavel Sivakov', Team: "Soudal-Quick Step", Points: 7, Jersey: 0, Total: 7, Player: 'Jordy', Reserved: false },
+            { Position: 20, Naam: 'Andreas Leknessund', Team: "Soudal-Quick Step", Points: 6, Jersey: 0, Total: 6, Player: 'Bart', Reserved: false },
+            { Position: 21, Naam: 'Mattia Cattaneo', Team: "Soudal-Quick Step", Points: 5, Jersey: 0, Total: 5, Player: 'Roel', Reserved: true },
+            { Position: 22, Naam: 'Lennard Kamna', Team: "Soudal-Quick Step", Points: 4, Jersey: 0, Total: 4, Player: 'Dries', Reserved: false },
+            { Position: 23, Naam: 'Nico Denz', Team: "Soudal-Quick Step", Points: 3, Jersey: 0, Total: 3, Player: 'Jordy', Reserved: false },
+            { Position: 24, Naam: 'Eddie Dunbar', Team: "Soudal-Quick Step", Points: 2, Jersey: 0, Total: 2, Player: 'Bart', Reserved: false },
+            { Position: 25, Naam: 'Edoardo Affini', Team: "Soudal-Quick Step", Points: 1, Jersey: 0, Total: 1, Player: 'Roel', Reserved: false }
         ]
         ,
         [
-            { Position: 1, Naam: 'Coole Gast',Team: "Soudal-Quick Step", Points: 100, Jersey: 35, Total: 135, Player: 'Dries', Reserved: false },
-            { Position: 2, Naam: 'Gekke Gast',Team: "Soudal-Quick Step", Points: 80, Jersey: 0, Total: 80, Player: 'Dries', Reserved: false },
-            { Position: 3, Naam: 'Wacko Gast',Team: "Soudal-Quick Step", Points: 65, Jersey: 0, Total: 65, Player: '', Reserved: false },
-            { Position: 4, Naam: 'Tao Hart',Team: "Soudal-Quick Step", Points: 55, Jersey: 10, Total: 65, Player: 'Bart', Reserved: false },
-            { Position: 5, Naam: 'Stefan Kung',Team: "Soudal-Quick Step", Points: 45, Jersey: 0, Total: 45, Player: 'Roel', Reserved: false },
-            { Position: 6, Naam: 'Primoz Roglic',Team: "Soudal-Quick Step", Points: 35, Jersey: 0, Total: 35, Player: 'Dries', Reserved: false },
-            { Position: 7, Naam: 'Jay Vine',Team: "Soudal-Quick Step", Points: 30, Jersey: 0, Total: 30, Player: 'Jordy', Reserved: false },
-            { Position: 8, Naam: 'Brandon McNulty',Team: "Soudal-Quick Step", Points: 25, Jersey: 0, Total: 25, Player: 'Bart', Reserved: false },
-            { Position: 9, Naam: 'Geraint Thomas',Team: "Soudal-Quick Step", Points: 20, Jersey: 0, Total: 20, Player: 'Roel', Reserved: true },
-            { Position: 10, Naam: 'Alexandr Vlasov',Team: "Soudal-Quick Step", Points: 17, Jersey: 0, Total: 17, Player: 'Dries', Reserved: false },
-            { Position: 11, Naam: 'Bruno Armirail',Team: "Soudal-Quick Step", Points: 15, Jersey: 0, Total: 15, Player: 'Jordy', Reserved: false },
-            { Position: 12, Naam: 'Mads Pedersen',Team: "Soudal-Quick Step", Points: 14, Jersey: 0, Total: 14, Player: 'Bart', Reserved: false },
-            { Position: 13, Naam: 'Michael Matthews',Team: "Soudal-Quick Step", Points: 13, Jersey: 0, Total: 13, Player: 'Roel', Reserved: false },
-            { Position: 14, Naam: 'Michael Hepburn',Team: "Soudal-Quick Step", Points: 12, Jersey: 0, Total: 12, Player: 'Dries', Reserved: false },
-            { Position: 15, Naam: 'William Barta',Team: "Soudal-Quick Step", Points: 11, Jersey: 0, Total: 11, Player: 'Jordy', Reserved: false },
-            { Position: 16, Naam: 'Ilan Van Wilder',Team: "Soudal-Quick Step", Points: 10, Jersey: 0, Total: 10, Player: 'Bart', Reserved: false },
-            { Position: 17, Naam: 'Stefan De Bod',Team: "Soudal-Quick Step", Points: 9, Jersey: 0, Total: 9, Player: 'Roel', Reserved: false },
-            { Position: 18, Naam: 'Daan Hoole',Team: "Soudal-Quick Step", Points: 8, Jersey: 0, Total: 8, Player: 'Dries', Reserved: false },
-            { Position: 19, Naam: 'Pavel Sivakov',Team: "Soudal-Quick Step", Points: 7, Jersey: 0, Total: 7, Player: 'Jordy', Reserved: false },
-            { Position: 20, Naam: 'Andreas Leknessund',Team: "Soudal-Quick Step", Points: 6, Jersey: 0, Total: 6, Player: 'Bart', Reserved: false },
-            { Position: 21, Naam: 'Mattia Cattaneo',Team: "Soudal-Quick Step", Points: 5, Jersey: 0, Total: 5, Player: 'Roel', Reserved: false },
-            { Position: 22, Naam: 'Lennard Kamna',Team: "Soudal-Quick Step", Points: 4, Jersey: 0, Total: 4, Player: 'Dries', Reserved: false },
-            { Position: 23, Naam: 'Nico Denz',Team: "Soudal-Quick Step", Points: 3, Jersey: 0, Total: 3, Player: 'Jordy', Reserved: false },
-            { Position: 24, Naam: 'Eddie Dunbar',Team: "Soudal-Quick Step", Points: 2, Jersey: 0, Total: 2, Player: 'Bart', Reserved: false },
-            { Position: 25, Naam: 'Edoardo Affini',Team: "Soudal-Quick Step", Points: 1, Jersey: 0, Total: 1, Player: 'Roel', Reserved: false }
+            { Position: 1, Naam: 'Remco Evenepoel', Team: "Soudal-Quick Step", Points: 10, Jersey: 0, Total: 10, Player: 'Roel', Reserved: false },
+            { Position: 2, Naam: 'Filippo Ganna', Team: "Soudal-Quick Step", Points: 80, Jersey: 35, Total: 115, Player: 'Dries', Reserved: false },
+            { Position: 3, Naam: 'Joao Almeida', Team: "Soudal-Quick Step", Points: 65, Jersey: 0, Total: 65, Player: 'Jordy', Reserved: false },
+            { Position: 4, Naam: 'Tao Hart', Team: "Soudal-Quick Step", Points: 55, Jersey: 10, Total: 65, Player: 'Bart', Reserved: false },
+            { Position: 5, Naam: 'Stefan Kung', Team: "Soudal-Quick Step", Points: 45, Jersey: 0, Total: 45, Player: 'Roel', Reserved: false },
+            { Position: 6, Naam: 'Primoz Roglic', Team: "Soudal-Quick Step", Points: 35, Jersey: 0, Total: 35, Player: 'Dries', Reserved: false },
+            { Position: 7, Naam: 'Jay Vine', Team: "Soudal-Quick Step", Points: 30, Jersey: 0, Total: 30, Player: 'Jordy', Reserved: false },
+            { Position: 8, Naam: 'Brandon McNulty', Team: "Soudal-Quick Step", Points: 25, Jersey: 0, Total: 25, Player: 'Bart', Reserved: false },
+            { Position: 9, Naam: 'Geraint Thomas', Team: "Soudal-Quick Step", Points: 20, Jersey: 0, Total: 20, Player: 'Roel', Reserved: true },
+            { Position: 10, Naam: 'Alexandr Vlasov', Team: "Soudal-Quick Step", Points: 17, Jersey: 0, Total: 17, Player: 'Dries', Reserved: false },
+            { Position: 11, Naam: 'Bruno Armirail', Team: "Soudal-Quick Step", Points: 15, Jersey: 0, Total: 15, Player: 'Jordy', Reserved: false },
+            { Position: 12, Naam: 'Mads Pedersen', Team: "Soudal-Quick Step", Points: 14, Jersey: 0, Total: 14, Player: 'Bart', Reserved: false },
+            { Position: 13, Naam: 'Michael Matthews', Team: "Soudal-Quick Step", Points: 113, Jersey: 0, Total: 113, Player: 'Roel', Reserved: false },
+            { Position: 14, Naam: 'Michael Hepburn', Team: "Soudal-Quick Step", Points: 12, Jersey: 0, Total: 12, Player: 'Dries', Reserved: false },
+            { Position: 15, Naam: 'William Barta', Team: "Soudal-Quick Step", Points: 11, Jersey: 0, Total: 11, Player: 'Jordy', Reserved: false },
+            { Position: 16, Naam: 'Ilan Van Wilder', Team: "Soudal-Quick Step", Points: 10, Jersey: 0, Total: 10, Player: 'Bart', Reserved: false },
+            { Position: 17, Naam: 'Stefan De Bod', Team: "Soudal-Quick Step", Points: 9, Jersey: 0, Total: 9, Player: 'Roel', Reserved: false },
+            { Position: 18, Naam: 'Daan Hoole', Team: "Soudal-Quick Step", Points: 8, Jersey: 0, Total: 8, Player: 'Dries', Reserved: false },
+            { Position: 19, Naam: 'Pavel Sivakov', Team: "Soudal-Quick Step", Points: 7, Jersey: 0, Total: 7, Player: 'Jordy', Reserved: false },
+            { Position: 20, Naam: 'Andreas Leknessund', Team: "Soudal-Quick Step", Points: 6, Jersey: 0, Total: 6, Player: 'Bart', Reserved: false },
+            { Position: 21, Naam: 'Mattia Cattaneo', Team: "Soudal-Quick Step", Points: 5, Jersey: 0, Total: 5, Player: 'Roel', Reserved: true },
+            { Position: 22, Naam: 'Lennard Kamna', Team: "Soudal-Quick Step", Points: 4, Jersey: 0, Total: 4, Player: 'Dries', Reserved: false },
+            { Position: 23, Naam: 'Nico Denz', Team: "Soudal-Quick Step", Points: 3, Jersey: 0, Total: 3, Player: 'Jordy', Reserved: false },
+            { Position: 24, Naam: 'Eddie Dunbar', Team: "Soudal-Quick Step", Points: 2, Jersey: 0, Total: 2, Player: 'Bart', Reserved: false },
+            { Position: 25, Naam: 'Edoardo Affini', Team: "Soudal-Quick Step", Points: 1, Jersey: 0, Total: 1, Player: 'Roel', Reserved: false }
         ]
         ,
         []
     ]
-
 
     const maxStage = Object.keys(stages).length;
 
@@ -93,14 +100,14 @@ function Dashboard() {
 
 
     // Calculate the total points for each player across all stages
-    const totalPlayerPoints = stages.flatMap(stage => stage).reduce((acc: { [key: string]: number }, { Total, Player }) => {
+    const totalPlayerPoints = stages.flatMap(stage => stage).filter(rider => !rider.Reserved).reduce((acc: { [key: string]: number }, { Total, Player }) => {
         if (Player) {
             acc[Player] = (acc[Player] || 0) + Total;
         }
         return acc;
     }, {});
 
-    const playerPoints = stages[currentStage].reduce((acc: { [key: string]: number }, { Total, Player }) => {
+    const playerPoints = stages[currentStage].filter(rider => !rider.Reserved).reduce((acc: { [key: string]: number }, { Total, Player }) => {
         if (Player) {
             acc[Player] = (acc[Player] || 0) + Total;
         }
@@ -128,34 +135,46 @@ function Dashboard() {
         { stageNumber: '22', nameWinner: "Jeroen", pointsWinner: 15 }]
 
 
-    const cumPointsPerStage: { [key: string]: number } = {}
+    const cumPointsPerStage: RiderData[] = [];
+
     for (let i = 0; i <= currentStage; i++) {
         for (let rider of stages[i]) {
-            if (rider.Player === "Roel" && !rider.Reserved) {
-                if (cumPointsPerStage[rider.Naam] === undefined) {
-                    cumPointsPerStage[rider.Naam] = rider.Total;
+            if (rider.Player === "Roel") {
+                const existingRiderIndex = cumPointsPerStage.findIndex(item => item.naam === rider.Naam);
 
+                if (existingRiderIndex === -1) {
+                    cumPointsPerStage.push({
+                        naam: rider.Naam,
+                        total: rider.Total,
+                        team: rider.Team,
+                        reserved: rider.Reserved,
+                        player: rider.Player
+                    });
                 } else {
-                    cumPointsPerStage[rider.Naam] += rider.Total;
+                    cumPointsPerStage[existingRiderIndex].total += rider.Total;
                 }
             }
         }
     }
 
-    function convert(obj: { [key: string]: number }) {
-        return Object.keys(obj).map(key => ({
-            name: key,
-            team: obj[key],
-            points: obj[key]
+
+    function convert(arr: RiderData[]) {
+        return arr.map(item => ({
+            name: item.naam,
+            team: item.team,
+            points: item.total,
+            reserved: item.reserved,
+            player: item.player
         }));
     }
 
+
     var sortedCumPointsPerStage = convert(cumPointsPerStage).sort((a, b) => b.points - a.points);
-    var nieuwe = sortedCumPointsPerStage.slice(1)
+    var sortedCumPointsPerStageWithoutTop = sortedCumPointsPerStage.slice(1)
     var topPlayerCum = sortedCumPointsPerStage[0]
 
 
-    console.log(nieuwe);
+    console.log(sortedCumPointsPerStageWithoutTop);
 
     const [cumPoints, setCumPoints] = useState(false);
 
@@ -176,77 +195,151 @@ function Dashboard() {
 
     return (
         <div className="grid grid-cols-3 gap-4 h-screen px-10 pt-5">
-            {/* Left Panel */}
-            <div className="col-span-2 bg-white p-4 flex flex-col">
-                {/* Content for left panel */}
-                {/* ... */}
-                <div className="flex items-baseline">
-                    <div className="text-2xl font-bold mb-4">{currentRace} {currentYear}</div>
-                    <div className="flex items-center ml-2">
-                        <div className="w-3 h-3 bg-green-500 rounded-full mr-1 animate-pulse"></div> {/* Green Dot */}
-                        <div className="text-green-500 font-bold">Live</div>
+            {isSwitchOn ?
+                <div className="col-span-2 bg-white p-4 flex flex-col">
+                    {/* Content for left panel */}
+                    {/* ... */}
+                    <div className="flex items-baseline">
+                        <div className="text-2xl font-bold mb-4">{currentRace} {currentYear}</div>
+                        <div className="flex items-center ml-2">
+                            <div className="w-3 h-3 bg-green-500 rounded-full mr-1 animate-pulse"></div> {/* Green Dot */}
+                            <div className="text-green-500 font-bold">Live</div>
+                        </div>
                     </div>
+
+
+
+                    <Carousel afterChange={e => setCurrentStage(e)} className="bg-orange-200" arrows={true} prevArrow={<LeftCircleOutlined />} nextArrow={<RightCircleOutlined />} waitForAnimate={true} easing="easeIn" speed={1000} style={{}}>
+                        {stages.map((stage, index) => (<>
+
+                            <div className="flex justify-between text-lg font-bold mb-4 pt-8 pr-8 pl-8">
+                                <div>Stage:{index + 1}</div>
+                                <div>Total Points: {sortedCumPointsPerStage.filter(rider => !rider.reserved).reduce((sum, rider) => sum + rider.points, 0)}
+                                </div>
+                            </div>
+                            <div className="text-lg font-bold mb-4 text-center pt-5">My Team</div>
+                            <div className="flex flex-col items-center pt-10">
+                                {/* Player with the most points (Top Player) */}
+                                {stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0] && (
+                                    <div className="relative mb-4 text-lg">
+                                        <img src="/img/crown.png" alt="Crown" className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-8 h-8" />
+                                        <img src="/img/yellow_jersey.png" alt="Rider Shirt" className="relative left-1/2 transform -translate-x-1/2 w-20 h-20" />
+                                        <div className="mt-2 font-bold">{(cumPoints) ? topPlayerCum.name : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Naam}</div>
+                                        <div style={{ fontSize: '0.85em' }}>({(cumPoints) ? topPlayerCum.team : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Team})</div>
+                                        <div className="italic font-semibold">{(cumPoints) ? topPlayerCum.points : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Total} Points</div>
+                                    </div>
+                                )}
+                                {/* Other Players */}
+                                <div className="flex flex-wrap justify-center pb-8 text-lg font-semibold" style={{ maxWidth: '55rem' }}>
+                                    {stage
+                                        .filter(rider => rider.Player === 'Roel')
+                                        .sort((a, b) => b.Total - a.Total)
+                                        .slice(1)
+                                        .map((player, index) => (
+                                            <div
+                                                key={index}
+                                                className={`mx-2 my-2 text-center flex-1 p-4 ${sortedCumPointsPerStageWithoutTop[index].reserved ? 'opacity-50' : ''
+                                                    }`}
+                                            >
+                                                <img src="/img/rider-shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
+                                                <div className="mt-2">{sortedCumPointsPerStageWithoutTop[index].name}</div>
+                                                <div style={{ fontSize: '0.7em' }}>({sortedCumPointsPerStageWithoutTop[index].team})</div>
+                                                <div className='italic'>{sortedCumPointsPerStageWithoutTop[index].points} Points</div>
+                                            </div>
+                                        ))}
+                                </div>
+
+
+                            </div>
+
+                            <Switch
+                                checked={isSwitchOn}
+                                onChange={handleSwitchChange}
+                                checkedChildren="cumulative points"
+                                unCheckedChildren="stage points"
+                                className='bottom-0 absolute bg-black'
+                            />
+                        </>
+                        ))}
+
+                    </Carousel>
                 </div>
 
 
+                :
 
-                <Carousel afterChange={e => setCurrentStage(e)} className="bg-orange-200" arrows={true} prevArrow={<LeftCircleOutlined />} nextArrow={<RightCircleOutlined />} waitForAnimate={true} easing="easeIn" speed={1000} style={{}}>
-                    {stages.map((stage, index) => (<>
-
-                        <div className="flex justify-between text-lg font-bold mb-4 pt-8 pr-8 pl-8">
-                            <div>Stage:{index + 1}</div>
-                            <div>Total Points: {(cumPoints) ? sortedCumPointsPerStage.reduce((sum, rider) => sum + rider.points, 0) : stage.filter(rider => rider.Player === 'Roel').filter(rider => !rider.Reserved).reduce((total, player) => total + player.Total, 0)}
-                            </div>
+                <div className="col-span-2 bg-white p-4 flex flex-col">
+                    {/* Content for left panel */}
+                    {/* ... */}
+                    <div className="flex items-baseline">
+                        <div className="text-2xl font-bold mb-4">{currentRace} {currentYear}</div>
+                        <div className="flex items-center ml-2">
+                            <div className="w-3 h-3 bg-green-500 rounded-full mr-1 animate-pulse"></div> {/* Green Dot */}
+                            <div className="text-green-500 font-bold">Live</div>
                         </div>
-                        <div className="text-lg font-bold mb-4 text-center pt-5">My Team</div>
-                        <div className="flex flex-col items-center pt-10">
-                            {/* Player with the most points (Top Player) */}
-                            {stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0] && (
-                                <div className="relative mb-4 text-lg">
-                                    <img src="/img/crown.png" alt="Crown" className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-8 h-8" />
-                                    <img src="/img/yellow_jersey.png" alt="Rider Shirt" className="relative left-1/2 transform -translate-x-1/2 w-20 h-20" />
-                                    <div className="mt-2 font-bold">{(cumPoints) ? topPlayerCum.name : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Naam}</div>
-                                    <div style={{fontSize: '0.85em'}}>({(cumPoints) ? topPlayerCum.team : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Team})</div>
-                                    <div className="italic font-semibold">{(cumPoints) ? topPlayerCum.points : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Total} Points</div>
+                    </div>
+
+
+
+                    <Carousel afterChange={e => setCurrentStage(e)} className="bg-orange-200" arrows={true} prevArrow={<LeftCircleOutlined />} nextArrow={<RightCircleOutlined />} waitForAnimate={true} easing="easeIn" speed={1000} style={{}}>
+                        {stages.map((stage, index) => (<>
+
+                            <div className="flex justify-between text-lg font-bold mb-4 pt-8 pr-8 pl-8">
+                                <div>Stage:{index + 1}</div>
+                                <div>Total Points: {(cumPoints) ? sortedCumPointsPerStage.reduce((sum, rider) => sum + rider.points, 0) : stage.filter(rider => rider.Player === 'Roel').filter(rider => !rider.Reserved).reduce((total, player) => total + player.Total, 0)}
                                 </div>
-                            )}
-                            {/* Other Players */}
-                            <div className="flex flex-wrap justify-center pb-8 text-lg font-semibold" style={{ maxWidth: '55rem' }}>
-                                {stage.filter(rider => rider.Player === 'Roel').filter(rider => rider.Reserved === false).sort((a, b) => b.Total - a.Total).slice(1).map((player, index) => (
-                                    <div key={index} className="mx-2 my-2 text-center flex-1 p-4">
-                                        <img src="/img/rider-shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
-                                        <div className="mt-2">{(cumPoints) ? nieuwe[index].name : player.Naam}</div>
-                                        <div style={{ fontSize: '0.7em' }}>({(cumPoints) ? nieuwe[index].team : player.Team})</div>
-                                        <div className=' italic '>{(cumPoints) ? nieuwe[index].points : player.Total} Points</div>
-                                    </div>
-                                ))}
                             </div>
-                            {/* Reserved */}
-                            <div className="flex flex-wrap justify-center pb-8 text-lg font-semibold" style={{ maxWidth: '55rem' }}>
-                                {stage.filter(rider => rider.Player === 'Roel').filter(rider => rider.Reserved === true).map((player, index) => (
-                                    <div key={index} className="mx-2 my-2 text-center flex-1 p-4">
-                                        <img src="/img/sub_shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
-                                        <div className="mt-2">{(cumPoints) ? nieuwe[index].name : player.Naam}</div>
-                                        <div style={{ fontSize: '0.7em' }}>({(cumPoints) ? nieuwe[index].team : player.Team})</div>
-                                        <div className=' italic '>{(cumPoints) ? 0 : 0} Points</div>
+                            <div className="text-lg font-bold mb-4 text-center pt-5">My Team</div>
+                            <div className="flex flex-col items-center pt-10">
+                                {/* Player with the most points (Top Player) */}
+                                {stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0] && (
+                                    <div className="relative mb-4 text-lg">
+                                        <img src="/img/crown.png" alt="Crown" className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-8 h-8" />
+                                        <img src="/img/yellow_jersey.png" alt="Rider Shirt" className="relative left-1/2 transform -translate-x-1/2 w-20 h-20" />
+                                        <div className="mt-2 font-bold">{(cumPoints) ? topPlayerCum.name : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Naam}</div>
+                                        <div style={{ fontSize: '0.85em' }}>({(cumPoints) ? topPlayerCum.team : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Team})</div>
+                                        <div className="italic font-semibold">{(cumPoints) ? topPlayerCum.points : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Total} Points</div>
                                     </div>
-                                ))}
+                                )}
+                                {/* Other Players */}
+                                <div className="flex flex-wrap justify-center pb-8 text-lg font-semibold" style={{ maxWidth: '55rem' }}>
+                                    {stage.filter(rider => rider.Player === 'Roel').filter(rider => rider.Reserved === false).sort((a, b) => b.Total - a.Total).slice(1).map((player, index) => (
+                                        <div key={index} className="mx-2 my-2 text-center flex-1 p-4">
+                                            <img src="/img/rider-shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
+                                            <div className="mt-2">{(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].name : player.Naam}</div>
+                                            <div style={{ fontSize: '0.7em' }}>({(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].team : player.Team})</div>
+                                            <div className=' italic '>{(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].points : player.Total} Points</div>
+                                        </div>
+                                    ))}
+                                </div>
+                                {/* Reserved */}
+                                <div className="flex flex-wrap justify-center pb-8 text-lg font-semibold" style={{ maxWidth: '55rem' }}>
+                                    {stage.filter(rider => rider.Player === 'Roel').filter(rider => rider.Reserved === true).map((player, index) => (
+                                        <div key={index} className="mx-2 my-2 text-center flex-1 p-4 opacity-50">
+                                            <img src="/img/sub_shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
+                                            <div className="mt-2">{(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].name : player.Naam}</div>
+                                            <div style={{ fontSize: '0.7em' }}>({(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].team : player.Team})</div>
+                                            <div className=' italic '>{(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].points : player.Points} Points</div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
 
-                        <Switch
-                            checked={isSwitchOn}
-                            onChange={handleSwitchChange}
-                            checkedChildren="cumulative points"
-                            unCheckedChildren="stage points"
-                            className='bottom-0 absolute bg-black'
-                        />
-                    </>
-                    ))}
+                            <Switch
+                                checked={isSwitchOn}
+                                onChange={handleSwitchChange}
+                                checkedChildren="cumulative points"
+                                unCheckedChildren="stage points"
+                                className='bottom-0 absolute bg-black'
+                            />
+                        </>
+                        ))}
 
-                </Carousel>
+                    </Carousel>
 
-            </div>
+                </div>}
+            {/* Left Panel */}
+
 
             {/* Right Panels */}
             <div className="col-span-1 grid grid-cols-1 gap-4">
