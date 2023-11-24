@@ -142,7 +142,7 @@ function RaceInfoPage() {
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState<number>(-1);
   const [showStageInfo, setShowStageInfo] = useState(false);
 
-  const handleShowStageInfo = (stage) => {
+  const handleShowStageInfo = (stage: React.SetStateAction<null>) => {
     if (selectedStage === stage && showStageInfo) {
       // Start the closing animation
       setShowStageInfo(false);
@@ -167,9 +167,13 @@ function RaceInfoPage() {
     }
 
     // Filter race names based on input
-    const matchingRace = races.find(race => race.toLowerCase().startsWith(input.toLowerCase()));
-    const suggestions = matchingRace ? [matchingRace] : [];
+    const inputRegex = new RegExp(`${input.toLowerCase().replace(/\s/g, '[.]*')}`);
+
+    const matchingRaces = races.filter(race => race.toLowerCase().match(inputRegex));
+    const suggestions = matchingRaces.length > 0 ? matchingRaces : [];
     setNameSuggestions(suggestions);
+
+
   };
 
   const handleRaceNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -178,7 +182,7 @@ function RaceInfoPage() {
     fetchNameSuggestions(name);
   };
 
-  const fetchStageInfo = (stage) => {
+  const fetchStageInfo = (stage: React.SetStateAction<null>) => {
     axios.get(`api/getstageinfo?stage_name=${stage.stage_url}`)
       .then((response) => {
         setStageInfo(response.data);
@@ -194,7 +198,7 @@ function RaceInfoPage() {
 
   };
 
-  const handleRaceYearChange = (event) => {
+  const handleRaceYearChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRaceYear(event.target.value);
   };
 
@@ -379,7 +383,7 @@ function RaceInfoPage() {
       apiFormattedRaceName = apiFormattedRaceName
         // Replace non-English alphabet letters with English counterparts
         .replace(/[^\x00-\x7F]/g, (char) => {
-          const englishEquivalent = {
+          const englishEquivalent: { [key: string]: string } = {
             'é': 'e',
             'è': 'e',
             'ê': 'e',
@@ -389,7 +393,6 @@ function RaceInfoPage() {
             'ç': 'c',
             'ô': 'o',
             'í': 'i',
-
           };
           return englishEquivalent[char] || char;
         })
@@ -514,7 +517,7 @@ function RaceInfoPage() {
                     {selectedStage === stage && showStageInfo && stageInfo && (
                       <div className={`mt-4 p-4 bg-gray-800 rounded-md border border-gray-700 slide-down`}>
                         <p className="text-lg text-white">Stage Info:</p>
-                        <p className="text-md text-white">Name: {stageInfo.name.split('/').pop().split('-').map((part, index) => index === 0 ? `${part.charAt(0).toUpperCase() + part.slice(1)}` : part).join(' ')}</p>
+                        <p className="text-md text-white">Name: {stageInfo.name.split('/').pop().split('-').map((part: string, index: number) => index === 0 ? `${part.charAt(0).toUpperCase() + part.slice(1)}` : part).join(' ')}</p>
                         <p className="text-md text-white">Date: {stageInfo.date}</p>
                         <p className="text-md text-white">Distance: {stageInfo.distance}</p>
                         <p className="text-md text-white">Stage Type: {stageInfo.stage_type}</p>

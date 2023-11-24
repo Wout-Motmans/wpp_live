@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth import  get_user_model
 from procyclingstats import Race, RaceStartlist, Stage
-from Cycling.models import *
+from Cycling.models import Rider, Tour, GameTeam
 from django.http import QueryDict
 from django.http import HttpRequest
 
