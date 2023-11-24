@@ -96,14 +96,26 @@ def find_one_day_race(request):
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def add_tour(request):
-    races = request.data.get('races')
+    one_day_races = request.data.get('races')
     try:
         # frontend: return list of all stages that are one day races (klassiekers) when making a new tour instead of adding the klassiekers every time manually
         # frontend: make custom tour klassiekers deletable
         # finish custom tour name getting and then make the tour in the db
-        for race in races:
+        
+        for one_day_race in one_day_races:
+            
             # if race not in db -> add it
             # if race now in db connect it the tour
+            if not Stage.objects.filter(url=one_day_race['url']).exists():
+                stage = Stage(url=one_day_race['url'],is_klasieker=True)
+                Stage.save()
+                
+                print(stage)
+                
+            
+      
+          
+            
             pass
         return Response(True, status=200)
     except Exception as e:
