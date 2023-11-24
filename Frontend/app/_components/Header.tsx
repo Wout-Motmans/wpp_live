@@ -7,17 +7,17 @@ import Dashboard from '../page';
 
 
 
-export default function Header(){
+export default function Header() {
     const pathname = usePathname();
-	const { logout, isLoggedIn, isAdmin } = useAuth();
+    const { logout, isLoggedIn, isAdmin } = useAuth();
 
-    const navigationRoutes = useMemo(() => {return ['dashboard', 'testrace', 'raceinfo', ...(isAdmin ? ['adminpage'] : [])]} , [isAdmin]);
+    const navigationRoutes = useMemo(() => ['dashboard', 'testrace', 'raceinfo', ...(isAdmin ? ['adminpage'] : [])], [isAdmin]);
 
     return (
-        <header className=" bg-[#1e1e24]">
-            <div className=" mx-auto " >
-                <div className="flex items-center justify-between px-6 py-3 mx-auto ">
-                    <Link href='/' className="flex">
+        <header className="bg-[#1e1e24] sticky top-0 z-50">
+            <div className="mx-auto relative z-50">
+                <div className="flex items-center justify-between px-6 py-3">
+                    <Link href="/" className="flex items-center">
                         <svg width="570" height="90" xmlns="http://www.w3.org/2000/svg">
                             <path transform="scale(0.85) translate(570, 0)" d="M54.3 52.2c-0.2-0.8-0.6-1.6-1.3-2.2l-7.8-6.5 9.4-7.6c1-0.8 1.8-1.9 2.2-3l18.7 14.8c1.6 1.3 3.9 1 5.2-0.6 1.3-1.6 1-3.9-0.6-5.2L57 23.6c-0.7-0.6-1.6-0.8-2.5-0.8l0 0c0 0-14.5 1.2-23.3 11.6-8.3 9.7 13.2 19.4 16.3 20.7l3.7 20.4c0.3 1.8 1.9 3 3.6 3 0.2 0 0.4 0 0.7-0.1 2-0.4 3.3-2.3 3-4.3L54.3 52.2zM70.1 28.2c4.3 0 7.8-3.5 7.8-7.8 0-4.3-3.5-7.8-7.8-7.8s-7.8 3.5-7.8 7.8C62.3 24.7 65.8 28.2 70.1 28.2zM25.1 53.4c-9.4 0-17 7.6-17 17 0 9.4 7.6 17 17 17s17-7.6 17-17C42.1 61.1 34.5 53.4 25.1 53.4zM25.1 80.1c-5.3 0-9.6-4.3-9.6-9.6 0-5.3 4.3-9.6 9.6-9.6s9.6 4.3 9.6 9.6C34.8 75.8 30.5 80.1 25.1 80.1zM78.6 53.4c-9.4 0-17 7.6-17 17 0 9.4 7.6 17 17 17s17-7.6 17-17C95.5 61.1 87.9 53.4 78.6 53.4zM78.6 80.1c-5.3 0-9.6-4.3-9.6-9.6 0-5.3 4.3-9.6 9.6-9.6 5.3 0 9.6 4.3 9.6 9.6C88.2 75.8 83.9 80.1 78.6 80.1z" fill="#f36527" data-fill-palette-color="accent">
                             </path>
@@ -32,50 +32,37 @@ export default function Header(){
                         </svg>
                     </Link>
 
-                    <nav className='flex flex-row items-center'>
-                        {
-                            isLoggedIn
-                            ?
+                    <nav className="flex flex-row items-center">
+                        {isLoggedIn ? (
                             <>
-                            {
-                            navigationRoutes.map(route => {
-                                if (route == 'dashboard'){
-                                    return (
-                                        <Link 
-                                        key={route} 
-                                        href={`/`}
-                                        className={`text-xl pr-3 text-white ${pathname === `/${route}`? "underline" : ""} `}
-                                        >
+                                {navigationRoutes.map((route) => (
+                                    <Link
+                                        key={route}
+                                        href={route === 'dashboard' ? '/' : `/${route}`}
+                                        className={`text-xl pr-3 text-white ${pathname === `/${route}` ? 'underline' : ''
+                                            } `}
+                                    >
                                         {route}
-                                        </Link>
-                                    )
-                                }
-                                else{
-                                    return (
-                                        <Link 
-                                        key={route} 
-                                        href={`/${route}`}
-                                        className={`text-xl pr-3 text-white ${pathname === `/${route}`? "underline" : ""} `}
-                                        >
-                                        {route}
-                                        </Link>
-                                    )
-                                }
-
-                            })
-                            }
-                            <button onClick={logout}  className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black">Logout</button>
+                                    </Link>
+                                ))}
+                                <button
+                                    onClick={logout}
+                                    className="text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black ml-3"
+                                >
+                                    Logout
+                                </button>
                             </>
-                            :
-                            <Link href={"/login"} className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black">Login</Link>
-
-                        }
+                        ) : (
+                            <Link
+                                href="/login"
+                                className="text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black"
+                            >
+                                Login
+                            </Link>
+                        )}
                     </nav>
                 </div>
             </div>
         </header>
-    )
-}
-
-
-
+    );
+}    
