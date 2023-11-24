@@ -8,6 +8,7 @@ import { DownloadOutlined, LeftCircleOutlined, LeftOutlined, RightCircleOutlined
 interface Rider {
     Position: number,
     Naam: string,
+    Team: string,
     Points: number,
     Jersey: number,
     Total: number,
@@ -24,61 +25,60 @@ function Dashboard() {
 
     const stages: Rider[][] = [
         [
-            { Position: 1, Naam: 'Remco Evenepoel', Points: 100, Jersey: 35, Total: 135, Player: 'Roel', Reserved: false },
-            { Position: 2, Naam: 'Filippo Ganna', Points: 80, Jersey: 0, Total: 80, Player: 'Dries', Reserved: false },
-            { Position: 3, Naam: 'Joao Almeida', Points: 65, Jersey: 0, Total: 65, Player: 'Jordy', Reserved: false },
-            { Position: 4, Naam: 'Tao Hart', Points: 55, Jersey: 10, Total: 65, Player: 'Bart', Reserved: false },
-            { Position: 5, Naam: 'Stefan Kung', Points: 45, Jersey: 0, Total: 45, Player: 'Roel', Reserved: false },
-            { Position: 6, Naam: 'Primoz Roglic', Points: 35, Jersey: 0, Total: 35, Player: 'Dries', Reserved: false },
-            { Position: 7, Naam: 'Jay Vine', Points: 30, Jersey: 0, Total: 30, Player: 'Jordy', Reserved: false },
-            { Position: 8, Naam: 'Brandon McNulty', Points: 25, Jersey: 0, Total: 25, Player: 'Bart', Reserved: false },
-            { Position: 9, Naam: 'Geraint Thomas', Points: 20, Jersey: 0, Total: 20, Player: 'Roel', Reserved: true },
-            { Position: 10, Naam: 'Alexandr Vlasov', Points: 17, Jersey: 0, Total: 17, Player: 'Dries', Reserved: false },
-            { Position: 11, Naam: 'Bruno Armirail', Points: 15, Jersey: 0, Total: 15, Player: 'Jordy', Reserved: false },
-            { Position: 12, Naam: 'Mads Pedersen', Points: 14, Jersey: 0, Total: 14, Player: 'Bart', Reserved: false },
-            { Position: 13, Naam: 'Michael Matthews', Points: 113, Jersey: 0, Total: 113, Player: 'Roel', Reserved: false },
-            { Position: 14, Naam: 'Michael Hepburn', Points: 12, Jersey: 0, Total: 12, Player: 'Dries', Reserved: false },
-            { Position: 15, Naam: 'William Barta', Points: 11, Jersey: 0, Total: 11, Player: 'Jordy', Reserved: false },
-            { Position: 16, Naam: 'Ilan Van Wilder', Points: 10, Jersey: 0, Total: 10, Player: 'Bart', Reserved: false },
-            { Position: 17, Naam: 'Stefan De Bod', Points: 9, Jersey: 0, Total: 9, Player: 'Roel', Reserved: true },
-            { Position: 18, Naam: 'Daan Hoole', Points: 8, Jersey: 0, Total: 8, Player: 'Dries', Reserved: false },
-            { Position: 19, Naam: 'Pavel Sivakov', Points: 7, Jersey: 0, Total: 7, Player: 'Jordy', Reserved: false },
-            { Position: 20, Naam: 'Andreas Leknessund', Points: 6, Jersey: 0, Total: 6, Player: 'Bart', Reserved: false },
-            { Position: 21, Naam: 'Mattia Cattaneo', Points: 5, Jersey: 0, Total: 5, Player: 'Roel', Reserved: true },
-            { Position: 22, Naam: 'Lennard Kamna', Points: 4, Jersey: 0, Total: 4, Player: 'Dries', Reserved: false },
-            { Position: 23, Naam: 'Nico Denz', Points: 3, Jersey: 0, Total: 3, Player: 'Jordy', Reserved: false },
-            { Position: 24, Naam: 'Eddie Dunbar', Points: 2, Jersey: 0, Total: 2, Player: 'Bart', Reserved: false },
-            { Position: 25, Naam: 'Edoardo Affini', Points: 1, Jersey: 0, Total: 1, Player: 'Roel', Reserved: false }
-        ]
-        ,
+
+            { Position: 1, Naam: 'Remco Evenepoel',Team: "Soudal-Quick Step", Points: 100, Jersey: 35, Total: 135, Player: 'Roel' },
+            { Position: 2, Naam: 'Filippo Ganna', Team: "Soudal-Quick Step", Points: 80, Jersey: 0, Total: 80, Player: 'Dries' },
+            { Position: 3, Naam: 'Joao Almeida', Team: "Soudal-Quick Step", Points: 65, Jersey: 0, Total: 65, Player: 'Jordy' },
+            { Position: 4, Naam: 'Tao Hart', Team: "Soudal-Quick Step", Points: 55, Jersey: 10, Total: 65, Player: 'Bart' },
+            { Position: 5, Naam: 'Stefan Kung', Team: "Soudal-Quick Step", Points: 45, Jersey: 0, Total: 45, Player: 'Roel' },
+            { Position: 6, Naam: 'Primoz Roglic', Team: "Soudal-Quick Step", Points: 35, Jersey: 0, Total: 35, Player: 'Dries' },
+            { Position: 7, Naam: 'Jay Vine', Team: "Soudal-Quick Step", Points: 30, Jersey: 0, Total: 30, Player: 'Jordy' },
+            { Position: 8, Naam: 'Brandon McNulty', Team: "Soudal-Quick Step", Points: 25, Jersey: 0, Total: 25, Player: 'Bart' },
+            { Position: 9, Naam: 'Geraint Thomas', Team: "Soudal-Quick Step", Points: 20, Jersey: 0, Total: 20, Player: 'Roel' },
+            { Position: 10, Naam: 'Alexandr Vlasov', Team: "Soudal-Quick Step", Points: 17, Jersey: 0, Total: 17, Player: 'Dries' },
+            { Position: 11, Naam: 'Bruno Armirail', Team: "Soudal-Quick Step", Points: 15, Jersey: 0, Total: 15, Player: 'Jordy' },
+            { Position: 12, Naam: 'Mads Pedersen', Team: "Soudal-Quick Step", Points: 14, Jersey: 0, Total: 14, Player: 'Bart' },
+            { Position: 13, Naam: 'Michael Matthews', Team: "Soudal-Quick Step", Points: 113, Jersey: 0, Total: 113, Player: 'Roel' },
+            { Position: 14, Naam: 'Michael Hepburn', Team: "Soudal-Quick Step", Points: 12, Jersey: 0, Total: 12, Player: 'Dries' },
+            { Position: 15, Naam: 'William Barta', Team: "Soudal-Quick Step", Points: 11, Jersey: 0, Total: 11, Player: 'Jordy' },
+            { Position: 16, Naam: 'Ilan Van Wilder', Team: "Soudal-Quick Step", Points: 10, Jersey: 0, Total: 10, Player: 'Bart' },
+            { Position: 17, Naam: 'Stefan De Bod', Team: "Soudal-Quick Step", Points: 9, Jersey: 0, Total: 9, Player: 'Roel' },
+            { Position: 18, Naam: 'Daan Hoole', Team: "Soudal-Quick Step", Points: 8, Jersey: 0, Total: 8, Player: 'Dries' },
+            { Position: 19, Naam: 'Pavel Sivakov', Team: "Soudal-Quick Step", Points: 7, Jersey: 0, Total: 7, Player: 'Jordy' },
+            { Position: 20, Naam: 'Andreas Leknessund', Team: "Soudal-Quick Step", Points: 6, Jersey: 0, Total: 6, Player: 'Bart' },
+            { Position: 21, Naam: 'Mattia Cattaneo', Team: "Soudal-Quick Step", Points: 5, Jersey: 0, Total: 5, Player: 'Roel' },
+            { Position: 22, Naam: 'Lennard Kamna', Team: "Soudal-Quick Step", Points: 4, Jersey: 0, Total: 4, Player: 'Dries' },
+            { Position: 23, Naam: 'Nico Denz', Team: "Soudal-Quick Step", Points: 3, Jersey: 0, Total: 3, Player: 'Jordy' },
+            { Position: 24, Naam: 'Eddie Dunbar', Team: "Soudal-Quick Step", Points: 2, Jersey: 0, Total: 2, Player: 'Bart' },
+            { Position: 25, Naam: 'Edoardo Affini', Team: "Soudal-Quick Step", Points: 1, Jersey: 0, Total: 1, Player: 'Roel' }
+        ],
         [
-            { Position: 1, Naam: 'Coole Gast', Points: 100, Jersey: 35, Total: 135, Player: 'Dries', Reserved: false },
-            { Position: 2, Naam: 'Gekke Gast', Points: 80, Jersey: 0, Total: 80, Player: 'Dries', Reserved: false },
-            { Position: 3, Naam: 'Wacko Gast', Points: 65, Jersey: 0, Total: 65, Player: '', Reserved: false },
-            { Position: 4, Naam: 'Tao Hart', Points: 55, Jersey: 10, Total: 65, Player: 'Bart', Reserved: false },
-            { Position: 5, Naam: 'Stefan Kung', Points: 45, Jersey: 0, Total: 45, Player: 'Roel', Reserved: false },
-            { Position: 6, Naam: 'Primoz Roglic', Points: 35, Jersey: 0, Total: 35, Player: 'Dries', Reserved: false },
-            { Position: 7, Naam: 'Jay Vine', Points: 30, Jersey: 0, Total: 30, Player: 'Jordy', Reserved: false },
-            { Position: 8, Naam: 'Brandon McNulty', Points: 25, Jersey: 0, Total: 25, Player: 'Bart', Reserved: false },
-            { Position: 9, Naam: 'Geraint Thomas', Points: 20, Jersey: 0, Total: 20, Player: 'Roel', Reserved: true },
-            { Position: 10, Naam: 'Alexandr Vlasov', Points: 17, Jersey: 0, Total: 17, Player: 'Dries', Reserved: false },
-            { Position: 11, Naam: 'Bruno Armirail', Points: 15, Jersey: 0, Total: 15, Player: 'Jordy', Reserved: false },
-            { Position: 12, Naam: 'Mads Pedersen', Points: 14, Jersey: 0, Total: 14, Player: 'Bart', Reserved: false },
-            { Position: 13, Naam: 'Michael Matthews', Points: 13, Jersey: 0, Total: 13, Player: 'Roel', Reserved: false },
-            { Position: 14, Naam: 'Michael Hepburn', Points: 12, Jersey: 0, Total: 12, Player: 'Dries', Reserved: false },
-            { Position: 15, Naam: 'William Barta', Points: 11, Jersey: 0, Total: 11, Player: 'Jordy', Reserved: false },
-            { Position: 16, Naam: 'Ilan Van Wilder', Points: 10, Jersey: 0, Total: 10, Player: 'Bart', Reserved: false },
-            { Position: 17, Naam: 'Stefan De Bod', Points: 9, Jersey: 0, Total: 9, Player: 'Roel', Reserved: false },
-            { Position: 18, Naam: 'Daan Hoole', Points: 8, Jersey: 0, Total: 8, Player: 'Dries', Reserved: false },
-            { Position: 19, Naam: 'Pavel Sivakov', Points: 7, Jersey: 0, Total: 7, Player: 'Jordy', Reserved: false },
-            { Position: 20, Naam: 'Andreas Leknessund', Points: 6, Jersey: 0, Total: 6, Player: 'Bart', Reserved: false },
-            { Position: 21, Naam: 'Mattia Cattaneo', Points: 5, Jersey: 0, Total: 5, Player: 'Roel', Reserved: false },
-            { Position: 22, Naam: 'Lennard Kamna', Points: 4, Jersey: 0, Total: 4, Player: 'Dries', Reserved: false },
-            { Position: 23, Naam: 'Nico Denz', Points: 3, Jersey: 0, Total: 3, Player: 'Jordy', Reserved: false },
-            { Position: 24, Naam: 'Eddie Dunbar', Points: 2, Jersey: 0, Total: 2, Player: 'Bart', Reserved: false },
-            { Position: 25, Naam: 'Edoardo Affini', Points: 1, Jersey: 0, Total: 1, Player: 'Roel', Reserved: false }
-        ]
-        ,
+            { Position: 1, Naam: 'Coole Gast', Team: "Soudal-Quick Step", Points: 100, Jersey: 35, Total: 135, Player: 'Dries' },
+            { Position: 2, Naam: 'Gekke Gast', Team: "Soudal-Quick Step", Points: 80, Jersey: 0, Total: 80, Player: 'Dries' },
+            { Position: 3, Naam: 'Wacko Gast', Team: "Soudal-Quick Step", Points: 65, Jersey: 0, Total: 65, Player: '' },
+            { Position: 4, Naam: 'Tao Hart', Team: "Soudal-Quick Step", Points: 55, Jersey: 10, Total: 65, Player: 'Bart' },
+            { Position: 5, Naam: 'Stefan Kung', Team: "Soudal-Quick Step", Points: 45, Jersey: 0, Total: 45, Player: 'Roel' },
+            { Position: 6, Naam: 'Primoz Roglic', Team: "Soudal-Quick Step", Points: 35, Jersey: 0, Total: 35, Player: 'Dries' },
+            { Position: 7, Naam: 'Jay Vine', Team: "Soudal-Quick Step", Points: 30, Jersey: 0, Total: 30, Player: 'Jordy' },
+            { Position: 8, Naam: 'Brandon McNulty', Team: "Soudal-Quick Step", Points: 25, Jersey: 0, Total: 25, Player: 'Bart' },
+            { Position: 9, Naam: 'Geraint Thomas', Team: "Soudal-Quick Step", Points: 20, Jersey: 0, Total: 20, Player: 'Roel' },
+            { Position: 10, Naam: 'Alexandr Vlasov', Team: "Soudal-Quick Step", Points: 17, Jersey: 0, Total: 17, Player: 'Dries' },
+            { Position: 11, Naam: 'Bruno Armirail', Team: "Soudal-Quick Step", Points: 15, Jersey: 0, Total: 15, Player: 'Jordy' },
+            { Position: 12, Naam: 'Mads Pedersen', Team: "Soudal-Quick Step", Points: 14, Jersey: 0, Total: 14, Player: 'Bart' },
+            { Position: 13, Naam: 'Michael Matthews', Team: "Soudal-Quick Step", Points: 13, Jersey: 0, Total: 13, Player: 'Roel' },
+            { Position: 14, Naam: 'Michael Hepburn', Team: "Soudal-Quick Step", Points: 12, Jersey: 0, Total: 12, Player: 'Dries' },
+            { Position: 15, Naam: 'William Barta', Team: "Soudal-Quick Step", Points: 11, Jersey: 0, Total: 11, Player: 'Jordy' },
+            { Position: 16, Naam: 'Ilan Van Wilder', Team: "Soudal-Quick Step", Points: 10, Jersey: 0, Total: 10, Player: 'Bart' },
+            { Position: 17, Naam: 'Stefan De Bod', Team: "Soudal-Quick Step", Points: 9, Jersey: 0, Total: 9, Player: 'Roel' },
+            { Position: 18, Naam: 'Daan Hoole', Team: "Soudal-Quick Step", Points: 8, Jersey: 0, Total: 8, Player: 'Dries' },
+            { Position: 19, Naam: 'Pavel Sivakov', Team: "Soudal-Quick Step", Points: 7, Jersey: 0, Total: 7, Player: 'Jordy' },
+            { Position: 20, Naam: 'Andreas Leknessund', Team: "Soudal-Quick Step", Points: 6, Jersey: 0, Total: 6, Player: 'Bart' },
+            { Position: 21, Naam: 'Mattia Cattaneo', Team: "Soudal-Quick Step", Points: 5, Jersey: 0, Total: 5, Player: 'Roel' },
+            { Position: 22, Naam: 'Lennard Kamna', Team: "Soudal-Quick Step", Points: 4, Jersey: 0, Total: 4, Player: 'Dries' },
+            { Position: 23, Naam: 'Nico Denz', Team: "Soudal-Quick Step", Points: 3, Jersey: 0, Total: 3, Player: 'Jordy' },
+            { Position: 24, Naam: 'Eddie Dunbar', Team: "Soudal-Quick Step", Points: 2, Jersey: 0, Total: 2, Player: 'Bart' },
+            { Position: 25, Naam: 'Edoardo Affini', Team: "Soudal-Quick Step", Points: 1, Jersey: 0, Total: 1, Player: 'Roel' }
+        ],
         []
     ]
 
@@ -144,6 +144,7 @@ function Dashboard() {
     function convert(obj: { [key: string]: number }) {
         return Object.keys(obj).map(key => ({
             name: key,
+            team: obj[key],
             points: obj[key]
         }));
     }
@@ -205,6 +206,7 @@ function Dashboard() {
                                     <img src="/img/crown.png" alt="Crown" className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-8 h-8" />
                                     <img src="/img/yellow_jersey.png" alt="Rider Shirt" className="relative left-1/2 transform -translate-x-1/2 w-20 h-20" />
                                     <div className="mt-2 font-bold">{(cumPoints) ? topPlayerCum.name : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Naam}</div>
+                                    <div style={{fontSize: '0.85em'}}>({(cumPoints) ? topPlayerCum.team : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Team})</div>
                                     <div className="italic font-semibold">{(cumPoints) ? topPlayerCum.points : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Total} Points</div>
                                 </div>
                             )}
@@ -214,6 +216,7 @@ function Dashboard() {
                                     <div key={index} className="mx-2 my-2 text-center flex-1 p-4">
                                         <img src="/img/rider-shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
                                         <div className="mt-2">{(cumPoints) ? nieuwe[index].name : player.Naam}</div>
+                                        <div style={{ fontSize: '0.7em' }}>({(cumPoints) ? nieuwe[index].team : player.Team})</div>
                                         <div className=' italic '>{(cumPoints) ? nieuwe[index].points : player.Total} Points</div>
                                     </div>
                                 ))}
