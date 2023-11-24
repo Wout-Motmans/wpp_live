@@ -283,7 +283,11 @@ function Dashboard() {
                         <tbody>
 
                             {totalSortedPlayers.map((player, index) => (
-                                <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
+                                <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}
+                                onMouseEnter={() => handlePlayerHover(player.name)}
+                                onMouseLeave={() => handlePlayerHover(null)}
+                                onClick={() => handlePlayerClick(player.name)}
+                                style={{ transition: 'ease-in-out 0.1s', cursor: 'pointer', backgroundColor: hoveredPlayer === player.name ? '#e9dbff' : '' }}>
                                     <td className="py-2 px-4 whitespace-nowrap">
                                         {index < 3 ? (
                                             <>
@@ -331,7 +335,7 @@ function Dashboard() {
                                 onMouseEnter={() => handlePlayerHover(player.name)}
                                 onMouseLeave={() => handlePlayerHover(null)}
                                 onClick={() => handlePlayerClick(player.name)}
-                                style={{ cursor: 'pointer', backgroundColor: hoveredPlayer === player.name ? '#fed7aa' : '' }}>
+                                style={{ transition: 'ease-in-out 0.1s', cursor: 'pointer', backgroundColor: hoveredPlayer === player.name ? '#e9dbff' : '' }}>
                                     <td className="py-2 px-4 whitespace-nowrap">
                                         {index < 3 ? (
                                             <>
