@@ -91,6 +91,22 @@ function Dashboard() {
         []
     ]
 
+
+    // handle click on player table row
+    const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
+
+    const handlePlayerClick = (playerName: string) => {
+        setSelectedPlayer(playerName);
+    };
+
+    // handle hover over player table row
+    const [hoveredPlayer, setHoveredPlayer] = useState<string | null>(null);
+
+    const handlePlayerHover = (playerName: string | null) => {
+        setHoveredPlayer(playerName);
+    };
+
+
     const maxStage = Object.keys(stages).length;
 
     const [currentStage, setCurrentStage] = useState(0);
@@ -286,40 +302,40 @@ function Dashboard() {
 
                             <div className="flex justify-between text-lg font-bold mb-4 pt-8 pr-8 pl-8">
                                 <div>Stage:{index + 1}</div>
-                                <div>Total Points: {(cumPoints) ? sortedCumPointsPerStage.reduce((sum, rider) => sum + rider.points, 0) : stage.filter(rider => rider.Player === 'Roel').filter(rider => !rider.Reserved).reduce((total, player) => total + player.Total, 0)}
+                                <div>Total Points: {(cumPoints) ? sortedCumPointsPerStage.reduce((sum, rider) => sum + rider.points, 0) : stage.filter(rider => rider.Player === selectedPlayer).filter(rider => !rider.Reserved).reduce((total, player) => total + player.Total, 0)}
                                 </div>
                             </div>
-                            <div className="text-lg font-bold mb-4 text-center pt-5">My Team</div>
+                            <div className="text-lg font-bold mb-4 text-center pt-5">{selectedPlayer}</div>
                             <div className="flex flex-col items-center pt-10">
                                 {/* Player with the most points (Top Player) */}
-                                {stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0] && (
+                                {stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0] && (
                                     <div className="relative mb-4 text-lg">
                                         <img src="/img/crown.png" alt="Crown" className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-8 h-8" />
                                         <img src="/img/yellow_jersey.png" alt="Rider Shirt" className="relative left-1/2 transform -translate-x-1/2 w-20 h-20" />
-                                        <div className="mt-2 font-bold">{(cumPoints) ? topPlayerCum.name : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Naam}</div>
-                                        <div style={{ fontSize: '0.85em' }}>({(cumPoints) ? topPlayerCum.team : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Team})</div>
-                                        <div className="italic font-semibold">{(cumPoints) ? topPlayerCum.points : stage.filter(rider => rider.Player === 'Roel').sort((a, b) => b.Total - a.Total)[0].Total} Points</div>
+                                        <div className="mt-2 font-bold">{(cumPoints) ? topPlayerCum.name : stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0].Naam}</div>
+                                        <div style={{ fontSize: '0.85em' }}>({(cumPoints) ? topPlayerCum.team : stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0].Team})</div>
+                                        <div className="italic font-semibold">{(cumPoints) ? topPlayerCum.points : stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0].Total} Points</div>
                                     </div>
                                 )}
                                 {/* Other Players */}
                                 <div className="flex flex-wrap justify-center pb-8 text-lg font-semibold" style={{ maxWidth: '55rem' }}>
-                                    {stage.filter(rider => rider.Player === 'Roel').filter(rider => rider.Reserved === false).sort((a, b) => b.Total - a.Total).slice(1).map((player, index) => (
+                                    {stage.filter(rider => rider.Player === selectedPlayer).filter(rider => rider.Reserved === false).sort((a, b) => b.Total - a.Total).slice(1).map((player, index) => (
                                         <div key={index} className="mx-2 my-2 text-center flex-1 p-4">
                                             <img src="/img/rider-shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
-                                            <div className="mt-2">{(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].name : player.Naam}</div>
-                                            <div style={{ fontSize: '0.7em' }}>({(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].team : player.Team})</div>
-                                            <div className=' italic '>{(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].points : player.Total} Points</div>
+                                            <div className="mt-2">{(cumPoints) ? nieuwe[index].name : player.Naam}</div>
+                                            <div style={{ fontSize: '0.7em' }}>({(cumPoints) ? nieuwe[index].team : player.Team})</div>
+                                            <div className=' italic '>{(cumPoints) ? nieuwe[index].points : player.Total} Points</div>
                                         </div>
                                     ))}
                                 </div>
                                 {/* Reserved */}
                                 <div className="flex flex-wrap justify-center pb-8 text-lg font-semibold" style={{ maxWidth: '55rem' }}>
-                                    {stage.filter(rider => rider.Player === 'Roel').filter(rider => rider.Reserved === true).map((player, index) => (
-                                        <div key={index} className="mx-2 my-2 text-center flex-1 p-4 opacity-50">
+                                    {stage.filter(rider => rider.Player === selectedPlayer).filter(rider => rider.Reserved === true).map((player, index) => (
+                                        <div key={index} className="mx-2 my-2 text-center flex-1 p-4">
                                             <img src="/img/sub_shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
-                                            <div className="mt-2">{(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].name : player.Naam}</div>
-                                            <div style={{ fontSize: '0.7em' }}>({(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].team : player.Team})</div>
-                                            <div className=' italic '>{(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].points : player.Points} Points</div>
+                                            <div className="mt-2">{(cumPoints) ? nieuwe[index].name : player.Naam}</div>
+                                            <div style={{ fontSize: '0.7em' }}>({(cumPoints) ? nieuwe[index].team : player.Team})</div>
+                                            <div className=' italic '>{(cumPoints) ? 0 : 0} Points</div>
                                         </div>
                                     ))}
                                 </div>
@@ -404,7 +420,12 @@ function Dashboard() {
                         </thead>
                         <tbody>
                             {sortedPlayers.map((player, index) => (
-                                <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
+                                <tr
+                                    key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}
+                                    onMouseEnter={() => handlePlayerHover(player.name)}
+                                    onMouseLeave={() => handlePlayerHover(null)}
+                                    onClick={() => handlePlayerClick(player.name)}
+                                    style={{ cursor: 'pointer', backgroundColor: hoveredPlayer === player.name ? '#fed7aa' : '' }}>
                                     <td className="py-2 px-4 whitespace-nowrap">
                                         {index < 3 ? (
                                             <>
