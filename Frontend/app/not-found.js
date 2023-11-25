@@ -35,7 +35,7 @@ const NotFound = () => {
                 <img src='/img/wiel.gif' style={{width:'75px',height:'75px',}}></img>
                 <h1 style={{fontSize:'6em'}}>4</h1>
                 </div>
-                <h2>{url} doesn't exist, please 'cycle' back to the home page.</h2>
+                <h2>{url} doesn&apos;t exist, please &apos;cycle&apos; back to the home page.</h2>
             </div>
 
             <div className='content'>
