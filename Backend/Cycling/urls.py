@@ -15,7 +15,7 @@ urlpatterns = [
     path('deleteuser', user.delete_user),
     path('edituser', user.edit_user),
     
-    path('popraces', race.get_popular_races),
+    path('get_future_races_customs', race.get_future_races_customs),
     path('startriders/<str:race_url>', race.get_start_riders),
     path('getresultsrace', race.calculate_score_per_renner_per_stage),
 

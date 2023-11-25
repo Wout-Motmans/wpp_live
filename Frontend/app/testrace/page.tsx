@@ -57,7 +57,10 @@ export default function Home() {
                                 <label>Amount of reserve riders:</label>
                                 <InputNumber min={0} value={reserveAmount} onChange={(e) => setReserveAmount(e!)} />
                             </div>
-                            <button onClick={() => { startGame(); setDisplayGame(true) }} className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black">Start Game</button>
+                            <div className=''>
+                                <button onClick={() => { startGame(); setDisplayGame(true) }} className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black">Start Game</button>
+                            </div>
+                            
                         </div>
                         :
                         <HomogenizeGame race={chosenRace} users={chosenUsers} riders={startRiders} template={template} activeAmount={activeAmount} totalAmount={activeAmount + reserveAmount}/>
