@@ -49,7 +49,7 @@ def add_user(request):
     if request.user.is_staff:
         username = request.data.get("username")
         password = request.data.get("password")
-        User.objects.create_user(username, password)
+        User.objects.create_user(username = username, password = password)
         return Response(status=status.HTTP_200_OK)
     return Response(status=status.HTTP_401_UNAUTHORIZED)
 

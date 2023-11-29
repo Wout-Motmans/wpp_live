@@ -7,30 +7,65 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth import  get_user_model
 from procyclingstats import Race, RaceStartlist, Stage
-from Cycling.models import Rider, Tour, GameTeam
+from Cycling.models import RiderStage, Rider, RiderGameTeam, StageTour, Stage, Game, GameTeam, Tour
 from django.http import QueryDict
 from django.http import HttpRequest
+import requests
+from bs4 import BeautifulSoup
+import re
 
-
-giro_latest = Race('/'.join(max(Race('/race/giro-d-italia/2020').prev_editions_select(), key=lambda entry: int(entry["text"]))['value'].split('/')[0:3]))
-tour_latest = Race('/'.join(max(Race('/race/tour-de-france/2020').prev_editions_select(), key=lambda entry: int(entry["text"]))['value'].split('/')[0:3]))
-vuelta_latest = Race('/'.join(max(Race('/race/vuelta-a-espana/2020').prev_editions_select(), key=lambda entry: int(entry["text"]))['value'].split('/')[0:3]))
-
-def find_latest_race(race_name):
-    race_name = f"race/{race_name.replace(' ', '-')}/2020"
-    try:
-        return Race('/'.join(max(Race(race_name).prev_editions_select(), key=lambda entry: int(entry["text"]))['value'].split('/')[0:3]))
-    except Exception as e:
-        return Response({'error': str(e)}, status=400)
 
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
-def get_future_races_customs(request):
-	if request.user.is_staff:
-		data = [{'url': x.relative_url(),'name': x.name(),'year': x.year()} for x in [giro_latest, tour_latest, vuelta_latest]]
-		return Response(status=status.HTTP_200_OK, data=data)
-	return Response(status=status.HTTP_401_UNAUTHORIZED)
+def get_possible_races(request):
+    if request.user.is_staff:
+        Tour.objects.all().delete()
+
+        #something fucks up here
+        tour_names = set([tour['url'].split('/')[-2:] for tour in Tour.objects.values('url')])
+        tours = [Race(f'race/{tour_name}') for tour_name in tour_names]
+        data = [{'url': x.relative_url(), 'name': x.name(), 'year': max(x.prev_editions_select(), key=lambda entry: int(entry["text"]))["text"] } for x in tours]
+        return Response(status=status.HTTP_200_OK, data=data)
+    return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticated])
+def add_tour(request):
+    tour_name = request.GET.get('tour_name').replace(' ','-')
+    try:
+        tour_names = [y['url'].split('/')[1] for y in Tour.objects.values('url')]
+        if tour_name not in tour_names:
+            text = get_years_from_race(f'https://www.procyclingstats.com/race/{tour_name}')
+            jaartal = re.search(r'\d{4}', text)
+            Tour.objects.create(url = f'race/{tour_name}/{jaartal}', is_klassieker = False)
+        return Response(True, status=200)
+    except Exception as e:
+        print(e)
+        return Response({'error': str(e)}, status=400)
+
+
+def check_page_existence(url):
+    try:
+        response = requests.head(url)
+        return response.status_code == 200
+    except requests.RequestException:
+        return False
+
+def get_years_from_race(url):
+    if not check_page_existence(url):
+        return Exception("error, page not found")
+    soup = BeautifulSoup(requests.get(url).content, 'html.parser')
+    div_element = soup.find('div', class_='pageSelectNav')
+    if div_element:
+        div_text = div_element.get_text(strip=True)
+        return div_text
+    else:
+        return "Div class not found on the page"
+
 
 
 @api_view(['GET'])
@@ -95,14 +130,13 @@ def find_one_day_race(request):
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
-def add_tour(request):
+def add_tour_with_klassiekers(request):
     one_day_races = request.data.get('races')
     custom_tour_name = request.data.get('tourname')
     try:
         # frontend: return list of all stages that are one day races (klassiekers) when making a new tour instead of adding the klassiekers every time manually
         # frontend: make custom tour klassiekers deletable
         # finish custom tour name getting and then make the tour in the db
-        print(custom_tour_name)
         if not Tour.objects.filter(url=custom_tour_name).exists():
             tour = Tour(url=custom_tour_name)
             tour.save()
@@ -113,23 +147,17 @@ def add_tour(request):
         # Get tour object
         tour = Tour.objects.get(url=custom_tour_name)
         
-            
         for one_day_race in one_day_races:
-            
             # if race not in db -> add it
             # if race now in db connect it the tour
             if not Stage.objects.filter(url=one_day_race['url']).exists():
                 stage = Stage(url=one_day_race['url'],is_klassieker=True)
                 stage.save()
-                print("A")
             stage_tour = StageTour(stage=Stage.objects.get(url=one_day_race['url']), tour=tour,stage_number=0)
             stage_tour.save()
-            print("B")
-            print(stage_tour)
         
         return Response(True, status=200)
     except Exception as e:
-        print(e)
         return Response({'error': str(e)}, status=400)
 
 

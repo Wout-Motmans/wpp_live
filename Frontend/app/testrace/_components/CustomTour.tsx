@@ -23,7 +23,7 @@ export default function CustomTour() {
   
     const handleOk = async () => {
       setConfirmLoading(true);
-      setOpen(!await  addTour(tourName,races))
+      setOpen(!await addTourWithKlassiekers(tourName,races))
       setConfirmLoading(false);
 
     };
@@ -48,25 +48,24 @@ export default function CustomTour() {
         <Button onClick={showModal} >Create Custom Tour</Button>
 
         <Modal
-                title="Create Custom Tour"
-                open={open}
-                onOk={handleOk}
-                confirmLoading={confirmLoading}
-                onCancel={handleCancel}
-            >
-                <List
-                    header={<Input value={tourName} onChange={e => setTourName(e.target.value)} placeholder="Enter name of tour" />}
-                    bordered
-                    dataSource={races}
-                    renderItem={race => (
-                        <List.Item>{race.name}</List.Item>
-                        
-                    )}
-                    className=" mb-8"
-                />
-                <p className=" mb-3">Give one day races</p>
-                <Search placeholder='add race' onSearch={onSearch} enterButton/>
-            </Modal>
+            title="Create Custom Tour"
+            open={open}
+            onOk={handleOk}
+            confirmLoading={confirmLoading}
+            onCancel={handleCancel}
+        >
+            <List
+                header={<Input value={tourName} onChange={e => setTourName(e.target.value)} placeholder="Enter name of tour" />}
+                bordered
+                dataSource={races}
+                renderItem={race => (
+                    <List.Item>{race.name}</List.Item>
+                )}
+                className=" mb-8"
+            />
+            <p className=" mb-3">Give one day races</p>
+            <Search placeholder='add race' onSearch={onSearch} enterButton/>
+        </Modal>
         </>
     )
 }
@@ -74,14 +73,10 @@ export default function CustomTour() {
 
 const findRace = async (race : string): Promise<RaceInfo> => {
     try {
-        console.log(race)
         const response = await fetch(`/api/findOneDayRace?race_name=${race}`);
-        console.log(response)
         if (!response.ok) throw new Error('findOneDayRace error');
         const data = await response.json();
-        
         return data;
-
     } catch (error) {
         console.error('findOneDayRace error:', error);
         throw error;
@@ -90,9 +85,9 @@ const findRace = async (race : string): Promise<RaceInfo> => {
 
 
 
-const addTour = async (tourname:string,races : RaceInfo[]): Promise<boolean> => {
+const addTourWithKlassiekers = async (tourname:string,races : RaceInfo[]): Promise<boolean> => {
     try {
-        const response = await fetch('/api/addTour', {
+        const response = await fetch('/api/addTourWithKlassiekers', {
             method: 'POST',
             headers: {
 				'X-CSRFToken': Cookies.get('csrftoken')!,
@@ -100,14 +95,12 @@ const addTour = async (tourname:string,races : RaceInfo[]): Promise<boolean> => 
             },
             body: JSON.stringify({tourname, races }),
         });
-
-
         if (!response.ok) return false;
         const data = await response.json();
         return data;
 
     } catch (error) {
-        console.error('addTour error:', error);
+        console.error('addTourWithKlassiekers error:', error);
         throw error;
     }
 };

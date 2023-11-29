@@ -1,9 +1,11 @@
 'use client'
 import { useState } from 'react';
 import { useAuthCheck } from '../_hooks/useAuthCheck';
+import { useAuth } from '../_contexts/authContext';
 
 export default function StageOverview() {
     const { requireAuth } = useAuthCheck();
+    const { isLoggedIn } = useAuth();
     requireAuth();
     const [showDetails, setShowDetails] = useState(false);
     const [selectedStage, setSelectedStage] = useState(null);
@@ -98,6 +100,10 @@ export default function StageOverview() {
     };
 
     return (
+        !isLoggedIn
+        ?
+        <h1>LOADING</h1>
+        :
         <div className="flex">
             <div className="w-1/3 p-4 bg-gray-100">
                 <h1 className="text-2xl font-bold mb-4">Stages</h1>
