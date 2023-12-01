@@ -201,7 +201,7 @@ function Dashboard() {
         } else if (currentStageRank < previousStageRank) {
             return 'greenarrow.png';
         }
-        return 'blackX.png'
+        return 'dash.png'
     }
 
     function getTotalForPlayer(stage2: string, playerName: string) {
