@@ -44,40 +44,9 @@ class StageDummy:
 
     def __str__(self):
         return f"Stage {self.stage_number} of {self.race_name} on {self.date}"
-
-# Manually create a stage_dummy object
-# stage_data = {
-#     'race_name': 'Tour de France 2022',
-#     'stage_number': 18,
-#     'date': '2022-07-21',
-#     'departure': 'Lourdes',
-#     'arrival': 'Hautacam',
-#     'distance': 143.2,
-#     'gc': [
-#         {
-#             'age': 25,
-#             'bonus': 32,
-#             'nationality': 'DK',
-#             'pcs_points': 0,
-#             'prev_rank': 1,
-#             'rank': 1,
-#             'rider_name': 'VINGEGAARD Jonas',
-#             'rider_url': 'rider/jonas-vingegaard-rasmussen',
-#             'team_name': 'Jumbo-Visma',
-#             'team_url': 'team/team-jumbo-visma-2022',
-#             'time': '71:53:34',
-#             'uci_points': 25.0
-#         }
-#         # Add more rider data here
-#     ]
-# }
-
-# stage_dummy = StageDummy(**stage_data)
-
-# Access stage_dummy attributes
-print(f"Stage Date: {stage_dummy.date}")
-print(f"Stage Departure: {stage_dummy.departure}")
-print(f"Stage Arrival: {stage_dummy.arrival}")
-print(f"Stage Distance: {stage_dummy.distance} km")
-print(f"Stage GC Results: {len(stage_dummy.gc)} riders")
+# print(f"Stage Date: {stage_dummy.date}")
+# print(f"Stage Departure: {stage_dummy.departure}")
+# print(f"Stage Arrival: {stage_dummy.arrival}")
+# print(f"Stage Distance: {stage_dummy.distance} km")
+# print(f"Stage GC Results: {len(stage_dummy.gc)} riders")
  
