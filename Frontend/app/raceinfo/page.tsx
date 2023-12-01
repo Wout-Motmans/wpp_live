@@ -1,6 +1,8 @@
 "use client";
-import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
+import React, { useState, KeyboardEvent } from 'react';
 import axios from 'axios';
+import { useAuthCheck } from '../_hooks/useAuthCheck';
+import { useAuth } from '../_contexts/authContext';
 
 interface RaceInfo {
   name: string;
@@ -25,6 +27,9 @@ interface StageInfo {
 }
 
 function RaceInfoPage() {
+  const { requireAuth } = useAuthCheck();
+  const { isLoggedIn } = useAuth();
+  requireAuth();
 
   const races = [
     "Tour de France",
@@ -423,6 +428,10 @@ function RaceInfoPage() {
   };
 
   return (
+    !isLoggedIn
+    ?
+    <h1>LOADING</h1>
+    :
     <div className="flex flex-col items-center justify-center min-h-screen p-6">
       <style>
         {`

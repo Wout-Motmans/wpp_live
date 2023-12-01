@@ -4,6 +4,7 @@ import { useAuthCheck } from './_hooks/useAuthCheck';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { DownloadOutlined, LeftCircleOutlined, LeftOutlined, RightCircleOutlined, RightOutlined } from '@ant-design/icons';
+import { useAuth } from './_contexts/authContext';
 
 interface Rider {
     Position: number,
@@ -26,9 +27,9 @@ interface RiderData {
 
 function Dashboard() {
     const { requireAuth } = useAuthCheck();
+	const { isLoggedIn } = useAuth();
+    requireAuth();
     const router = useRouter();
-
-
 
     const currentRace = 'Tour de France';
     const currentYear = '2021';
@@ -306,6 +307,10 @@ function Dashboard() {
 
 
     return (
+        !isLoggedIn
+        ?
+        <h1>LOADING</h1>
+        :
         <div className="grid grid-cols-3 gap-4 h-screen px-10 pt-5">
             {isSwitchOn ?
                 <div className="col-span-2 bg-white p-4 flex flex-col">
@@ -593,7 +598,9 @@ function Dashboard() {
                     </div>
                 }
             </div>
-        </div >
+        </div>
+        
+
     )
 }
 

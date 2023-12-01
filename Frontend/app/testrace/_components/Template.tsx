@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { List, Switch } from 'antd';
 
 
-interface User {
-    key: number;
+type User = {
+    id: number;
     username: string;
 }
 
@@ -38,13 +38,13 @@ export function TemplateSetter({ selectedUsers, template, setTemplate }: { selec
         <div className='flex flex-row space-x-2'>
             <Template template={template}/>
             <div className='flex flex-col space-y-2'>
-                <Switch className='border-4' onChange={onChangeSlang} checkedChildren="Slang" unCheckedChildren="None"/>
+                <Switch className='border-4' checked={templateType=='slang'} onChange={onChangeSlang} checkedChildren="Slang" unCheckedChildren="None"/>
                 {
                     selectedUsers.map(user =>
-                        <button key={user.key} className='border-2 rounded-full p-2' onClick={() => handleAddUser(user)}>{user.username}</button>
+                        <button key={user.id} className='border-2 rounded-full p-2' onClick={() => handleAddUser(user)}>{user.username}</button>
                     )
                 }
-                <button onClick={() => setTemplate([])} className=' underline underline-offset-2 text-red-500'>RESET</button>
+                <button onClick={() => setTemplateType('none')} className=' underline underline-offset-2 text-red-500'>RESET</button>
             </div>
         </div>
     );
@@ -53,13 +53,17 @@ export function TemplateSetter({ selectedUsers, template, setTemplate }: { selec
 
 
 export function Template({ template } : { template: User[] }){
+
+    
+
     return (
         <List
             header={<div>Order</div>}
+            rowKey='key'
             bordered
-            dataSource={[...template]}
-            renderItem={user=> (
-                <List.Item key={user.key} className=" h-20">
+            dataSource={template.map((user, i) => {return { ...user, key : i}})}
+            renderItem={user => (
+                <List.Item className=" h-20">
                     {user.username}
                 </List.Item>
             )}

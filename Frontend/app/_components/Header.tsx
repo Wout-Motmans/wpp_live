@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../_contexts/authContext';
 import { useMemo } from 'react';
-import Dashboard from '../page';
+import Image from 'next/image'
 
 
 
@@ -11,7 +11,11 @@ export default function Header() {
     const pathname = usePathname();
     const { logout, isLoggedIn, isAdmin } = useAuth();
 
-    const navigationRoutes = useMemo(() => ['dashboard', 'testrace', 'raceinfo', ...(isAdmin ? ['adminpage'] : [])], [isAdmin]);
+    const navigations = useMemo(() => [ { name: 'dashboard', route: '/'  },
+                                        { name: 'testrace' , route: '/testrace' },
+                                        { name: 'raceinfo' , route: '/raceinfo' },
+                        ...(isAdmin ? [ { name: 'adminpage', route: '/adminpage'}] : []),
+                    ], [isAdmin]);
 
     return (
         <header className="bg-[#1e1e24] sticky top-0 z-50">
@@ -35,14 +39,13 @@ export default function Header() {
                     <nav className="flex flex-row items-center">
                         {isLoggedIn ? (
                             <>
-                                {navigationRoutes.map((route) => (
+                                {navigations.map(navigation => (
                                     <Link
-                                        key={route}
-                                        href={route === 'dashboard' ? '/' : `/${route}`}
-                                        className={`text-xl pr-3 text-white ${pathname === `/${route}` ? 'underline' : ''
-                                            } `}
+                                        key={navigation.name}
+                                        href={navigation.route}
+                                        className={`text-xl pr-3 text-white ${pathname === navigation.route ? 'underline' : ''} `}
                                     >
-                                        {route}
+                                        {navigation.name}
                                     </Link>
                                 ))}
                                 <button
@@ -65,4 +68,4 @@ export default function Header() {
             </div>
         </header>
     );
-}    
+}

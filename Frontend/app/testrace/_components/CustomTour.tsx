@@ -1,29 +1,49 @@
-import { Button, List, Modal, Space, Typography } from "antd";
+import { Button, List, Modal, Space, Table, Typography } from "antd";
 import Input, { SearchProps } from "antd/es/input";
 import Search from "antd/es/input/Search";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Cookies from 'js-cookie';
+import { ColumnsType } from "antd/es/table";
 
 
 interface RaceInfo {
+    id: number;
     name: string;
-    url: string;
+    year: number;
 }
+
+const columns: ColumnsType<RaceInfo>  = [
+	{
+		title: 'Klassieker',
+		dataIndex: 'name',
+	},
+	{
+		title: 'Year',
+		dataIndex: 'year',
+	},
+]
 
 
 export default function CustomTour() {
     const [open, setOpen] = useState<boolean>(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [races, setRaces] = useState<RaceInfo[]>([])
-    const [tourName, setTourName] = useState<string>('')
+    const [allRaces, setAllRaces] = useState<RaceInfo[]>([])
+    const [customTourName, setCustomTourName] = useState<string>('')
   
+
+    useEffect(() => {
+        getAllRaces().then(res => setAllRaces(res))
+    }, [])
+
+
     const showModal = () => {
       setOpen(true);
     };
   
     const handleOk = async () => {
       setConfirmLoading(true);
-      setOpen(!await  addTour(tourName,races))
+      setOpen(!await addTourWithKlassiekers(customTourName, races))
       setConfirmLoading(false);
 
     };
@@ -35,38 +55,35 @@ export default function CustomTour() {
 
     
     const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
-        if (!races.some(race => race.url.split('/')[0] === value.replaceAll(' ', '-').toLowerCase())) {
-            const x = await findRace(value.toLowerCase())
-            setRaces(p => [...p, x])
-            
-        }
+        await findRace(value.toLowerCase())
+        getAllRaces().then(res => setAllRaces(res))
     }
 
 
     return (
         <>
         <Button onClick={showModal} >Create Custom Tour</Button>
-
         <Modal
-                title="Create Custom Tour"
-                open={open}
-                onOk={handleOk}
-                confirmLoading={confirmLoading}
-                onCancel={handleCancel}
-            >
-                <List
-                    header={<Input value={tourName} onChange={e => setTourName(e.target.value)} placeholder="Enter name of tour" />}
-                    bordered
-                    dataSource={races}
-                    renderItem={race => (
-                        <List.Item>{race.name}</List.Item>
-                        
-                    )}
-                    className=" mb-8"
-                />
-                <p className=" mb-3">Give one day races</p>
-                <Search placeholder='add race' onSearch={onSearch} enterButton/>
-            </Modal>
+            title="Create Custom Tour"
+            open={open}
+            onOk={handleOk}
+            confirmLoading={confirmLoading}
+            onCancel={handleCancel}
+        >
+            <Input placeholder="Enter custom tour name" value={customTourName} onChange={e => setCustomTourName(e.target.value)}></Input>
+            <Table
+                rowKey="key"
+                columns={columns}
+                dataSource={allRaces}
+                pagination = {false}
+                rowSelection={{
+                    type:'checkbox',
+                    onChange:(_,records) => {setRaces(records)}
+                }}
+			/>
+            <p className=" mb-3">Give klassieker</p>
+            <Search placeholder='add race' onSearch={onSearch} enterButton/>
+        </Modal>
         </>
     )
 }
@@ -74,40 +91,45 @@ export default function CustomTour() {
 
 const findRace = async (race : string): Promise<RaceInfo> => {
     try {
-        console.log(race)
-        const response = await fetch(`/api/findOneDayRace?race_name=${race}`);
-        console.log(response)
-        if (!response.ok) throw new Error('findOneDayRace error');
+        const response = await fetch(`/api/addOneDayRace?race_name=${race}`);
+        if (!response.ok) throw new Error('addOneDayRace error');
         const data = await response.json();
-        
         return data;
-
     } catch (error) {
-        console.error('findOneDayRace error:', error);
+        console.error('addOneDayRace error:', error);
         throw error;
     }
 };
 
 
-
-const addTour = async (tourname:string,races : RaceInfo[]): Promise<boolean> => {
+const getAllRaces = async (): Promise<RaceInfo[]> => {
     try {
-        const response = await fetch('/api/addTour', {
+        const response = await fetch(`/api/getFutureKlassiekers`);
+        if (!response.ok) throw new Error('getFutureKlassiekers error');
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('getFutureKlassiekers error:', error);
+        throw error;
+    }
+};
+
+const addTourWithKlassiekers = async (tour_name :string, races : RaceInfo[]): Promise<boolean> => {
+    try {
+        const response = await fetch('/api/addTourWithKlassiekers', {
             method: 'POST',
             headers: {
 				'X-CSRFToken': Cookies.get('csrftoken')!,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({tourname, races }),
+            body: JSON.stringify({ tour_name, races }),
         });
-
-
         if (!response.ok) return false;
         const data = await response.json();
         return data;
 
     } catch (error) {
-        console.error('addTour error:', error);
+        console.error('addTourWithKlassiekers error:', error);
         throw error;
     }
 };

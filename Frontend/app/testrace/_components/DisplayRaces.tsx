@@ -8,21 +8,17 @@ const { Search } = Input;
 
 
 interface RaceInfo {
-    key: string;
+    id: number;
     name: string;
     year: number;
 }
 
-export default function DisplayRaces({ setChosenRace } : { setChosenRace : (value:string) => void }) {
+
+export default function DisplayRaces({ setChosenRace } : { setChosenRace : (value:RaceInfo) => void }) {
     const [races, setRaces] = useState<RaceInfo[]>([]);
 
-    
-
     useEffect(() => {
-        const fetchRaces = async () => {
-            setRaces(await getNewestRaces());
-        };
-        fetchRaces();
+        getPossibleRaces().then(res => setRaces(res))
     }, []);
 
     const columns: ColumnsType<RaceInfo> = [
@@ -36,50 +32,57 @@ export default function DisplayRaces({ setChosenRace } : { setChosenRace : (valu
         },
     ];
 
-    const onSearch: SearchProps['onSearch'] = (value, _e, info) => {
-
+    const [searchLoading, setSearchLoading] = useState(false);
+    const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
+        setSearchLoading(true)
+        await addTour(value.toLowerCase())
+        setSearchLoading(false)
+        getPossibleRaces().then(res => setRaces(res))
     }
 
     return (
         <div className='flex flex-col space-y-2'>
             <CustomTour/>
-            <Search   placeholder='add race' onSearch={onSearch} enterButton/>
+            <Search placeholder='add tour' onSearch={onSearch} enterButton loading={searchLoading}/>
             <Table
-                
                 columns={columns}
                 bordered
                 dataSource={races}
                 pagination={false}
                 rowSelection={{
                     type:'radio',
-                    onSelect:(record) => setChosenRace(record.key)
+                    onSelect:(record) => setChosenRace(record)
                 }}
             />
-            
         </div>
     )
 }
 
 
-const getNewestRaces = async (): Promise<RaceInfo[]> => {
+const getPossibleRaces = async (): Promise<RaceInfo[]> => {
     try {
-        const response = await fetch('/api/get_future_races_customs');
-    
-        if (!response.ok) throw new Error('popraces error');
-        
+        const response = await fetch('/api/getFutureTours');
+        console.log(response)
+        if (!response.ok) throw new Error('getFutureTours error');
         const data = await response.json();
-
-        const modifiedData: RaceInfo[] = data.map((race: { url: string; name: string; year: string; }) => ({
-            key: race.url,
-            name: race.name,
-            year: race.year,
-        }));
-        
-        return modifiedData;
-
+        return data;
     } catch (error) {
-        console.error('Popraces error:', error);
+        console.error('getFutureTours error:', error);
         throw error;
     }
 };
 
+
+const addTour = async (tour : string): Promise<RaceInfo> => {
+    try {
+        const response = await fetch(`/api/addTour?tour_name=${tour}`);
+        if (!response.ok) throw new Error('addTour error');
+        const data = await response.json();
+        
+        return data;
+
+    } catch (error) {
+        console.error('addTour error:', error);
+        throw error;
+    }
+};
