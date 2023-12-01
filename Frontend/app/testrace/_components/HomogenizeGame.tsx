@@ -1,13 +1,11 @@
 'use client'
-import { List, Input, Dropdown, MenuProps, message } from "antd"
+import { List, Input } from "antd"
 import Cookies from 'js-cookie';
 import React, { useState } from 'react';
-import { Template } from "./Template";
 
 
 
 interface User {
-	key: number;
 	id: number;
 	username: string;
 }
@@ -23,8 +21,13 @@ interface Team {
 
 }
 
+interface RaceInfo {
+    id: number;
+    name: string;
+    year: number;
+}
 
-export default function HomogenizeGame({ race, users, riders, template, activeAmount, totalAmount }: { race: number, users: User[], riders: Rider[], template : User[], activeAmount : number, totalAmount : number }) {
+export default function HomogenizeGame({ race, users, riders, template, activeAmount, totalAmount }: { race: RaceInfo, users: User[], riders: Rider[], template : User[], activeAmount : number, totalAmount : number }) {
 	const [teams, setTeams] = useState<Team[]>(users.map(user => { return { user, riders: [] } }))
 	const [filterRider, setFilterRider] = useState<string>('')
 
@@ -118,7 +121,7 @@ export default function HomogenizeGame({ race, users, riders, template, activeAm
 						users.map(user =>
 							<List
 								className={user === chosingNowUser() && changeRider === null ? " bg-green-100" : ""}
-								key={user.key}
+								key={user.id}
 								header={<div className="">{user.username}</div>}
 								bordered
 								dataSource={teams.find(team => team.user === user)!.riders}
@@ -160,16 +163,16 @@ export default function HomogenizeGame({ race, users, riders, template, activeAm
 
 
 
-const addGame = async (race: number, teams: Team[], activeAmount: number) => {
+const addGame = async (race: RaceInfo, teams: Team[], activeAmount: number) => {
 
-	const teamsUpdate = teams.map(team => { return { user: team.user.key, riders: team.riders.map(rider => rider.rider_url) } })
-	fetch('/api/addgame', {
+	const teamsUpdate = teams.map(team => { return { userId: team.user.id, riders: team.riders.map(rider => rider.rider_url) } })
+	fetch('/api/addGame', {
 		method: 'POST',
 		headers: {
 			'X-CSRFToken': Cookies.get('csrftoken')!,
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify({ race, teams: teamsUpdate, activeAmount })
+		body: JSON.stringify({ raceId : race.id, teams: teamsUpdate, activeAmount })
 	})
 		.catch(error => {
 			console.error('Add game error:', error);

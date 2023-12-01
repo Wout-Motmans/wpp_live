@@ -7,14 +7,19 @@ import { ColumnsType } from "antd/es/table";
 
 
 interface RaceInfo {
+    id: number;
     name: string;
-    key: number;
+    year: number;
 }
 
 const columns: ColumnsType<RaceInfo>  = [
 	{
 		title: 'Klassieker',
 		dataIndex: 'name',
+	},
+	{
+		title: 'Year',
+		dataIndex: 'year',
 	},
 ]
 
@@ -99,12 +104,12 @@ const findRace = async (race : string): Promise<RaceInfo> => {
 
 const getAllRaces = async (): Promise<RaceInfo[]> => {
     try {
-        const response = await fetch(`/api/getAllKlassiekers`);
-        if (!response.ok) throw new Error('getAllKlassiekers error');
+        const response = await fetch(`/api/getFutureKlassiekers`);
+        if (!response.ok) throw new Error('getFutureKlassiekers error');
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error('getAllKlassiekers error:', error);
+        console.error('getFutureKlassiekers error:', error);
         throw error;
     }
 };

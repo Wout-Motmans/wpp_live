@@ -15,7 +15,6 @@ import React, { useEffect, useState } from 'react';
 import type { ColumnsType } from 'antd/es/table';
 
 type User = {
-	key : number;
 	id : number;
 	username : string;
 }
@@ -70,8 +69,8 @@ export default function DisplayUsers({ setChosenUsers } : { setChosenUsers : (va
 	const onDragEnd = ({ active, over }: DragEndEvent) => {
 		if (active.id !== over?.id) {
 		  	setDataSource((prev) => {
-				const activeIndex = prev.findIndex((i) => i.key === active.id);
-				const overIndex = prev.findIndex((i) => i.key === over?.id);
+				const activeIndex = prev.findIndex((i) => i.id === active.id);
+				const overIndex = prev.findIndex((i) => i.id === over?.id);
 				return arrayMove(prev, activeIndex, overIndex);
 		  	});
 		}
@@ -82,7 +81,7 @@ export default function DisplayUsers({ setChosenUsers } : { setChosenUsers : (va
 		<DndContext sensors={sensors} modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
       		<SortableContext
         		// rowKey array
-        		items={dataSource.map((i) => i.key)}
+        		items={dataSource.map((i) => i.id)}
         		strategy={verticalListSortingStrategy}
       		>
 				<Table

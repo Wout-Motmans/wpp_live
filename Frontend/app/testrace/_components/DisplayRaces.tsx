@@ -8,13 +8,13 @@ const { Search } = Input;
 
 
 interface RaceInfo {
-    key: number;
+    id: number;
     name: string;
     year: number;
 }
 
 
-export default function DisplayRaces({ setChosenRace } : { setChosenRace : (value:number) => void }) {
+export default function DisplayRaces({ setChosenRace } : { setChosenRace : (value:RaceInfo) => void }) {
     const [races, setRaces] = useState<RaceInfo[]>([]);
 
     useEffect(() => {
@@ -51,7 +51,7 @@ export default function DisplayRaces({ setChosenRace } : { setChosenRace : (valu
                 pagination={false}
                 rowSelection={{
                     type:'radio',
-                    onSelect:(record) => setChosenRace(record.key)
+                    onSelect:(record) => setChosenRace(record)
                 }}
             />
         </div>
@@ -61,13 +61,13 @@ export default function DisplayRaces({ setChosenRace } : { setChosenRace : (valu
 
 const getPossibleRaces = async (): Promise<RaceInfo[]> => {
     try {
-        const response = await fetch('/api/getPossibleRaces');
+        const response = await fetch('/api/getFutureTours');
         console.log(response)
-        if (!response.ok) throw new Error('possible races error');
+        if (!response.ok) throw new Error('getFutureTours error');
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error('possible races error:', error);
+        console.error('getFutureTours error:', error);
         throw error;
     }
 };

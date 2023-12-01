@@ -15,7 +15,6 @@ urlpatterns = [
     path('deleteuser', user.delete_user),
     path('edituser', user.edit_user),
     
-    path('startriders/<str:race_url>', race.get_start_riders),
     path('getresultsrace', race.calculate_score_per_renner_per_stage),
 
     path('getraceinfo', race.get_race_info),
@@ -26,12 +25,16 @@ urlpatterns = [
     path('calculateteamscoreperstage', race.get_team_scores_per_stage),
     
 
-    path('getPossibleRaces', race.get_possible_races),
-    path('addOneDayRace', race.add_one_day_race),
-    path('addTourWithKlassiekers', race.add_tour_with_klassiekers),
+    path('getStartRiders', race.get_start_riders),
+
+    path('getFutureTours', race.get_future_tours),
+    path('getFutureKlassiekers', race.get_future_klassiekers),
+
     path('addTour', race.add_tour),
-    path('addgame', race.add_game),
-    path('getAllKlassiekers', race.get_possible_races_klassiekers),
+    path('addKlassieker', race.add_klassieker),
+    path('addTourWithKlassiekers', race.add_tour_with_klassiekers),
+
+    path('addGame', race.add_game),
 ]
 
 

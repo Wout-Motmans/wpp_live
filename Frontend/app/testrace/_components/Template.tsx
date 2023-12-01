@@ -5,7 +5,6 @@ import { List, Switch } from 'antd';
 
 
 type User = {
-    key : number
     id: number;
     username: string;
 }
@@ -42,7 +41,7 @@ export function TemplateSetter({ selectedUsers, template, setTemplate }: { selec
                 <Switch className='border-4' checked={templateType=='slang'} onChange={onChangeSlang} checkedChildren="Slang" unCheckedChildren="None"/>
                 {
                     selectedUsers.map(user =>
-                        <button key={user.key} className='border-2 rounded-full p-2' onClick={() => handleAddUser(user)}>{user.username}</button>
+                        <button key={user.id} className='border-2 rounded-full p-2' onClick={() => handleAddUser(user)}>{user.username}</button>
                     )
                 }
                 <button onClick={() => setTemplateType('none')} className=' underline underline-offset-2 text-red-500'>RESET</button>

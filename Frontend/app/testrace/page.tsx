@@ -10,8 +10,7 @@ import { InputNumber, Button } from 'antd';
 import { useAuth } from '../_contexts/authContext';
 
 
-interface User {
-    key: number;
+type User = {
     id: number;
     username: string;
 }
@@ -21,6 +20,11 @@ interface Rider {
     rider_url: string;
 }
 
+interface RaceInfo {
+    id: number;
+    name: string;
+    year: number;
+}
 
 
 export default function Home() {
@@ -28,7 +32,7 @@ export default function Home() {
     const { isLoggedIn } = useAuth();
     requireAuth();
 
-    const [chosenRace, setChosenRace] = useState<number | null>(null)
+    const [chosenRace, setChosenRace] = useState<RaceInfo | null>(null)
     const [chosenUsers, setChosenUsers] = useState<User[]>([])
     const [startRiders, setStartRiders] = useState<Rider[]>([])
     const [template, setTemplate] = useState<User[]>([])
@@ -79,9 +83,10 @@ export default function Home() {
 }
 
 
-const getStartRiders = async (race: number): Promise<Rider[]> => {
+const getStartRiders = async (race: RaceInfo): Promise<Rider[]> => {
+    console.log(race)
     try {
-        const response = await fetch(`/api/startriders/${'race/tour-de-france/2023'.replace(/\//g, "_")}`);
+        const response = await fetch(`/api/getStartRiders?raceId=${race.id}`);
         if (!response.ok) throw new Error('startriders error');
         const data = await response.json();
         return data;
