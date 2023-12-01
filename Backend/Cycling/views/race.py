@@ -13,6 +13,8 @@ from django.http import HttpRequest
 import requests
 from bs4 import BeautifulSoup
 import re
+from .stagedummy import StageDummy
+import urllib.parse
 
 
 @api_view(['GET'])
@@ -226,9 +228,17 @@ def get_stage_info(request):
 		results = [{'rider_name': result['rider_name'], 'rider_number': result['rider_number'], 'rank': result['rank'], 'uci_points' : result['uci_points']} for result in stage.results()]
 
 		return Response({'name' : stage_name, 'date' : date, 'distance' : distance, "stage_type" : stage_type, "depart" : depart, "arrival" : arrival, "results" : results}, status=200)
-	except Exception as e:
-		return Response({'error': str(e)}, status=400)
 
+	except Exception as e:
+        # Create a new QueryDict
+		query_dict = QueryDict(mutable=True)
+		query_dict['stage_name'] = stage_name
+		drf_request = request._request
+		drf_request.GET = query_dict   
+        # Call your DRF view or function with the Django request
+		response = get_stage_info_scrape(drf_request)   
+		return response
+		
 @api_view(['GET'])
 def calculate_score_per_renner_per_stage(request):
     stage_name = request.GET.get('stage_name')
@@ -419,16 +429,6 @@ def get_team_scores_per_stage(request):
     return Response({'team_name': team_response.data['team_name'], 'scores': team_scores}, status=status.HTTP_200_OK)
 
 
-
-
-
-
-
-
-
-
-
-
 def check_page_existence(url):
     try:
         response = requests.head(url)
@@ -447,3 +447,56 @@ def get_years_from_race(url):
     else:
         return "Div class not found on the page"
 
+@api_view(['GET'])
+def get_stage_info_scrape(request):
+    stage_name = request.GET.get('stage_name')
+
+    if not stage_name:
+        return Response({'error': 'Stage name is required'}, status=400)
+    
+    # Decode the URL-encoded string
+    decoded_stage_name = urllib.parse.unquote(stage_name)
+
+    # Construct the desired URL
+    base_url = "https://www.procyclingstats.com/"
+    url = f"{base_url}{decoded_stage_name}"
+
+    # Scrape data from the provided URL
+    response = requests.get(url)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, 'html.parser')
+        race_name = soup.find('ul', class_='thumbnails').find('a')
+        stage_date = soup.find('div', text="Date:")
+        if stage_date:
+            date = stage_date.find_next('div').get_text()
+        distance_element = soup.find('div', class_='sub').find('span', class_='red fw400')
+
+        if distance_element:
+            distance = distance_element.get_text()  
+        rider_names = soup.find_all('a', href=lambda href: href and 'rider/' in href)
+        rider_teams = soup.find_all('td', class_='cu600')
+        
+        results = []
+        for i in range(len(rider_names)):
+            result = {
+                'rider_name': rider_names[i].get_text(),
+                'rider_number' : "",
+                'uci_points': 0,
+                'team_name': rider_teams[i].get_text(),
+                'rank': str(i + 1),
+            }
+            results.append(result)
+            
+        final_result = {
+            'name' : race_name.get_text(),
+            'date' : date,
+            'distance' : distance,
+            'stage_type' : "",
+            'depart' : "",
+            'arrival' : "",
+            'results': results
+        }
+    
+        return Response(final_result, status=200)
+    else:
+        return Response('Failed to retrieve the page', status=500)
