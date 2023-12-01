@@ -403,7 +403,11 @@ function Dashboard() {
                         <tbody>
 
                             {totalSortedPlayers.map((player, index) => (
-                                <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
+                                <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}
+                                    onMouseEnter={() => handlePlayerHover(player.name)}
+                                    onMouseLeave={() => handlePlayerHover(null)}
+                                    onClick={() => handlePlayerClick(player.name)}
+                                    style={{ transition: 'ease-in-out 0.1s', cursor: 'pointer', backgroundColor: hoveredPlayer === player.name ? '#e9dbff' : '' }}>
                                     <td className="py-2 px-4 whitespace-nowrap">
                                         {index < 3 ? (
                                             <>
@@ -428,91 +432,49 @@ function Dashboard() {
                 <a href='/stage-overview' ><Button type="primary" shape="round" className=' bg-black'>View all stages</Button></a>
 
 
-                {/* Bottom Right Panel (Leaderboard) */
-                }
-                {isSwitchOn ?
-                    <div className="white p-4">
-                        <div className="text-2xl font-bold mb-4">Cummulative Leaderboard { }</div>
-                        <table className="min-w-full">
-                            <thead>
-                                <tr className="bg-[#1e1e24]">
-                                    <th className="py-2 px-4 whitespace-nowrap text-white">Ranking</th>
-                                    <th className="py-2 px-4 text-white">Name</th>
-                                    <th className="py-2 px-4 text-white">Points</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {sortedPlayers.map((player, index, array) => {
-                                    const previousPoints = index > 0 ? array[index - 1].points : 0;
-                                    const arrowImage = checkScore(player.points, previousPoints);
-                                    const stageDifference = getPlayerDifference(player.name)
-                                    return (
-                                        <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
-                                            <td className="py-2 px-4 whitespace-nowrap">
-                                                {index < 3 ? (
-                                                    <>
-                                                        {index === 0 && <img src="/img/medal-1.png" alt="Gold Medal" className="w-6 h-9 mr-2" />}
-                                                        {index === 1 && <img src="/img/medal-2.png" alt="Silver Medal" className="w-6 h-9 mr-2" />}
-                                                        {index === 2 && <img src="/img/medal-3.png" alt="Bronze Medal" className="w-6 h-9 mr-2" />}
-                                                    </>
-                                                ) : (
-                                                    index + 1
-                                                )}
-                                            </td>
-                                            <td className="py-2 px-4">{player.name}</td>
-                                            <td className="py-2 px-4">
-                                                <img src={'/img/${arrowImage}'} alt="Arrow" className="w-6 h-6 mr-2" />
-                                            </td>
-                                            <td className="py-2 px-4">{player.points}</td>
-                                            <td className="py-2 px-4" style={{ color: 'lightGreen' }}>
-                                                {stageDifference}
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
+                {/* Bottom Right Panel (Leaderboard) */}
+                <div className="white p-4">
+                    <div className="text-2xl font-bold mb-4">Stage Leaderboard { }</div>
+                    <table className="min-w-full">
+                        {/*         <thead>
+            <tr className="bg-[#1e1e24] col-span-3">
+                <th className="py-2 px-4 whitespace-nowrap text-white">Leaderboard</th>
+            </tr>
+        </thead> */}
+                        <thead>
+                            <tr className="bg-[#1e1e24]">
+                                <th className="py-2 px-4 whitespace-nowrap text-white">Ranking</th>
+                                <th className="py-2 px-4 text-white">Name</th>
+                                <th className="py-2 px-4 text-white">Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {sortedPlayers.map((player, index) => (
+                                <tr
+                                    key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}
+                                    onMouseEnter={() => handlePlayerHover(player.name)}
+                                    onMouseLeave={() => handlePlayerHover(null)}
+                                    onClick={() => handlePlayerClick(player.name)}
+                                    style={{ transition: 'ease-in-out 0.1s', cursor: 'pointer', backgroundColor: hoveredPlayer === player.name ? '#e9dbff' : '' }}>
+                                    <td className="py-2 px-4 whitespace-nowrap">
+                                        {index < 3 ? (
+                                            <>
+                                                {index === 0 && <img src="/img/medal-1.png" alt="Gold Medal" className="w-6 h-9 mr-2" />}
+                                                {index === 1 && <img src="/img/medal-2.png" alt="Silver Medal" className="w-6 h-9 mr-2" />}
+                                                {index === 2 && <img src="/img/medal-3.png" alt="Bronze Medal" className="w-6 h-9 mr-2" />}
+                                            </>
+                                        ) : (
+                                            index + 1
 
-                            </tbody>
-                        </table>
-                    </div>
-                    :
-                    <div className="white p-4">
-                        <div className="text-2xl font-bold mb-4">Stage Leaderboard { }</div>
-                        <table className="min-w-full">
-                            <thead>
-                                <tr className="bg-[#1e1e24]">
-                                    <th className="py-2 px-4 whitespace-nowrap text-white">Ranking</th>
-                                    <th className="py-2 px-4 text-white">Name</th>
-                                    <th className="py-2 px-4 text-white">Points</th>
+                                        )}
+                                    </td>
+                                    <td className="py-2 px-4">{player.name}</td>
+                                    <td className="py-2 px-4">{player.points}</td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {sortedPlayers.map((player, index, array) => {
-                                    const previousPoints = index > 0 ? array[index - 1].points : 0;
-                                    const arrowImage = checkScore(player.points, previousPoints);
-                                    const stageDifference = getPlayerDifference(player.name)
-                                    return (
-                                        <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
-                                            <td className="py-2 px-4 whitespace-nowrap">
-                                                {index < 3 ? (
-                                                    <>
-                                                        {index === 0 && <img src="/img/medal-1.png" alt="Gold Medal" className="w-6 h-9 mr-2" />}
-                                                        {index === 1 && <img src="/img/medal-2.png" alt="Silver Medal" className="w-6 h-9 mr-2" />}
-                                                        {index === 2 && <img src="/img/medal-3.png" alt="Bronze Medal" className="w-6 h-9 mr-2" />}
-                                                    </>
-                                                ) : (
-                                                    index + 1
-                                                )}
-                                            </td>
-                                            <td className="py-2 px-4">{player.name}</td>
-                                            <td className="py-2 px-4">{player.points}</td>
-                                        </tr>
-                                    );
-                                })}
-
-                            </tbody>
-                        </table>
-                    </div>
-                }
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div >
     )
