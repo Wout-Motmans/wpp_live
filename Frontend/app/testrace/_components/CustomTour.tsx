@@ -15,7 +15,6 @@ const columns: ColumnsType<RaceInfo>  = [
 	{
 		title: 'Klassieker',
 		dataIndex: 'name',
-        key: 'url'
 	},
 ]
 
@@ -67,7 +66,7 @@ export default function CustomTour() {
             onCancel={handleCancel}
         >
             <Table
-                rowKey="key"
+                rowKey="url"
                 columns={columns}
                 dataSource={allRaces}
                 pagination = {false}
