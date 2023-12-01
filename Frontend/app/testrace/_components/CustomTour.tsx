@@ -8,7 +8,7 @@ import { ColumnsType } from "antd/es/table";
 
 interface RaceInfo {
     name: string;
-    url: string;
+    key: number;
 }
 
 const columns: ColumnsType<RaceInfo>  = [
@@ -24,6 +24,7 @@ export default function CustomTour() {
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [races, setRaces] = useState<RaceInfo[]>([])
     const [allRaces, setAllRaces] = useState<RaceInfo[]>([])
+    const [customTourName, setCustomTourName] = useState<string>('')
   
 
     useEffect(() => {
@@ -37,7 +38,7 @@ export default function CustomTour() {
   
     const handleOk = async () => {
       setConfirmLoading(true);
-      setOpen(!await addTourWithKlassiekers(races))
+      setOpen(!await addTourWithKlassiekers(customTourName, races))
       setConfirmLoading(false);
 
     };
@@ -57,7 +58,6 @@ export default function CustomTour() {
     return (
         <>
         <Button onClick={showModal} >Create Custom Tour</Button>
-
         <Modal
             title="Create Custom Tour"
             open={open}
@@ -65,8 +65,9 @@ export default function CustomTour() {
             confirmLoading={confirmLoading}
             onCancel={handleCancel}
         >
+            <Input placeholder="Enter custom tour name" value={customTourName} onChange={e => setCustomTourName(e.target.value)}></Input>
             <Table
-                rowKey="url"
+                rowKey="key"
                 columns={columns}
                 dataSource={allRaces}
                 pagination = {false}
@@ -108,7 +109,7 @@ const getAllRaces = async (): Promise<RaceInfo[]> => {
     }
 };
 
-const addTourWithKlassiekers = async (races : RaceInfo[]): Promise<boolean> => {
+const addTourWithKlassiekers = async (tour_name :string, races : RaceInfo[]): Promise<boolean> => {
     try {
         const response = await fetch('/api/addTourWithKlassiekers', {
             method: 'POST',
@@ -116,7 +117,7 @@ const addTourWithKlassiekers = async (races : RaceInfo[]): Promise<boolean> => {
 				'X-CSRFToken': Cookies.get('csrftoken')!,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ races }),
+            body: JSON.stringify({ tour_name, races }),
         });
         if (!response.ok) return false;
         const data = await response.json();

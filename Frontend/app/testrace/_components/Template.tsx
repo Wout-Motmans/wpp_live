@@ -53,9 +53,11 @@ export function TemplateSetter({ selectedUsers, template, setTemplate }: { selec
 
 
 export function Template({ template } : { template: User[] }){
+    console.log(template)
     return (
         <List
             header={<div>Order</div>}
+            rowKey='username'
             bordered
             dataSource={[...template]}
             renderItem={user=> (

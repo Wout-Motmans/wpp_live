@@ -22,12 +22,20 @@ def get_possible_races(request):
     try:
         if request.user.is_staff:
             #Tour.objects.all().delete()
-            # if changed to Tour(naam, jaar, is_klassier)
-            # then possuble to use Tour.objects.values_list('url', flat=True).distinct()
-            
-            tour_names = {tour.split('/')[0] : tour.split('/')[1] for tour in Tour.objects.values_list('url', flat=True)}
-            tours = [Race(f'race/{tour_name}') for tour_name in tour_names]
-            data = [{'url': x.relative_url(), 'name': x.name(), 'year': max([entry['text'] for entry in x.prev_editions_select() if entry['text'].isdigit()]) } for x in tours]
+            data = []
+            for tour in Tour.objects.all():
+                if tour.is_klassieker:
+                    data.append({'key' : tour.pk, 'name': tour.url.split('/')[0], 'year': tour.url.split('/')[1]})
+                else:
+                    race = Race(f'race/{tour.url}')
+                    if race.name() not in [x.get('name') for x in data]:
+                        latest_year = max([entry['text'] for entry in race.prev_editions_select() if entry['text'].isdigit()])
+                        url_name = race.relative_url().split('/')[1]
+                        full_unique_url = f'{url_name}/{latest_year}'
+                        if not Tour.objects.filter(url=full_unique_url).exists():
+                            Tour.objects.create(url=full_unique_url, is_klassieker=False)
+                        latest_race = Tour.objects.get(url=full_unique_url)
+                        data.append({'key' : latest_race.pk, 'name': race.name(), 'year': latest_year })
             return Response(status=status.HTTP_200_OK, data=data)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     except Exception as e:
@@ -38,12 +46,24 @@ def get_possible_races(request):
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def get_possible_races_klassiekers(request):
-    if request.user.is_staff:
-        race_names = {race.split('/')[0] : race.split('/')[1] for race in Stage.objects.filter(is_klassieker=True).values_list('url', flat=True)}
-        races = [Race(f'race/{race_name}') for race_name in race_names]
-        data = [{'url': x.relative_url(), 'name': x.name(), 'year': max([entry['text'] for entry in x.prev_editions_select() if entry['text'].isdigit()]) } for x in races]
-        return Response(status=status.HTTP_200_OK, data=data)
-    return Response(status=status.HTTP_401_UNAUTHORIZED)
+    try:
+        if request.user.is_staff:
+            data = []
+            for tour in Stage.objects.all().filter(is_klassieker=True):
+                race = Race(f'race/{tour.url}')
+                if race.name() not in [x.get('name') for x in data]:
+                    latest_year = max([entry['text'] for entry in race.prev_editions_select() if entry['text'].isdigit()])
+                    url_name = race.relative_url().split('/')[1]
+                    full_unique_url = f'{url_name}/{latest_year}'
+                    if not Stage.objects.filter(url=full_unique_url).exists():
+                        Stage.objects.create(url=full_unique_url, is_klassieker=True)
+                    latest_race = Stage.objects.get(url=full_unique_url)
+                    data.append({'key' : latest_race.pk, 'name': race.name(), 'year': latest_year })
+            return Response(status=status.HTTP_200_OK, data=data)
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+    except Exception as e:
+        print(e)
+        return Response({'error': str(e)}, status=400)
 
 
 
@@ -134,35 +154,28 @@ def add_game(request):
 @permission_classes([IsAuthenticated])
 def add_tour_with_klassiekers(request):
     one_day_races = request.data.get('races')
+    tour_name = request.data.get('tour_name')
     try:
-        print({'one day races' : one_day_races})
-        jaartallen = [one_day_races['url'].split("/")[1] for one_day_race in one_day_races]
-        
-        print({'jaartallen' : jaartallen})
+        if (len(one_day_races) == 0):
+            return Response({'error': 'Geen Klassiekers Aangeduid'}, status=400)
+        jaartallen = [one_day_race['year'] for one_day_race in one_day_races]
         jaartal = set(jaartallen)
-        print({'jaartal' : jaartal})
         if len(jaartal) != 1:
             return Response({'error': 'Klassiekers jaartallen verschillen'}, status=400)
-        jaartal = jaartal[0]
-        print({'jaartal single' : jaartal})
-        customtour_name = f'CustomTour/{jaartal}'
+        jaartal = jaartal.pop()
+        
+        customtour_name = f'{tour_name}/{jaartal}'
         if Tour.objects.filter(url=customtour_name).exists():
             return Response({'error': "Tour already exists"}, status=400)
-        tour = Tour.objects.create(url=customtour_name)
+        tour = Tour.objects.create(url=customtour_name, is_klassieker=True)
 
-        one_day_races_sorted = [Race(f'race/{one_day_race.get("url")}') for one_day_race in one_day_races]
+        one_day_races_sorted = sorted([Race(f'race/{Stage.objects.get(pk=one_day_race.get("key")).url}') for one_day_race in one_day_races], key=lambda x: x.startdate())
 
-        print(one_day_races_sorted)
-
-        for one_day_race in enumerate(one_day_races):
-            stage = Stage.objects.get_or_create(url=one_day_race['url'], is_klassieker=True)
-            stage_tour = StageTour(stage=stage, tour=tour,stage_number=0)
+        for count, race in enumerate(one_day_races_sorted):
+            stage = Stage.objects.get(url='/'.join(race.relative_url().split('/')[-2:]))
+            stage_tour = StageTour(stage=stage, tour=tour,stage_number=count)
             stage_tour.save()
         
-        #Tour.objects.all().delete()
-        #Stage.objects.all().delete()
-        #StageTour.objects.all().delete()
-
         return Response(True, status=200)
     except Exception as e:
         print(e)

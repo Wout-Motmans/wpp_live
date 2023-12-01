@@ -8,22 +8,17 @@ const { Search } = Input;
 
 
 interface RaceInfo {
-    key: string;
+    key: number;
     name: string;
     year: number;
 }
 
 
-export default function DisplayRaces({ setChosenRace } : { setChosenRace : (value:string) => void }) {
+export default function DisplayRaces({ setChosenRace } : { setChosenRace : (value:number) => void }) {
     const [races, setRaces] = useState<RaceInfo[]>([]);
 
-    
-
     useEffect(() => {
-        const fetchRaces = async () => {
-            setRaces(await getPossibleRaces());
-        };
-        fetchRaces();
+        getPossibleRaces().then(res => setRaces(res))
     }, []);
 
     const columns: ColumnsType<RaceInfo> = [
@@ -42,6 +37,7 @@ export default function DisplayRaces({ setChosenRace } : { setChosenRace : (valu
         setSearchLoading(true)
         await addTour(value.toLowerCase())
         setSearchLoading(false)
+        getPossibleRaces().then(res => setRaces(res))
     }
 
     return (
@@ -66,14 +62,10 @@ export default function DisplayRaces({ setChosenRace } : { setChosenRace : (valu
 const getPossibleRaces = async (): Promise<RaceInfo[]> => {
     try {
         const response = await fetch('/api/getPossibleRaces');
+        console.log(response)
         if (!response.ok) throw new Error('possible races error');
         const data = await response.json();
-        const modifiedData: RaceInfo[] = data.map((race: { url: string; name: string; year: number; }) => ({
-            key: race.url,
-            name: race.name,
-            year: race.year,
-        }));
-        return modifiedData;
+        return data;
     } catch (error) {
         console.error('possible races error:', error);
         throw error;
