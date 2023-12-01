@@ -19,13 +19,29 @@ import re
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def get_possible_races(request):
-    if request.user.is_staff:
-        Tour.objects.all().delete()
+    try:
+        if request.user.is_staff:
+            #Tour.objects.all().delete()
+            # if changed to Tour(naam, jaar, is_klassier)
+            # then possuble to use Tour.objects.values_list('url', flat=True).distinct()
+            
+            tour_names = {tour.split('/')[0] : tour.split('/')[1] for tour in Tour.objects.values_list('url', flat=True)}
+            tours = [Race(f'race/{tour_name}') for tour_name in tour_names]
+            data = [{'url': x.relative_url(), 'name': x.name(), 'year': max([entry['text'] for entry in x.prev_editions_select() if entry['text'].isdigit()]) } for x in tours]
+            return Response(status=status.HTTP_200_OK, data=data)
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+    except Exception as e:
+        print(e)
+        return Response({'error': str(e)}, status=400)
 
-        #something fucks up here
-        tour_names = set([tour['url'].split('/')[-2:] for tour in Tour.objects.values('url')])
-        tours = [Race(f'race/{tour_name}') for tour_name in tour_names]
-        data = [{'url': x.relative_url(), 'name': x.name(), 'year': max(x.prev_editions_select(), key=lambda entry: int(entry["text"]))["text"] } for x in tours]
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticated])
+def get_possible_races_klassiekers(request):
+    if request.user.is_staff:
+        race_names = {race.split('/')[0] : race.split('/')[1] for race in Stage.objects.filter(is_klassieker=True).values_list('url', flat=True)}
+        races = [Race(f'race/{race_name}') for race_name in race_names]
+        data = [{'url': x.relative_url(), 'name': x.name(), 'year': max([entry['text'] for entry in x.prev_editions_select() if entry['text'].isdigit()]) } for x in races]
         return Response(status=status.HTTP_200_OK, data=data)
     return Response(status=status.HTTP_401_UNAUTHORIZED)
 
@@ -40,31 +56,29 @@ def add_tour(request):
         tour_names = [y['url'].split('/')[1] for y in Tour.objects.values('url')]
         if tour_name not in tour_names:
             text = get_years_from_race(f'https://www.procyclingstats.com/race/{tour_name}')
-            jaartal = re.search(r'\d{4}', text)
-            Tour.objects.create(url = f'race/{tour_name}/{jaartal}', is_klassieker = False)
+            jaartal = re.search(r'\d{4}', text).group(0)
+            Tour.objects.create(url = f'{tour_name}/{jaartal}', is_klassieker = False)
         return Response(True, status=200)
     except Exception as e:
         print(e)
-        return Response({'error': str(e)}, status=400)
 
 
-def check_page_existence(url):
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticated])
+def add_one_day_race(request):
+    race_name = request.GET.get('race_name').replace(' ','-')
     try:
-        response = requests.head(url)
-        return response.status_code == 200
-    except requests.RequestException:
-        return False
-
-def get_years_from_race(url):
-    if not check_page_existence(url):
-        return Exception("error, page not found")
-    soup = BeautifulSoup(requests.get(url).content, 'html.parser')
-    div_element = soup.find('div', class_='pageSelectNav')
-    if div_element:
-        div_text = div_element.get_text(strip=True)
-        return div_text
-    else:
-        return "Div class not found on the page"
+        text = get_years_from_race(f'https://www.procyclingstats.com/race/{race_name}')
+        jaartal = re.search(r'\d{4}', text).group(0)
+        race = Race(url=f'race/{race_name}/{jaartal}')
+        if race.is_one_day_race():
+            Stage.objects.create(url = f'{race_name}/{jaartal}', is_klassieker = True)
+            return Response(True, status=200)
+        return Response({'error: Not a one day race'}, status=400)
+    except Exception as e:
+        print(e)
+        return Response({'error': str(e)}, status=400)
 
 
 
@@ -114,51 +128,61 @@ def add_game(request):
 	return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
-@api_view(['GET'])
-def find_one_day_race(request):
-    race_name = request.GET.get('race_name')
-    try:
-        race = find_latest_race(race_name)
-        if race.is_one_day_race():
-            print(race.url.split('/')[-2:])
-            return Response({'name': race.name(), 'url': '/'.join(race.url.split('/')[-2:])}, status=200)
-        return Response({'error': str(e)}, status=400)
-    except Exception as e:
-        return Response({'error': str(e)}, status=400)
-
 
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def add_tour_with_klassiekers(request):
     one_day_races = request.data.get('races')
-    custom_tour_name = request.data.get('tourname')
     try:
-        # frontend: return list of all stages that are one day races (klassiekers) when making a new tour instead of adding the klassiekers every time manually
-        # frontend: make custom tour klassiekers deletable
-        # finish custom tour name getting and then make the tour in the db
-        if not Tour.objects.filter(url=custom_tour_name).exists():
-            tour = Tour(url=custom_tour_name)
-            tour.save()
+        print({'one day races' : one_day_races})
+        jaartallen = [one_day_races['url'].split("/")[1] for one_day_race in one_day_races]
         
-        else:
-            
+        print({'jaartallen' : jaartallen})
+        jaartal = set(jaartallen)
+        print({'jaartal' : jaartal})
+        if len(jaartal) != 1:
+            return Response({'error': 'Klassiekers jaartallen verschillen'}, status=400)
+        jaartal = jaartal[0]
+        print({'jaartal single' : jaartal})
+        customtour_name = f'CustomTour/{jaartal}'
+        if Tour.objects.filter(url=customtour_name).exists():
             return Response({'error': "Tour already exists"}, status=400)
-        # Get tour object
-        tour = Tour.objects.get(url=custom_tour_name)
-        
-        for one_day_race in one_day_races:
-            # if race not in db -> add it
-            # if race now in db connect it the tour
-            if not Stage.objects.filter(url=one_day_race['url']).exists():
-                stage = Stage(url=one_day_race['url'],is_klassieker=True)
-                stage.save()
-            stage_tour = StageTour(stage=Stage.objects.get(url=one_day_race['url']), tour=tour,stage_number=0)
+        tour = Tour.objects.create(url=customtour_name)
+
+        one_day_races_sorted = [Race(f'race/{one_day_race.get("url")}') for one_day_race in one_day_races]
+
+        print(one_day_races_sorted)
+
+        for one_day_race in enumerate(one_day_races):
+            stage = Stage.objects.get_or_create(url=one_day_race['url'], is_klassieker=True)
+            stage_tour = StageTour(stage=stage, tour=tour,stage_number=0)
             stage_tour.save()
         
+        #Tour.objects.all().delete()
+        #Stage.objects.all().delete()
+        #StageTour.objects.all().delete()
+
         return Response(True, status=200)
     except Exception as e:
+        print(e)
         return Response({'error': str(e)}, status=400)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @api_view(['GET'])
@@ -379,3 +403,33 @@ def get_team_scores_per_stage(request):
     team_scores = [score for score in all_scores if score['rider_name'] in team_rider_names]
 
     return Response({'team_name': team_response.data['team_name'], 'scores': team_scores}, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
+
+
+def check_page_existence(url):
+    try:
+        response = requests.head(url)
+        return response.status_code == 200
+    except requests.RequestException:
+        return False
+
+def get_years_from_race(url):
+    if not check_page_existence(url):
+        return Exception("error, page not found")
+    soup = BeautifulSoup(requests.get(url).content, 'html.parser')
+    div_element = soup.find('div', class_='pageSelectNav')
+    if div_element:
+        div_text = div_element.get_text(strip=True)
+        return div_text
+    else:
+        return "Div class not found on the page"
+
