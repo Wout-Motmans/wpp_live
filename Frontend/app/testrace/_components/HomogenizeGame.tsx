@@ -1,7 +1,7 @@
 'use client'
 import { List, Input, Dropdown, MenuProps, message } from "antd"
 import Cookies from 'js-cookie';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Template } from "./Template";
 
 
@@ -14,6 +14,7 @@ interface User {
 interface Rider {
 	rider_name: string,
 	rider_url: string,
+	team_url: string,
 }
 
 interface Team {
@@ -95,7 +96,23 @@ export default function HomogenizeGame({ race, users, riders, template, activeAm
 			
 			return team;
 		});
-		setTeams(updatedTeams)
+
+		// Count the occurrences of each team_url
+		const teamUrlCounter: Record<string, number> = {};
+
+		// Use forEach and object destructuring for brevity
+		updatedTeams.forEach(({ riders }) => {
+			riders.forEach(({ team_url }) => {
+				teamUrlCounter[team_url] = (teamUrlCounter[team_url] || 0) + 1;
+			});
+		});
+
+		if (Object.values(teamUrlCounter).some(count => count > 2)) {
+			message.error('You cannot have more than 2 riders from the same team')
+			return
+		}else{
+			setTeams(updatedTeams)
+		}
 	}
 
 	const handleChangeRider = (rider : Rider) => {
@@ -108,6 +125,11 @@ export default function HomogenizeGame({ race, users, riders, template, activeAm
 
 
 	const [changeRider, setChangeRider] = useState<Rider|null>(null)
+
+
+
+	useEffect(() => {setFilterRider('')}, [teams])
+
 
 	return (
 
