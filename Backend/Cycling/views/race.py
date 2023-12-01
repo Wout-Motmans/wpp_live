@@ -404,17 +404,6 @@ def get_stage_info_scrape(request):
             }
             results.append(result)
             
-#             "stage_type": "RR",
-#   "depart": "Bilbao",
-#   "arrival": "Bilbao",
-#   "results": [
-#     {
-#       "rider_name": "YATES Adam",
-#       "rider_number": 19,
-#       "rank": 1,
-#       "uci_points": 210.0
-#     },
-        
         final_result = {
             'name' : race_name.get_text(),
             'date' : date,
