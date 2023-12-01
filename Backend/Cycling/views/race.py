@@ -164,8 +164,16 @@ def get_stage_info(request):
 		results = [{'rider_name': result['rider_name'], 'rider_number': result['rider_number'], 'rank': result['rank'], 'uci_points' : result['uci_points']} for result in stage.results()]
 
 		return Response({'name' : stage_name, 'date' : date, 'distance' : distance, "stage_type" : stage_type, "depart" : depart, "arrival" : arrival, "results" : results}, status=200)
+
 	except Exception as e:
-		return Response({'error': str(e)}, status=400)
+        # Create a new QueryDict
+		query_dict = QueryDict(mutable=True)
+		query_dict['stage_name'] = stage_name
+		drf_request = request._request
+		drf_request.GET = query_dict   
+        # Call your DRF view or function with the Django request
+		response = get_stage_info_scrape(drf_request)   
+		return response
 		
 @api_view(['GET'])
 def calculate_score_per_renner_per_stage(request):
@@ -370,24 +378,26 @@ def get_stage_info_scrape(request):
     base_url = "https://www.procyclingstats.com/"
     url = f"{base_url}{decoded_stage_name}"
 
-
     # Scrape data from the provided URL
     response = requests.get(url)
-
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
-        names = soup.find_all('a', href=lambda href: href and 'rider/' in href)
-        teams = soup.find_all('td', class_='cu600')
+        rider_names = soup.find_all('a', href=lambda href: href and 'rider/' in href)
+        rider_teams = soup.find_all('td', class_='cu600')
         
         results = []
-        for i in range(len(names)):
+        for i in range(len(rider_names)):
             result = {
-                'rider_name': names[i].get_text(),
-                'team_name': teams[i].get_text(),
+                'rider_name': rider_names[i].get_text(),
+                'team_name': rider_teams[i].get_text(),
                 'rank': str(i + 1),
-
             }
             results.append(result)
-        return Response({'results': results}, status=200)
+        
+        final_result = {
+            'results': results
+        }
+    
+        return Response(final_result, status=200)
     else:
-        return 'Failed to retrieve the page', 500
+        return Response('Failed to retrieve the page', status=500)
