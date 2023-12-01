@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import include, path
-from .views import auth, user, race
+from .views import auth, user, race, stagedummy
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -30,6 +30,8 @@ urlpatterns = [
     path('findOneDayRace', race.find_one_day_race),
     path('addTour', race.add_tour),
     path('addgame', race.add_game),
+    
+    path('getstageinfoscrape', race.get_stage_info_scrape),
 ]
 
 
