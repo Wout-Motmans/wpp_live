@@ -196,12 +196,14 @@ function Dashboard() {
 
     function checkScore(currentStageRank: number, previousStageRank: number) {
 
-        if (currentStageRank > previousStageRank) {
-            return 'redarrow.png';
+        if (previousStageRank === -1) return 'dash.png';
+
+        if (currentStageRank === previousStageRank) {
+            return 'dash.png';
         } else if (currentStageRank < previousStageRank) {
             return 'greenarrow.png';
         }
-        return 'dash.png'
+        return 'redarrow.png';
     }
 
     function getTotalForPlayer(stage2: string, playerName: string) {
@@ -290,6 +292,7 @@ function Dashboard() {
         if (checked)
             setCumPoints(checked);
 
+
     };
 
     //requireAuth();
@@ -297,7 +300,6 @@ function Dashboard() {
 
     const handleSwitchChange = (checked: boolean) => {
         setIsSwitchOn(checked);
-
         setCumPoints(checked);
 
     };
