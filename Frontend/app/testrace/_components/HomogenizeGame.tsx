@@ -1,5 +1,5 @@
 'use client'
-import { List, Input } from "antd"
+import { List, Input, Dropdown, MenuProps, message } from "antd"
 import Cookies from 'js-cookie';
 import React, { useState } from 'react';
 import { Template } from "./Template";
@@ -55,22 +55,59 @@ export default function HomogenizeGame({ race, users, riders, template, activeAm
 		setTeams(updatedTeams);
 	}
 
-	const chooseRider = (rider: Rider) => {
+	const chooseRider = (givenRider: Rider) => {
 		if (chosingNowUser() == null) return
-		const updatedTeams = teams.map((team) => {
-			if (team.user === chosingNowUser() ) {
-				if (team.riders.length >= totalAmount) return team
-				riders.splice(riders.findIndex((rider) => rider === rider), 1)
-				incrementChosingNow()
-				return {
-					...team,
-					riders: [...team.riders, rider],
-				};
+		const updatedTeams = teams.map((team, index) => {
+			if (changeRider !== null) {
+				const indexOfRiderToReplace = teams.findIndex(item => {
+					return item.riders.some(rider => rider.rider_url === changeRider.rider_url);
+				});
+				if (index === indexOfRiderToReplace) {
+					const riderIndex = team.riders.findIndex(rider => rider.rider_url === changeRider.rider_url);
+					if (riderIndex !== -1) {
+						return {
+							...team,
+							riders: [
+								...team.riders.slice(0, riderIndex),
+								givenRider,
+								...team.riders.slice(riderIndex + 1)
+							]
+						};
+					}
+				}
+				const indexOfRiderToReplaceOther = riders.findIndex(rider => rider.rider_url === givenRider.rider_url);
+				if (indexOfRiderToReplaceOther !== -1) {
+					riders[indexOfRiderToReplaceOther] = changeRider;
+				}
+				setChangeRider(null)
+				return team;
+			} else {
+				if (team.user === chosingNowUser() ) {
+					if (team.riders.length >= totalAmount) return team
+					riders.splice(riders.findIndex((rider) => rider === rider), 1)
+					incrementChosingNow()
+					return {
+						...team,
+						riders: [...team.riders, givenRider],
+					};
+				}
 			}
+			
 			return team;
 		});
 		setTeams(updatedTeams)
 	}
+
+	const handleChangeRider = (rider : Rider) => {
+		if (changeRider === rider) { 
+			setChangeRider(null)
+		} else {
+			setChangeRider(rider)
+		}
+	}
+
+
+	const [changeRider, setChangeRider] = useState<Rider|null>(null)
 
 	return (
 
@@ -79,14 +116,17 @@ export default function HomogenizeGame({ race, users, riders, template, activeAm
 					{
 						users.map(user =>
 							<List
-								className={user === chosingNowUser() ? " bg-green-100" : ""}
+								className={user === chosingNowUser() && changeRider === null ? " bg-green-100" : ""}
 								key={user.key}
 								header={<div className="">{user.username}</div>}
 								bordered
 								dataSource={teams.find(team => team.user === user)!.riders}
 								renderItem={(rider, i) => (
-									<List.Item className="h-20">
-										<div  className={`${i >= activeAmount ? 'text-red-600' : ''}`}>{rider.rider_name}</div>
+									<List.Item
+										className={`h-20 ${changeRider === rider ? 'bg-green-200' : ''}`}
+										onClick={() => handleChangeRider(rider)}
+									>
+										<div className={`${i >= activeAmount ? 'text-red-600' : ''}`}>{rider.rider_name}</div>
 									</List.Item>
 								)}
 							/>
@@ -110,7 +150,6 @@ export default function HomogenizeGame({ race, users, riders, template, activeAm
 					<div className="flex flex-col space-y-2">
 						<button onClick={handleAddGame} className=" text-xl border-4 font-bold rounded-3xl p-2 bg-[#1e1e24] text-white hover:bg-white hover:text-black hover:border-black hover:border-dotted ">Start Game</button>
 						<button onClick={() => undo()} className=' underline underline-offset-2 text-red-500'>Undo</button>
-						<Template template={template}/>
 					</div>
 				</div>
 			</div>
