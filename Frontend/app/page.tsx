@@ -72,7 +72,7 @@ function Dashboard() {
             { Position: 7, Naam: 'Jay Vine', Team: "Soudal-Quick Step", Points: 30, Jersey: 0, Total: 30, Player: 'Jordy', Reserved: false },
             { Position: 8, Naam: 'Brandon McNulty', Team: "Soudal-Quick Step", Points: 25, Jersey: 0, Total: 25, Player: 'Bart', Reserved: false },
             { Position: 9, Naam: 'Geraint Thomas', Team: "Soudal-Quick Step", Points: 20, Jersey: 0, Total: 20, Player: 'Roel', Reserved: true },
-            { Position: 10, Naam: 'Alexandr Vlasov', Team: "Soudal-Quick Step", Points: 17, Jersey: 0, Total: 17, Player: 'Dries', Reserved: true },
+            { Position: 10, Naam: 'Alexandr Vlasov', Team: "Soudal-Quick Step", Points: 200, Jersey: 0, Total: 200, Player: 'Dries', Reserved: true },
             { Position: 11, Naam: 'Bruno Armirail', Team: "Soudal-Quick Step", Points: 15, Jersey: 0, Total: 15, Player: 'Jordy', Reserved: false },
             { Position: 12, Naam: 'Mads Pedersen', Team: "Soudal-Quick Step", Points: 14, Jersey: 0, Total: 14, Player: 'Bart', Reserved: false },
             { Position: 13, Naam: 'Michael Matthews', Team: "Soudal-Quick Step", Points: 113, Jersey: 0, Total: 113, Player: 'Roel', Reserved: false },
@@ -84,7 +84,7 @@ function Dashboard() {
             { Position: 19, Naam: 'Pavel Sivakov', Team: "Soudal-Quick Step", Points: 7, Jersey: 0, Total: 7, Player: 'Jordy', Reserved: false },
             { Position: 20, Naam: 'Andreas Leknessund', Team: "Soudal-Quick Step", Points: 6, Jersey: 0, Total: 6, Player: 'Bart', Reserved: false },
             { Position: 21, Naam: 'Mattia Cattaneo', Team: "Soudal-Quick Step", Points: 5, Jersey: 0, Total: 5, Player: 'Roel', Reserved: true },
-            { Position: 22, Naam: 'Lennard Kamna', Team: "Soudal-Quick Step", Points: 4, Jersey: 0, Total: 4, Player: 'Dries', Reserved: false },
+            { Position: 22, Naam: 'Lennard Kamna', Team: "Soudal-Quick Step", Points: 304, Jersey: 0, Total: 304, Player: 'Dries', Reserved: false },
             { Position: 23, Naam: 'Nico Denz', Team: "Soudal-Quick Step", Points: 3, Jersey: 0, Total: 3, Player: 'Jordy', Reserved: false },
             { Position: 24, Naam: 'Eddie Dunbar', Team: "Soudal-Quick Step", Points: 2, Jersey: 0, Total: 2, Player: 'Bart', Reserved: false },
             { Position: 25, Naam: 'Edoardo Affini', Team: "Soudal-Quick Step", Points: 1, Jersey: 0, Total: 1, Player: 'Roel', Reserved: false }
@@ -147,14 +147,31 @@ function Dashboard() {
     // Sort the array in descending order of total points
     let sortedPlayers = players.sort((a, b) => b.points - a.points);
 
-    const recentStages = [
-        { stageNumber: '24', nameWinner: "Roel", pointsWinner: 35 },
-        { stageNumber: '23', nameWinner: "Bert", pointsWinner: 25 },
-        { stageNumber: '22', nameWinner: "Jeroen", pointsWinner: 15 }]
-
-
     const cumPointsPerStage: RiderData[] = [];
+    let cumPointsPerPlayer: RiderData[] = [];
+    function calcCumPointsPerPlayer() {
+        cumPointsPerPlayer = [];
+        for (let i = 0; i <= currentStage; i++) {
+            for (let rider of stages[i]) {
+                const existingRiderIndex = cumPointsPerPlayer.findIndex(item => item.naam === rider.Naam);
 
+                if (existingRiderIndex === -1) {
+                    cumPointsPerPlayer.push({
+                        naam: rider.Naam,
+                        total: rider.Total,
+                        team: rider.Team,
+                        reserved: rider.Reserved,
+                        player: rider.Player
+                    });
+                } else {
+                    cumPointsPerPlayer[existingRiderIndex].total += rider.Total;
+                }
+            }
+        }
+        return cumPointsPerPlayer;
+    }
+
+    //Calculate the total points for current selected player
     for (let i = 0; i <= currentStage; i++) {
         for (let rider of stages[i]) {
             if (rider.Player === selectedPlayer) {
@@ -175,12 +192,14 @@ function Dashboard() {
         }
     }
 
-    function checkScore(currentStagePoints: number, previousStagePoints: number) {
 
-        if (currentStagePoints > previousStagePoints) {
-            return 'greenarrow.png';
-        } else if (currentStagePoints < previousStagePoints) {
+
+    function checkScore(currentStageRank: number, previousStageRank: number) {
+
+        if (currentStageRank > previousStageRank) {
             return 'redarrow.png';
+        } else if (currentStageRank < previousStageRank) {
+            return 'greenarrow.png';
         }
         return 'blackX.png'
     }
@@ -189,7 +208,7 @@ function Dashboard() {
 
         let total2 = 0;
 
-        stages[stage2].forEach(player => {
+        stages[stage2].forEach((player: { player: string; Total: number; }) => {
             if (player.player === playerName) {
 
 
@@ -200,6 +219,42 @@ function Dashboard() {
 
 
         return total2;
+    }
+
+    const getSortedPointsPerPlayerTillStage = () => {
+        sortedPlayers.map(player => {
+            const totalPoints = cumPointsPerStage
+                .filter(rider => rider.player === player.name)
+                .reduce((sum, rider) => sum + rider.total, 0);
+
+            return { playerName: player.name, totalPoints };
+        });
+    };
+
+    const [displayedStage, setDisplayedStage] = useState('1');
+    const incrementStage = (event: { preventDefault: () => void; }) => {
+        event.preventDefault();
+        setDisplayedStage(prevStage => (parseInt(prevStage) + 1).toString());
+    };
+
+    const decrementStage = (event: { preventDefault: () => void; }) => {
+        event.preventDefault();
+        if (parseInt(displayedStage) > 1) {
+            setDisplayedStage(prevStage => (parseInt(prevStage) - 1).toString());
+        }
+    };
+    // Loop through each stage from 1 to the current stage
+    for (let stage = 1; stage <= parseInt(displayedStage); stage++) {
+        // Calculate the total points for each player in the current stage
+        let stagePoints = stages[stage].reduce((points, rider) => {
+            points[rider.Player] = (points[rider.Player] || 0) + rider.Total;
+            return points;
+        }, {});
+
+        // Add the stage points to the total points for each player
+        for (let player in stagePoints) {
+            playerPoints[player] += stagePoints[player];
+        }
     }
 
     function getPlayerDifference(playerName: string): number {
@@ -220,19 +275,21 @@ function Dashboard() {
         }));
     }
 
+    const [prevSortedPlayers, setPrevSortedPlayers] = useState<{ name: string; points: number; }[]>([]);
 
     var sortedCumPointsPerStage = convert(cumPointsPerStage).sort((a, b) => b.points - a.points);
     var sortedCumPointsPerStageWithoutTop = sortedCumPointsPerStage.slice(1)
     var topPlayerCum = sortedCumPointsPerStage[0]
 
 
-    console.log(sortedCumPointsPerStageWithoutTop);
+    console.log(calcCumPointsPerPlayer());
 
     const [cumPoints, setCumPoints] = useState(false);
 
     const onChange = (checked: boolean) => {
         if (checked)
             setCumPoints(checked);
+
     };
 
     //requireAuth();
@@ -244,6 +301,7 @@ function Dashboard() {
         setCumPoints(checked);
 
     };
+
 
     return (
         <div className="grid grid-cols-3 gap-4 h-screen px-10 pt-5">
@@ -259,9 +317,7 @@ function Dashboard() {
                         </div>
                     </div>
 
-
-
-                    <Carousel afterChange={e => setCurrentStage(e)} className="bg-orange-200" arrows={true} prevArrow={<LeftCircleOutlined />} nextArrow={<RightCircleOutlined />} waitForAnimate={true} easing="easeIn" speed={1000} style={{}}>
+                    <Carousel afterChange={e => { setPrevSortedPlayers(sortedPlayers), setCurrentStage(e) }} className="bg-orange-200" arrows={true} prevArrow={<LeftCircleOutlined />} nextArrow={<RightCircleOutlined />} waitForAnimate={true} easing="easeIn" speed={1000} style={{}}>
                         {stages.map((stage, index) => (<>
 
                             <div className="flex justify-between text-lg font-bold mb-4 pt-8 pr-8 pl-8">
@@ -293,7 +349,10 @@ function Dashboard() {
                                                 className={`mx-2 my-2 text-center flex-1 p-4 ${sortedCumPointsPerStageWithoutTop[index].reserved ? 'opacity-50' : ''
                                                     }`}
                                             >
-                                                <img src="/img/rider-shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
+                                                {sortedCumPointsPerStageWithoutTop[index].reserved ?
+                                                    <img src="/img/sub_shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
+                                                    :
+                                                    <img src="/img/rider-shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />}
                                                 <div className="mt-2">{sortedCumPointsPerStageWithoutTop[index].name}</div>
                                                 <div style={{ fontSize: '0.7em' }}>({sortedCumPointsPerStageWithoutTop[index].team})</div>
                                                 <div className='italic'>{sortedCumPointsPerStageWithoutTop[index].points} Points</div>
@@ -458,10 +517,10 @@ function Dashboard() {
                             </thead>
                             <tbody>
                                 {sortedPlayers.map((player, index, array) => {
-                                    const previousPoints = index > 0 ? array[index - 1].points : 0;
-                                    const arrowImage = checkScore(player.points, previousPoints);
+                                    const previousIndex = prevSortedPlayers.findIndex(item => item.name === player.name);
+                                    const arrowImage = checkScore(index, previousIndex);
 
-                                    const stageDifference = getTotalForPlayer(currentStage.toString(), player.name);
+                                    const stageDifference = getTotalForPlayer(displayedStage, player.name);
 
                                     return (
                                         <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
@@ -480,9 +539,10 @@ function Dashboard() {
                                             <td className="py-2 px-4">
                                                 <img src={`/img/${arrowImage}`} alt="Arrow" className="w-6 h-6 mr-2" />
                                             </td>
-                                            <td className="py-2 px-4">{player.points}</td>
+                                            <td className="py-2 px-4">{calcCumPointsPerPlayer().filter(rider => rider.player === player.name).filter(rider => !rider.reserved).reduce((sum, rider) => sum + rider.total, 0)}
+                                            </td>
                                             <td className="py-2 px-4" style={{ color: 'lightGreen' }}>
-                                                {stageDifference}
+                                                {'+' + player.points}
                                             </td>
                                         </tr>
                                     );
