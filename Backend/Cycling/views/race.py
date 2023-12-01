@@ -382,6 +382,14 @@ def get_stage_info_scrape(request):
     response = requests.get(url)
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
+        race_name = soup.find('ul', class_='thumbnails').find('a')
+        stage_date = soup.find('div', text="Date:")
+        if stage_date:
+            date = stage_date.find_next('div').get_text()
+        distance_element = soup.find('div', class_='sub').find('span', class_='red fw400')
+
+        if distance_element:
+            distance = distance_element.get_text()  
         rider_names = soup.find_all('a', href=lambda href: href and 'rider/' in href)
         rider_teams = soup.find_all('td', class_='cu600')
         
@@ -389,12 +397,31 @@ def get_stage_info_scrape(request):
         for i in range(len(rider_names)):
             result = {
                 'rider_name': rider_names[i].get_text(),
+                'rider_number' : "",
+                'uci_points': 0,
                 'team_name': rider_teams[i].get_text(),
                 'rank': str(i + 1),
             }
             results.append(result)
+            
+#             "stage_type": "RR",
+#   "depart": "Bilbao",
+#   "arrival": "Bilbao",
+#   "results": [
+#     {
+#       "rider_name": "YATES Adam",
+#       "rider_number": 19,
+#       "rank": 1,
+#       "uci_points": 210.0
+#     },
         
         final_result = {
+            'name' : race_name.get_text(),
+            'date' : date,
+            'distance' : distance,
+            'stage_type' : "",
+            'depart' : "",
+            'arrival' : "",
             'results': results
         }
     
