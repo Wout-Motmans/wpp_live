@@ -10,6 +10,12 @@ from procyclingstats import Race, RaceStartlist, Stage
 from Cycling.models import Rider, Tour, GameTeam
 from django.http import QueryDict
 from django.http import HttpRequest
+from stagedummy import StageDummy
+
+# Rest of your code...
+
+from bs4 import BeautifulSoup
+import requests
 
 
 giro_latest = Race('/'.join(max(Race('/race/giro-d-italia/2020').prev_editions_select(), key=lambda entry: int(entry["text"]))['value'].split('/')[0:3]))
@@ -162,7 +168,7 @@ def get_stage_info(request):
 		return Response({'name' : stage_name, 'date' : date, 'distance' : distance, "stage_type" : stage_type, "depart" : depart, "arrival" : arrival, "results" : results}, status=200)
 	except Exception as e:
 		return Response({'error': str(e)}, status=400)
-
+		
 @api_view(['GET'])
 def calculate_score_per_renner_per_stage(request):
     stage_name = request.GET.get('stage_name')
@@ -351,3 +357,36 @@ def get_team_scores_per_stage(request):
     team_scores = [score for score in all_scores if score['rider_name'] in team_rider_names]
 
     return Response({'team_name': team_response.data['team_name'], 'scores': team_scores}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def get_stage_info_scrape(request):
+    stage_name = request.GET.get('stage_name')
+
+    if not stage_name:
+        return Response({'error': 'Stage name is required'}, status=400)
+
+    try:
+        # Create a Stage object
+        stage = Stage(stage_name)
+        
+        # Retrieve stage information
+        date = stage.date()
+        distance = stage.distance()
+        stage_type = stage.stage_type()
+        depart = stage.departure()
+        arrival = stage.arrival()
+        url = 'https://www.procyclingstats.com/race/vuelta-femenina-al-ecuador/2023/stage-1' 
+
+        # Scrape data from the provided URL
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            names = soup.find_all('a', href=lambda href: href and 'rider/' in href)
+            teams = soup.find_all('td', class_='cu600')
+            results = [{'rider_name': names[i].get_text(), 'team_name': teams[i].get_text(), 'rank': str(i)} for i in range(len(names))]
+            return Response({'name': stage_name, 'date': date, 'distance': distance, "stage_type": stage_type, "depart": depart, "arrival": arrival, "results": results}, status=200)
+        else:
+            return Response({'error': 'Failed to fetch data from the URL'}, status=400)
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
