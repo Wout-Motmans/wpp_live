@@ -7,23 +7,24 @@ import { Template } from "./Template";
 
 
 interface User {
-	key: number,
-	username: string
+	key: number;
+	id: number;
+	username: string;
 }
 
 interface Rider {
-	rider_name: string,
-	rider_url: string,
+	rider_name: string;
+	rider_url: string;
 }
 
 interface Team {
-	user: User,
-	riders: Rider[],
+	user: User;
+	riders: Rider[];
 
 }
 
 
-export default function HomogenizeGame({ race, users, riders, template, activeAmount, totalAmount }: { race: string, users: User[], riders: Rider[], template : User[], activeAmount : number, totalAmount : number }) {
+export default function HomogenizeGame({ race, users, riders, template, activeAmount, totalAmount }: { race: number, users: User[], riders: Rider[], template : User[], activeAmount : number, totalAmount : number }) {
 	const [teams, setTeams] = useState<Team[]>(users.map(user => { return { user, riders: [] } }))
 	const [filterRider, setFilterRider] = useState<string>('')
 
@@ -159,7 +160,7 @@ export default function HomogenizeGame({ race, users, riders, template, activeAm
 
 
 
-const addGame = async (race: string, teams: Team[], activeAmount: number) => {
+const addGame = async (race: number, teams: Team[], activeAmount: number) => {
 
 	const teamsUpdate = teams.map(team => { return { user: team.user.key, riders: team.riders.map(rider => rider.rider_url) } })
 	fetch('/api/addgame', {

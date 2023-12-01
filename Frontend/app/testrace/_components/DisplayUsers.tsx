@@ -15,8 +15,9 @@ import React, { useEffect, useState } from 'react';
 import type { ColumnsType } from 'antd/es/table';
 
 type User = {
-	key : number,
-	username : string
+	key : number;
+	id : number;
+	username : string;
 }
 const columns: ColumnsType<User>  = [
 	{
@@ -50,7 +51,7 @@ export default function DisplayUsers({ setChosenUsers } : { setChosenUsers : (va
 	const [selectedUsers, setSelectedUsers] = useState<User[]>([])
 
 	useEffect(() => {
-		setDataSource(users.sort((a, b) => a.id - b.id).map(user => {return {key: user.id, username: user.username}}))
+		setDataSource(users.sort((a, b) => a.id - b.id).map((user, i) => {return {key : i, ...user}}))
 	}, [users])
 
 	const sensors = useSensors(

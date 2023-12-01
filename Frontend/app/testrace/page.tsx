@@ -11,13 +11,14 @@ import { useAuth } from '../_contexts/authContext';
 
 
 interface User {
-    key: number,
-    username: string
+    key: number;
+    id: number;
+    username: string;
 }
 
 interface Rider {
-    rider_name: string,
-    rider_url: string,
+    rider_name: string;
+    rider_url: string;
 }
 
 
@@ -27,7 +28,7 @@ export default function Home() {
     const { isLoggedIn } = useAuth();
     requireAuth();
 
-    const [chosenRace, setChosenRace] = useState<string>('')
+    const [chosenRace, setChosenRace] = useState<number | null>(null)
     const [chosenUsers, setChosenUsers] = useState<User[]>([])
     const [startRiders, setStartRiders] = useState<Rider[]>([])
     const [template, setTemplate] = useState<User[]>([])
@@ -38,7 +39,10 @@ export default function Home() {
     const [reserveAmount, setReserveAmount] = useState<number>(0)
 
     const startGame = async () => {
-        setStartRiders(await getStartRiders(chosenRace))
+        if (chosenRace !== null) {
+            setStartRiders(await getStartRiders(chosenRace))
+            setDisplayGame(true)
+        }
     }
 
 
@@ -63,11 +67,11 @@ export default function Home() {
                             <InputNumber min={0} value={reserveAmount} onChange={(e) => setReserveAmount(e!)} />
                         </div>
                         <div className=''>
-                            <Button type='primary' onClick={() => { startGame(); setDisplayGame(true) }}>Start Game</Button>
+                            <Button type='primary' onClick={() => startGame()}>Start Game</Button>
                         </div>
                     </div>
                     :
-                    <HomogenizeGame race={chosenRace} users={chosenUsers} riders={startRiders} template={template} activeAmount={activeAmount} totalAmount={activeAmount + reserveAmount}/>
+                    <HomogenizeGame race={chosenRace!} users={chosenUsers} riders={startRiders} template={template} activeAmount={activeAmount} totalAmount={activeAmount + reserveAmount}/>
                 }
             </main>
         </UsersProvider>
@@ -75,7 +79,7 @@ export default function Home() {
 }
 
 
-const getStartRiders = async (race: string): Promise<Rider[]> => {
+const getStartRiders = async (race: number): Promise<Rider[]> => {
     try {
         const response = await fetch(`/api/startriders/${'race/tour-de-france/2023'.replace(/\//g, "_")}`);
         if (!response.ok) throw new Error('startriders error');
