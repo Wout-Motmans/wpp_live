@@ -36,7 +36,7 @@ def get_future_tours(request):
                         if not Tour.objects.filter(url=full_unique_url).exists():
                             Tour.objects.create(url=full_unique_url, is_klassieker=False)
                         latest_race = Tour.objects.get(url=full_unique_url)
-                        data.append({'key' : latest_race.id, 'name': race.name(), 'year': latest_year })
+                        data.append({'id' : latest_race.id, 'name': race.name(), 'year': latest_year })
             return Response(status=status.HTTP_200_OK, data=data)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     except Exception as e:
@@ -110,7 +110,7 @@ def get_start_riders(request):
     raceId = request.GET.get('raceId')
     if request.user.is_staff:
         race = Tour.objects.get(id=raceId)
-        startlist = RaceStartlist(f"{race.url}/startlist").startlist()
+        startlist = RaceStartlist(f"race/{race.url}/startlist").startlist()
         selected_keys = ["rider_name", "rider_url", "team_name", "team_url"]
         result = [{key: item[key] for key in selected_keys} for item in startlist]
         return Response(status=status.HTTP_200_OK, data=result)

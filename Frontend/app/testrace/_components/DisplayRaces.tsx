@@ -62,7 +62,6 @@ export default function DisplayRaces({ setChosenRace } : { setChosenRace : (valu
 const getPossibleRaces = async (): Promise<RaceInfo[]> => {
     try {
         const response = await fetch('/api/getFutureTours');
-        console.log(response)
         if (!response.ok) throw new Error('getFutureTours error');
         const data = await response.json();
         return data;
