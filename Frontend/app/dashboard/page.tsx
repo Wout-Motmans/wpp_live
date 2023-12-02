@@ -3,7 +3,7 @@ import { Carousel } from 'antd';
 import { useAuthCheck } from '../_hooks/useAuthCheck';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
-import { LeftCircleOutlined, LeftOutlined, RightCircleOutlined, RightOutlined } from '@ant-design/icons';
+import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
 
 function Dashboard() {
     const { requireAuth } = useAuthCheck();

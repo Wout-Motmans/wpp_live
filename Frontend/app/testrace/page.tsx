@@ -10,7 +10,7 @@ import { InputNumber, Button } from 'antd';
 import { useAuth } from '../_contexts/authContext';
 
 
-type User = {
+interface User {
     id: number;
     username: string;
 }
@@ -18,6 +18,8 @@ type User = {
 interface Rider {
     rider_name: string;
     rider_url: string;
+    team_url: string;
+	team_name: string;
 }
 
 interface RaceInfo {
@@ -84,7 +86,6 @@ export default function Home() {
 
 
 const getStartRiders = async (race: RaceInfo): Promise<Rider[]> => {
-    console.log(race)
     try {
         const response = await fetch(`/api/getStartRiders?raceId=${race.id}`);
         if (!response.ok) throw new Error('startriders error');
