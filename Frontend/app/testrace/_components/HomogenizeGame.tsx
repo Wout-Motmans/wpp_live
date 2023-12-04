@@ -1,7 +1,8 @@
+/* eslint-disable react/jsx-key */
 'use client'
 import { List, Input, Button } from "antd";
 import Cookies from 'js-cookie';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { PlusCircleOutlined } from '@ant-design/icons';
 
 
@@ -30,61 +31,71 @@ interface RaceInfo {
     year: number;
 }
 
-export default function HomogenizeGame({ race, users, riders, template, activeAmount, totalAmount }: { race: RaceInfo, users: User[], riders: Rider[], template : User[], activeAmount : number, totalAmount : number }) {
+interface UndoInfo {
+	changeRider: Rider|null,
+	chosingTemplateIndex : number,
+	teams: Team[],
+	riders: Rider[],
+}
+
+export default function HomogenizeGame({ race, users, riders : inputRiders, template, activeAmount, totalAmount }: { race: RaceInfo, users: User[], riders: Rider[], template : User[], activeAmount : number, totalAmount : number }) {
 	const [teams, setTeams] = useState<Team[]>(users.map(user => { return { user, riders: [] } }))
 	const [filterRider, setFilterRider] = useState<string>('')
+	const [changeRider, setChangeRider] = useState<Rider|null>(null)
+	const [riders, setRiders] = useState<Rider[]>(inputRiders)
 
 	const handleAddGame = async () => {
 		if (teams.some(team => team.riders.length < totalAmount)) return
 		addGame(race, teams, activeAmount)
 	}
 
-	const fullTemplate = Array.from({ length: totalAmount * users.length }, (_, i) => template[i % template.length])
-
+	const fullTemplate : User[] = fullTemplateMaker(template, users, totalAmount)
 	const [chosingTemplateIndex, setChosingTemplateIndex] = useState<number>(0)
-	const incrementChosingNow = () => setChosingTemplateIndex(p => p + 1)
-	const decrementChosingNow = () => setChosingTemplateIndex(p => p - 1)
-	const chosingTemplateUser = (x : number = chosingTemplateIndex) => { return fullTemplate[x] || null }
+	const chosingTemplateUser = () => { return fullTemplate[chosingTemplateIndex] || null }
+
+	const undoInformation = useRef<UndoInfo[]>([{
+		changeRider,
+		chosingTemplateIndex,
+		teams,
+		riders
+	}])
 
 	const undo = () => {
-		decrementChosingNow()
-		const updatedTeams = teams.map((team) => {
-			if (team.user === chosingTemplateUser(chosingTemplateIndex - 1)) {
-				riders.push(team.riders[team.riders.length - 1])
-				return {
-					...team,
-					riders: team.riders.slice(0, -1),
-				};
-			}
-			return team;
-		});
-		setTeams(updatedTeams);
+		const  copy = [...undoInformation.current]
+		const lastItem = copy.pop()
+		undoInformation.current = copy
+		if (lastItem != null) {
+			setChangeRider(lastItem.changeRider)
+			setChosingTemplateIndex(lastItem.chosingTemplateIndex)
+			setTeams(lastItem.teams)
+			setRiders(lastItem.riders)
+			console.log("SOMETHING should have HAPPENED by now")
+		}
 	}
 
 	const chooseRider = (givenRider: Rider) => {
-		const updatedTeams = teams.map(team => {
+		undoInformation.current.push({changeRider, chosingTemplateIndex, riders, teams})
+		setTeams(prev => prev.map(team => {
 			if (changeRider !== null) {
 				if (team.riders.includes(changeRider)) {
-					const teamRiderIndex = team.riders.findIndex(rider => rider == changeRider)
-					team.riders[teamRiderIndex] = givenRider
-					const allRiderIndex = riders.findIndex(rider => rider == givenRider);
-					riders[allRiderIndex] = changeRider;
+					setRiders(prev => [...prev.slice(0, prev.findIndex(rider => rider == givenRider)), changeRider, ...prev.slice(prev.findIndex(rider => rider == givenRider)+1)])
 					setChangeRider(null)
+					return {...team, riders : [...team.riders.slice(0, team.riders.findIndex(rider => rider == changeRider)), givenRider, ...team.riders.slice(team.riders.findIndex(rider => rider == changeRider)+1)]}
 				};
 			} else {
 				if (team.user === chosingTemplateUser() ) {
-					riders.splice(riders.findIndex(rider => rider === rider), 1)
-					incrementChosingNow()
-					team.riders.push(givenRider)
+					setRiders(prev => [...prev.slice(0, prev.findIndex(rider => rider == givenRider)), ...prev.slice(prev.findIndex(rider => rider == givenRider)+1)])
+					setChosingTemplateIndex(p => p + 1)
+					return {...team, riders : [...team.riders, givenRider]}
+
 				}
 			}
-			return team;
-		});
-		setTeams(updatedTeams)
+			return team
+		}));
 	}
 
 	const handleChangeRider = (rider : Rider) => {
-		if (changeRider === rider) { 
+		if (changeRider === rider) {
 			setChangeRider(null)
 		} else {
 			setChangeRider(rider)
@@ -92,10 +103,8 @@ export default function HomogenizeGame({ race, users, riders, template, activeAm
 	}
 
 
-	const [changeRider, setChangeRider] = useState<Rider|null>(null)
-
 	return (
-
+		<>
 			<div className='flex flex-row justify-between space-x-8 w-full'>
 				<div className='flex space-x-4'>
 					{
@@ -146,6 +155,7 @@ export default function HomogenizeGame({ race, users, riders, template, activeAm
 					</div>
 				</div>
 			</div>
+		</>
 	)
 }
 
@@ -153,7 +163,6 @@ export default function HomogenizeGame({ race, users, riders, template, activeAm
 
 
 const addGame = async (race: RaceInfo, teams: Team[], activeAmount: number) => {
-
 	const teamsUpdate = teams.map(team => { return { userId: team.user.id, riders: team.riders.map(rider => rider.rider_url) } })
 	fetch('/api/addGame', {
 		method: 'POST',
@@ -167,3 +176,19 @@ const addGame = async (race: RaceInfo, teams: Team[], activeAmount: number) => {
 			console.error('Add game error:', error);
 		});
 }
+
+
+const fullTemplateMaker = (template: User[], users: User[], amount: number) => {
+	const fullTemplate: User[] = [];
+	let count = 0;
+	while (fullTemplate.length < users.length * amount) {
+		const nextUser = template[count % template.length];
+		if (fullTemplate.reduce((acc, val) => (val.id === nextUser.id ? acc + 1 : acc), 0) <= amount) {
+			fullTemplate.push(nextUser);
+		}
+		count++;
+	}
+	return fullTemplate;
+}
+	 
+	 
