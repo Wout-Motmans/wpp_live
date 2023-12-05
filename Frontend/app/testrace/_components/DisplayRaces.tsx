@@ -5,13 +5,9 @@ import type { ColumnsType } from 'antd/es/table';
 import { SearchProps } from 'antd/es/input/Search';
 import CustomTour from './CustomTour';
 const { Search } = Input;
+import { RaceInfo } from '@/app/types'
 
 
-interface RaceInfo {
-    id: number;
-    name: string;
-    year: number;
-}
 
 
 export default function DisplayRaces({ setChosenRace } : { setChosenRace : (value:RaceInfo) => void }) {

@@ -2,38 +2,14 @@
 'use client'
 import { List, Input, Button } from "antd";
 import Cookies from 'js-cookie';
-import React, { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { PlusCircleOutlined } from '@ant-design/icons';
+import { User, Rider, Team, RaceInfo } from '@/app/types'
 
-
-
-interface User {
-	id: number;
-	username: string;
-}
-
-interface Rider {
-    rider_name: string;
-    rider_url: string;
-    team_url: string;
-	team_name: string;
-}
-
-interface Team {
-	user: User;
-	riders: Rider[];
-
-}
-
-interface RaceInfo {
-    id: number;
-    name: string;
-    year: number;
-}
 
 interface UndoInfo {
 	changeRider: Rider|null,
-	chosingTemplateIndex : number,
+	chosingIndex: number,
 	teams: Team[],
 	riders: Rider[],
 }
@@ -49,13 +25,13 @@ export default function HomogenizeGame({ race, users, riders : inputRiders, temp
 		addGame(race, teams, activeAmount)
 	}
 
-	const fullTemplate : User[] = fullTemplateMaker(template, users, totalAmount)
-	const [chosingTemplateIndex, setChosingTemplateIndex] = useState<number>(0)
-	const chosingTemplateUser = () => { return fullTemplate[chosingTemplateIndex] || null }
+	const fullTemplate: User[] = fullTemplateMaker(template, users, totalAmount)
+	const [chosingIndex, setChosingIndex] = useState<number>(0)
+	const chosingTemplateUser = () => { return fullTemplate[chosingIndex] || null }
 
 	const undoInformation = useRef<UndoInfo[]>([{
 		changeRider,
-		chosingTemplateIndex,
+		chosingIndex,
 		teams,
 		riders
 	}])
@@ -66,15 +42,14 @@ export default function HomogenizeGame({ race, users, riders : inputRiders, temp
 		undoInformation.current = copy
 		if (lastItem != null) {
 			setChangeRider(lastItem.changeRider)
-			setChosingTemplateIndex(lastItem.chosingTemplateIndex)
+			setChosingIndex(lastItem.chosingIndex)
 			setTeams(lastItem.teams)
 			setRiders(lastItem.riders)
-			console.log("SOMETHING should have HAPPENED by now")
 		}
 	}
 
 	const chooseRider = (givenRider: Rider) => {
-		undoInformation.current.push({changeRider, chosingTemplateIndex, riders, teams})
+		undoInformation.current.push({changeRider, chosingIndex, riders, teams})
 		setTeams(prev => prev.map(team => {
 			if (changeRider !== null) {
 				if (team.riders.includes(changeRider)) {
@@ -84,10 +59,9 @@ export default function HomogenizeGame({ race, users, riders : inputRiders, temp
 				};
 			} else {
 				if (team.user === chosingTemplateUser() ) {
-					setRiders(prev => [...prev.slice(0, prev.findIndex(rider => rider == givenRider)), ...prev.slice(prev.findIndex(rider => rider == givenRider)+1)])
-					setChosingTemplateIndex(p => p + 1)
+					setRiders(prev => [ ...prev.slice(0, prev.findIndex(rider => rider == givenRider)), ...prev.slice(prev.findIndex(rider => rider == givenRider)+1)])
+					setChosingIndex(p => p + 1)
 					return {...team, riders : [...team.riders, givenRider]}
-
 				}
 			}
 			return team
@@ -101,7 +75,6 @@ export default function HomogenizeGame({ race, users, riders : inputRiders, temp
 			setChangeRider(rider)
 		}
 	}
-
 
 	return (
 		<>

@@ -13,11 +13,8 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import React, { useEffect, useState } from 'react';
 import type { ColumnsType } from 'antd/es/table';
+import { User } from '@/app/types'
 
-type User = {
-	id : number;
-	username : string;
-}
 const columns: ColumnsType<User>  = [
 	{
 		title: 'User',

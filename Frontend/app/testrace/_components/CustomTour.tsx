@@ -1,16 +1,10 @@
-import { Button, List, Modal, Space, Table, Typography } from "antd";
+import { Button, Modal, Table } from "antd";
 import Input, { SearchProps } from "antd/es/input";
 import Search from "antd/es/input/Search";
 import { useEffect, useState } from "react";
 import Cookies from 'js-cookie';
 import { ColumnsType } from "antd/es/table";
-
-
-interface RaceInfo {
-    id: number;
-    name: string;
-    year: number;
-}
+import { RaceInfo } from '@/app/types'
 
 const columns: ColumnsType<RaceInfo>  = [
 	{

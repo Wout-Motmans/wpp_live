@@ -8,25 +8,7 @@ import DisplayUsers from './_components/DisplayUsers';
 import { TemplateSetter } from './_components/Template';
 import { InputNumber, Button } from 'antd';
 import { useAuth } from '../_contexts/authContext';
-
-
-interface User {
-    id: number;
-    username: string;
-}
-
-interface Rider {
-    rider_name: string;
-    rider_url: string;
-    team_url: string;
-	team_name: string;
-}
-
-interface RaceInfo {
-    id: number;
-    name: string;
-    year: number;
-}
+import { User, Rider, RaceInfo } from '@/app/types'
 
 
 export default function Home() {
