@@ -49,7 +49,6 @@ export default function HomogenizeGame({ race, users, riders : inputRiders, temp
 	}
 
 	const chooseRider = (givenRider: Rider) => {
-		undoInformation.current.push({changeRider, chosingIndex, riders, teams})
 		if (changeRider !== null) {
 			const teamIndexWithChangeRider = teams.findIndex(team => team.riders.includes(changeRider))
 			if (teamIndexWithChangeRider != -1) {
@@ -66,7 +65,11 @@ export default function HomogenizeGame({ race, users, riders : inputRiders, temp
 			setRiders(prev => [ ...prev.slice(0, givenRiderIndex), ...prev.slice(givenRiderIndex+1)])
 			setTeams(prev => prev.map(team => team.user === chosingTemplateUser()? {...team, riders : [...team.riders, givenRider]} : team))
 			setChosingIndex(p => p + 1)
+		} else {
+			return
 		}
+		undoInformation.current.push({changeRider, chosingIndex, riders, teams})
+
 	}
 
 	const handleChangeRider = (rider : Rider) => {
