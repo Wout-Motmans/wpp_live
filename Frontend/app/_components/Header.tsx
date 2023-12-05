@@ -12,7 +12,7 @@ export default function Header() {
     const { logout, isLoggedIn, isAdmin } = useAuth();
 
     const navigations = useMemo(() => [ { name: 'dashboard', route: '/'  },
-                                        { name: 'testrace' , route: '/testrace' },
+                        ...(isAdmin ? [ { name: 'New Race' , route: '/newrace'  }] : []),
                                         { name: 'raceinfo' , route: '/raceinfo' },
                         ...(isAdmin ? [ { name: 'adminpage', route: '/adminpage'}] : []),
                     ], [isAdmin]);
@@ -43,7 +43,7 @@ export default function Header() {
                                     <Link
                                         key={navigation.name}
                                         href={navigation.route}
-                                        className={`text-xl pr-3 text-white ${pathname === navigation.route ? 'underline' : ''} `}
+                                        className={`text-xl pr-3 text-white  whitespace-nowrap ${pathname === navigation.route ? 'underline' : ''} `}
                                     >
                                         {navigation.name}
                                     </Link>

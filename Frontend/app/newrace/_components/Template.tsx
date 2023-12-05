@@ -2,12 +2,8 @@
 'use client'
 import React, { useEffect, useState } from 'react';
 import { List, Switch } from 'antd';
+import { User } from '@/app/types'
 
-
-type User = {
-    id: number;
-    username: string;
-}
 
 export function TemplateSetter({ selectedUsers, template, setTemplate }: { selectedUsers: User[], template: User[], setTemplate: (value: User[]) => void }) {
 
@@ -53,9 +49,6 @@ export function TemplateSetter({ selectedUsers, template, setTemplate }: { selec
 
 
 export function Template({ template } : { template: User[] }){
-
-    
-
     return (
         <List
             header={<div>Order</div>}
