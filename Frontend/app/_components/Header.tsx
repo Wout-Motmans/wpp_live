@@ -12,7 +12,7 @@ export default function Header() {
     const { logout, isLoggedIn, isAdmin } = useAuth();
 
     const navigations = useMemo(() => [ { name: 'dashboard', route: '/'  },
-                        ...(isAdmin ? [ { name: 'New Race' , route: '/testrace'  }] : []),
+                        ...(isAdmin ? [ { name: 'New Race' , route: '/newrace'  }] : []),
                                         { name: 'raceinfo' , route: '/raceinfo' },
                         ...(isAdmin ? [ { name: 'adminpage', route: '/adminpage'}] : []),
                     ], [isAdmin]);

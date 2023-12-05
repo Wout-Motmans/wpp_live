@@ -50,22 +50,22 @@ export default function HomogenizeGame({ race, users, riders : inputRiders, temp
 
 	const chooseRider = (givenRider: Rider) => {
 		undoInformation.current.push({changeRider, chosingIndex, riders, teams})
-		setTeams(prev => prev.map(team => {
-			if (changeRider !== null) {
-				if (team.riders.includes(changeRider)) {
-					setRiders(prev => [...prev.slice(0, prev.findIndex(rider => rider == givenRider)), changeRider, ...prev.slice(prev.findIndex(rider => rider == givenRider)+1)])
-					setChangeRider(null)
-					return {...team, riders : [...team.riders.slice(0, team.riders.findIndex(rider => rider == changeRider)), givenRider, ...team.riders.slice(team.riders.findIndex(rider => rider == changeRider)+1)]}
-				};
-			} else {
-				if (team.user === chosingTemplateUser() ) {
-					setRiders(prev => [ ...prev.slice(0, prev.findIndex(rider => rider == givenRider)), ...prev.slice(prev.findIndex(rider => rider == givenRider)+1)])
-					setChosingIndex(p => p + 1)
-					return {...team, riders : [...team.riders, givenRider]}
-				}
+
+		if (changeRider !== null) {
+			const teamIndexWithChangeRider = teams.findIndex(team => team.riders.includes(changeRider))
+			if (teamIndexWithChangeRider != -1) {
+				const givenRiderIndex = riders.findIndex(rider => rider === givenRider)
+				setRiders(prev => [...prev.slice(0, givenRiderIndex), changeRider, ...prev.slice(givenRiderIndex+1)])
+				const ridersChanged = teams[teamIndexWithChangeRider].riders.map(rider => rider === changeRider ? givenRider : rider)
+				setTeams(prev => prev.map((team, i) => i === teamIndexWithChangeRider? {...team, riders : ridersChanged} : team))
+				setChangeRider(null)
 			}
-			return team
-		}));
+		} else if (chosingTemplateUser() != null) {
+				const riderIndex = riders.findIndex(rider => rider === givenRider)
+				setRiders(prev => [ ...prev.slice(0, riderIndex), ...prev.slice(riderIndex+1)])
+				setTeams(prev => prev.map(team => team.user === chosingTemplateUser()? {...team, riders : [...team.riders, givenRider]} : team))
+				setChosingIndex(p => p + 1)
+			}
 	}
 
 	const handleChangeRider = (rider : Rider) => {
@@ -156,7 +156,7 @@ const fullTemplateMaker = (template: User[], users: User[], amount: number) => {
 	let count = 0;
 	while (fullTemplate.length < users.length * amount) {
 		const nextUser = template[count % template.length];
-		if (fullTemplate.reduce((acc, val) => (val.id === nextUser.id ? acc + 1 : acc), 0) <= amount) {
+		if (fullTemplate.reduce((acc, val) => (val.id === nextUser.id ? acc + 1 : acc), 0) < amount) {
 			fullTemplate.push(nextUser);
 		}
 		count++;
@@ -165,3 +165,25 @@ const fullTemplateMaker = (template: User[], users: User[], amount: number) => {
 }
 	 
 	 
+
+
+//setTeams(prev => prev.map(team => {
+//	if (changeRider !== null) {
+//		if (team.riders.includes(changeRider)) {
+//			const givenRiderIndex = riders.findIndex(rider => rider === givenRider)
+//			setRiders(prev => [...prev.slice(0, givenRiderIndex), changeRider, ...prev.slice(givenRiderIndex+1)])
+//			setChangeRider(null)
+//			const changeRiderIndex = team.riders.findIndex(rider => rider === changeRider)
+//			return {...team, riders : [...team.riders.slice(0, changeRiderIndex), givenRider, ...team.riders.slice(changeRiderIndex+1)]}
+//		};
+//	} else {
+//		console.log(team.user, chosingTemplateUser())
+//		if (team.user === chosingTemplateUser() ) {
+//			const riderIndex = riders.findIndex(rider => rider === givenRider)
+//			setRiders(prev => [ ...prev.slice(0, riderIndex), ...prev.slice(riderIndex+1)])
+//			setChosingIndex(p => p + 1)
+//			return {...team, riders : [...team.riders, givenRider]}
+//		}
+//	}
+//	return team
+//}));
