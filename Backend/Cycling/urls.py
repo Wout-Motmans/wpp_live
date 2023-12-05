@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import include, path
-from .views import auth, user, race
+from .views import auth, user, race, stagedummy
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -24,17 +24,16 @@ urlpatterns = [
     path('getteamriders', race.get_team_riders),
     path('calculateteamscoreperstage', race.get_team_scores_per_stage),
     
+    path('getstageinfoscrape', race.get_stage_info_scrape),
 
     path('getStartRiders', race.get_start_riders),
-
     path('getFutureTours', race.get_future_tours),
     path('getFutureKlassiekers', race.get_future_klassiekers),
-
     path('addTour', race.add_tour),
     path('addKlassieker', race.add_klassieker),
     path('addTourWithKlassiekers', race.add_tour_with_klassiekers),
-
     path('addGame', race.add_game),
+    
 ]
 
 
