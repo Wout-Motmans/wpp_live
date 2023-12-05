@@ -2,7 +2,7 @@
 'use client'
 import { List, Input, Button } from "antd";
 import Cookies from 'js-cookie';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { User, Rider, Team, RaceInfo } from '@/app/types'
 
@@ -50,10 +50,10 @@ export default function HomogenizeGame({ race, users, riders : inputRiders, temp
 
 	const chooseRider = (givenRider: Rider) => {
 		undoInformation.current.push({changeRider, chosingIndex, riders, teams})
-
 		if (changeRider !== null) {
 			const teamIndexWithChangeRider = teams.findIndex(team => team.riders.includes(changeRider))
 			if (teamIndexWithChangeRider != -1) {
+				if (teams[teamIndexWithChangeRider].riders.reduce((acc, rider) => (rider.team_url === givenRider.team_url ? acc + 1 : acc), 1) > 2) return
 				const givenRiderIndex = riders.findIndex(rider => rider === givenRider)
 				setRiders(prev => [...prev.slice(0, givenRiderIndex), changeRider, ...prev.slice(givenRiderIndex+1)])
 				const ridersChanged = teams[teamIndexWithChangeRider].riders.map(rider => rider === changeRider ? givenRider : rider)
@@ -61,11 +61,12 @@ export default function HomogenizeGame({ race, users, riders : inputRiders, temp
 				setChangeRider(null)
 			}
 		} else if (chosingTemplateUser() != null) {
-				const riderIndex = riders.findIndex(rider => rider === givenRider)
-				setRiders(prev => [ ...prev.slice(0, riderIndex), ...prev.slice(riderIndex+1)])
-				setTeams(prev => prev.map(team => team.user === chosingTemplateUser()? {...team, riders : [...team.riders, givenRider]} : team))
-				setChosingIndex(p => p + 1)
-			}
+			if (teams.find(team => team.user === chosingTemplateUser())!.riders.reduce((acc, rider) => (rider.team_url === givenRider.team_url ? acc + 1 : acc), 1) > 2) return
+			const givenRiderIndex = riders.findIndex(rider => rider === givenRider)
+			setRiders(prev => [ ...prev.slice(0, givenRiderIndex), ...prev.slice(givenRiderIndex+1)])
+			setTeams(prev => prev.map(team => team.user === chosingTemplateUser()? {...team, riders : [...team.riders, givenRider]} : team))
+			setChosingIndex(p => p + 1)
+		}
 	}
 
 	const handleChangeRider = (rider : Rider) => {
@@ -75,6 +76,8 @@ export default function HomogenizeGame({ race, users, riders : inputRiders, temp
 			setChangeRider(rider)
 		}
 	}
+
+	useEffect(() => {setFilterRider('')}, [teams])
 
 	return (
 		<>
