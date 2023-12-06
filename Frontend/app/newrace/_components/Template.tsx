@@ -5,7 +5,7 @@ import { List, Switch } from 'antd';
 import { User } from '@/app/types'
 
 
-export function TemplateSetter({ selectedUsers, template, setTemplate }: { selectedUsers: User[], template: User[], setTemplate: (value: User[]) => void }) {
+export function Template({ selectedUsers, template, setTemplate }: { selectedUsers: User[], template: User[], setTemplate: (value: User[]) => void }) {
 
     const [templateType, setTemplateType] = useState('none')
 
@@ -32,7 +32,17 @@ export function TemplateSetter({ selectedUsers, template, setTemplate }: { selec
 
     return (
         <div className='flex flex-row space-x-2'>
-            <Template template={template}/>
+            <List
+                header={<div>Order</div>}
+                rowKey='key'
+                bordered
+                dataSource={template.map((user, i) => {return { ...user, key : i}})}
+                renderItem={user => (
+                    <List.Item className=" h-20">
+                        {user.username}
+                    </List.Item>
+                )}
+            />
             <div className='flex flex-col space-y-2'>
                 <Switch className='border-4' checked={templateType=='slang'} onChange={onChangeSlang} checkedChildren="Slang" unCheckedChildren="None"/>
                 {
@@ -45,21 +55,3 @@ export function TemplateSetter({ selectedUsers, template, setTemplate }: { selec
         </div>
     );
 };
-
-
-
-export function Template({ template } : { template: User[] }){
-    return (
-        <List
-            header={<div>Order</div>}
-            rowKey='key'
-            bordered
-            dataSource={template.map((user, i) => {return { ...user, key : i}})}
-            renderItem={user => (
-                <List.Item className=" h-20">
-                    {user.username}
-                </List.Item>
-            )}
-        />
-    )
-}
