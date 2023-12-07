@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-key */
 'use client'
-import { List, Input, Button, Modal, Popover } from "antd";
+import { List, Input, Button, Modal, Popover, message } from "antd";
 import Cookies from 'js-cookie';
 import { useEffect, useRef, useState } from 'react';
 import { PlusCircleOutlined } from '@ant-design/icons';
@@ -79,11 +79,7 @@ export default function HomogenizeGame({ race, users, startRiders, template, act
 
 	
 	const checkGameContent = () => {
-		const missingTeams = teams.filter(team => team.riders.length < totalAmount)
-		if (missingTeams.length != 0) {
-			return <p>Missing riders for {prettyPrint(missingTeams.map(team => team.user.username))}</p>
-		}
-		addGame(race, teams, activeAmount).then(res => { return ( <p>{res}</p>) })
+		
 	}
 
 	function prettyPrint(arr : string[]){
@@ -93,8 +89,55 @@ export default function HomogenizeGame({ race, users, startRiders, template, act
 		return arr.slice(0, -1).join(", ") + " and " + arr.at(-1) + ".";
 	}
 
+
+    const [messageApi, contextHolder] = message.useMessage();
+    const key = 'updatable';
+    const handleAddGame = async () => {
+        const checkError = () => {
+            const missingTeams = teams.filter(team => team.riders.length < totalAmount)
+            if (missingTeams.length != 0) return `Missing riders for ${prettyPrint(missingTeams.map(team => team.user.username))}`
+        }
+        const error = checkError()
+        if (error) {
+            return messageApi.open({
+                type: 'error',
+                content: error,
+            });
+        }
+        messageApi.open({
+            key,
+            type: 'loading',
+            content: 'Loading...',
+        });
+        addGame(race, teams, activeAmount).then(added =>
+            added ?
+            messageApi.open({
+                key,
+                type: 'success',
+                content: 'Added Succesfully!',
+                duration: 1.5,
+            })
+            :
+            messageApi.open({
+                key,
+                type: 'warning',
+                content: 'Not Added!',
+                duration: 1.5,
+            })
+        ).catch(_ => 
+            messageApi.open({
+                key,
+                type: 'error',
+                content: 'Error!',
+                duration: 1.5,
+            })
+        )
+        
+    }
+
 	return (
 		<>
+            {contextHolder}
 			<div className='flex flex-row justify-between space-x-8 w-full h-full '>
 				<div className='flex space-x-4'>
 					{
@@ -125,9 +168,7 @@ export default function HomogenizeGame({ race, users, startRiders, template, act
 				<div className="flex space-x-4">
 					<div className=" space-y-3">
                         <div className="flex justify-between">
-                            <Popover content={checkGameContent} trigger="click">
-                                <Button type="primary">Start Game</Button>
-                            </Popover>
+                            <Button type="primary" onClick={handleAddGame}>Start Game</Button>
                             <Button type="link" onClick={() => undo()} >Undo</Button>
                         </div>
 						<Input placeholder="Filter Riders" value={filterRider} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilterRider(e.target.value)}/>
@@ -156,7 +197,7 @@ export default function HomogenizeGame({ race, users, startRiders, template, act
 
 
 const addGame = async (race: RaceInfo, teams: Team[], activeAmount: number): Promise<boolean> => {
-	const teamsUpdate = teams.map(team => { return { userId: team.user.id, riders: team.riders.map(rider => rider.rider_url) } })
+	const teamsUpdate = teams.map(team => { return { userId: team.user.id, riders: team.riders } })
 	const response = await fetch('/api/addGame', {
 		method: 'POST',
 		headers: {

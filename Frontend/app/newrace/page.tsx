@@ -1,15 +1,14 @@
 'use client'
 import { useAuthCheck } from '../_hooks/useAuthCheck';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { UsersProvider } from '../_contexts/usersContext';
 import HomogenizeGame from './_components/HomogenizeGame';
 import DisplayRaces from './_components/DisplayRaces';
 import DisplayUsers from './_components/DisplayUsers';
 import { Template } from './_components/Template';
-import { InputNumber, Button, Popover } from 'antd';
+import { InputNumber, Button, Popover, message } from 'antd';
 import { useAuth } from '../_contexts/authContext';
 import { User, Rider, RaceInfo } from '@/app/types'
-
 
 export default function Home() {
     const { requireAuth } = useAuthCheck();
@@ -26,16 +25,7 @@ export default function Home() {
 
     const [displayGame, setDisplayGame] = useState<boolean>(false)
 
-    const checkContinueContent = () => {
-        if (chosenRace == null) return <p>Pick a race first.</p>
-        if (chosenUsers.length == 0) return <p>Pick some users first.</p>
-        if (template.length == 0) return <p>Template??</p>
-        const missingChosenUsersInTemplate = chosenUsers.filter(user => !template.includes(user))
-        if (missingChosenUsersInTemplate.length != 0) return <p>Template missing {prettyPrint(missingChosenUsersInTemplate.map(user => user.username))}</p>
-        if (new Set(template.map(elem => template.filter(e => e === elem).length)).size != 1) return <p>Your template isn not good enough.</p>
-        if (chosenUsers.length * (activeAmount + reserveAmount) > startRiders.length) return <p>Too many riders per player.<br/>Only a individual amount of {Math.floor(startRiders.length / chosenUsers.length)} possible</p>
-        return <Button type='primary' onClick={confirmContinue}>Confirm</Button>
-    }
+    
 
     useEffect(() => {
         if (chosenRace) {
@@ -51,13 +41,32 @@ export default function Home() {
 	}
 
 
-    const [open, setOpen] = useState(false)
-    const confirmContinue = () => {
-        setOpen(false)
-        setDisplayGame(true)
-    }
-    const handleOpenChange = (newOpen: boolean) => {
-        setOpen(newOpen)
+    const [messageApi, contextHolder] = message.useMessage();
+    const handleContinue = async () => {
+        const checkError = () => {
+            if (chosenRace == null) return "Pick a race first."
+            if (chosenUsers.length == 0) return "Pick some users first."
+            if (template.length == 0) return "Template??"
+            const missingChosenUsersInTemplate = chosenUsers.filter(user => !template.includes(user))
+            if (missingChosenUsersInTemplate.length != 0) return `Template missing ${prettyPrint(missingChosenUsersInTemplate.map(user => user.username))}`
+            if (new Set(template.map(elem => template.filter(e => e === elem).length)).size != 1) return "Your template isn not good enough."
+            if (chosenUsers.length * (activeAmount + reserveAmount) > startRiders.length) return `Too many riders per player. Only ${Math.floor(startRiders.length / chosenUsers.length)} per player possible`
+        }
+        const error = checkError()
+        if (error) {
+            return messageApi.open({
+                type: 'error',
+                content: error,
+              });
+        }
+        messageApi.open({
+            type: 'success',
+            content: 'succes',
+            duration: 1,
+        });
+        setTimeout(() => {
+            setDisplayGame(true)
+        }, 1000);        
     }
     
     return (
@@ -67,6 +76,7 @@ export default function Home() {
         :
         <UsersProvider>
             <main className=" h-full mt-12 mx-auto max-w-7xl">
+                {contextHolder}
                 <div className='mx-6'>
                     {
                         !displayGame
@@ -84,16 +94,7 @@ export default function Home() {
                                     <label>Reserve:</label>
                                     <InputNumber min={0} value={reserveAmount} onChange={(e) => setReserveAmount(e!)} />
                                 </div>
-                                <div>
-                                    <Popover
-                                        content={checkContinueContent}
-                                        trigger="click"
-                                        open={open}
-                                        onOpenChange={handleOpenChange}
-                                    >
-                                        <Button type="primary">Continue</Button>
-                                    </Popover>
-                                </div>
+                                <Button type="primary" onClick={handleContinue}>Continue</Button>
                             </div>
                         </div>
                         :
