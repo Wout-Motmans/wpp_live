@@ -66,38 +66,40 @@ export default function Home() {
         <h1>LOADING</h1>
         :
         <UsersProvider>
-            <main className="flex items-center justify-around min-h-full pt-8 mx-2 w-full lg:mx-auto">
-                {
-                    !displayGame
-                    ?
-                    <div className='flex justify-between space-x-20'>
-                        <DisplayRaces setChosenRace={setChosenRace} />
-                        <div className='flex child:flex-1'>
-                            <DisplayUsers setChosenUsers={setChosenUsers} />
-                            <Template selectedUsers={chosenUsers} template={template} setTemplate={setTemplate} />
-                        </div>
-                        <div className='flex flex-col space-y-8'>
-                            <div className='flex flex-col'>
-                                <label>Riders:</label>
-                                <InputNumber min={1} value={activeAmount} onChange={(e) => setActiveAmount(e!)} />
-                                <label>Reserve:</label>
-                                <InputNumber min={0} value={reserveAmount} onChange={(e) => setReserveAmount(e!)} />
+            <main className=" h-full mt-12 mx-auto max-w-7xl">
+                <div className='mx-6'>
+                    {
+                        !displayGame
+                        ?
+                        <div className='flex w-full mx-auto justify-between space-x-20'>
+                            <DisplayRaces setChosenRace={setChosenRace} />
+                            <div className='flex child:flex-1'>
+                                <DisplayUsers setChosenUsers={setChosenUsers} />
+                                <Template selectedUsers={chosenUsers} template={template} setTemplate={setTemplate} />
                             </div>
-                            <div>
-                                <Popover
-                                    content={checkContinueContent}
-                                    trigger="click"
-                                    open={open}
-                                    onOpenChange={handleOpenChange}
-                                >
-                                    <Button type="primary">Continue</Button>
-                                </Popover>
+                            <div className='flex flex-col space-y-8'>
+                                <div className='flex flex-col'>
+                                    <label>Riders:</label>
+                                    <InputNumber min={1} value={activeAmount} onChange={(e) => setActiveAmount(e!)} />
+                                    <label>Reserve:</label>
+                                    <InputNumber min={0} value={reserveAmount} onChange={(e) => setReserveAmount(e!)} />
+                                </div>
+                                <div>
+                                    <Popover
+                                        content={checkContinueContent}
+                                        trigger="click"
+                                        open={open}
+                                        onOpenChange={handleOpenChange}
+                                    >
+                                        <Button type="primary">Continue</Button>
+                                    </Popover>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    :
-                    <HomogenizeGame race={chosenRace!} startRiders={startRiders} users={chosenUsers}  template={template} activeAmount={activeAmount} totalAmount={activeAmount + reserveAmount}/>
-                }
+                        :
+                        <HomogenizeGame race={chosenRace!} startRiders={startRiders} users={chosenUsers}  template={template} activeAmount={activeAmount} totalAmount={activeAmount + reserveAmount}/>
+                    }
+                </div>
             </main>
         </UsersProvider>
     )

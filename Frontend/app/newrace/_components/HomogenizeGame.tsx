@@ -95,14 +95,14 @@ export default function HomogenizeGame({ race, users, startRiders, template, act
 
 	return (
 		<>
-			<div className='flex flex-row justify-evenly space-x-8 w-full'>
+			<div className='flex flex-row justify-between space-x-8 w-full h-full '>
 				<div className='flex space-x-4'>
 					{
 						users.map(user =>
 							<List
-								className={user === chosingTemplateUser() && changeRider === null ? " bg-green-100" : ""}
+								className={` flex-1 flex-grow h-fit ${user === chosingTemplateUser() && changeRider === null ? " bg-green-100" : ""}`}
 								key={user.id}
-								header={<div className="">{user.username}</div>}
+								header={<div className=" font-bold">{user.username}</div>}
 								bordered
 								dataSource={teams.find(team => team.user === user)!.riders}
 								renderItem={(rider, i) => (
@@ -124,27 +124,27 @@ export default function HomogenizeGame({ race, users, startRiders, template, act
 				</div>
 				<div className="flex space-x-4">
 					<div className=" space-y-3">
-						<Input placeholder="Filter Riders" value={filterRider} onChange={(e) => setFilterRider(e.target.value)}/>
-						<List
-							bordered
-							dataSource={riders.sort((a, b) => a.rider_name.localeCompare(b.rider_name)).filter(rider => new RegExp(filterRider, 'i').test(rider.rider_name))}
-							className=" overflow-auto h-96"
-							renderItem={rider => (
-								<List.Item className=" justify-between ">
-									<div className="flex flex-col">
-										<div className=" text-base">{rider.rider_name}</div>
-										<div className=" text-xs text-gray-400">{rider.team_name}</div>
-									</div>
-									<PlusCircleOutlined onClick={() => chooseRider(rider)} />
-								</List.Item>
-							)}
-						/>
-					</div>
-					<div className="flex flex-col space-y-2">
-						<Popover content={checkGameContent} trigger="click">
-							<Button type="primary">Start Game</Button>
-						</Popover>
-						<Button type="link" onClick={() => undo()} >Undo</Button>
+                        <div className="flex justify-between">
+                            <Popover content={checkGameContent} trigger="click">
+                                <Button type="primary">Start Game</Button>
+                            </Popover>
+                            <Button type="link" onClick={() => undo()} >Undo</Button>
+                        </div>
+						<Input placeholder="Filter Riders" value={filterRider} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilterRider(e.target.value)}/>
+                        <List
+                            bordered
+                            dataSource={riders.sort((a, b) => a.rider_name.localeCompare(b.rider_name)).filter(rider => new RegExp(filterRider, 'i').test(rider.rider_name))}
+                            className=" overflow-auto h-2/5 "
+                            renderItem={rider => (
+                                <List.Item className=" justify-between ">
+                                    <div className="flex flex-col">
+                                        <div className=" text-base">{rider.rider_name}</div>
+                                        <div className=" text-xs text-gray-400">{rider.team_name}</div>
+                                    </div>
+                                    <PlusCircleOutlined onClick={() => chooseRider(rider)} />
+                                </List.Item>
+                            )}
+                        />
 					</div>
 				</div>
 			</div>

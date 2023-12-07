@@ -36,9 +36,10 @@ export function Template({ selectedUsers, template, setTemplate }: { selectedUse
                 header={<div>Order</div>}
                 rowKey='key'
                 bordered
+                className=' h-fit'
                 dataSource={template.map((user, i) => {return { ...user, key : i}})}
                 renderItem={user => (
-                    <List.Item className=" h-20">
+                    <List.Item className=" h-12">
                         {user.username}
                     </List.Item>
                 )}
