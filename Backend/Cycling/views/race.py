@@ -136,7 +136,7 @@ def add_game(request):
                     Rider.objects.create(url=rider.get('rider_url'), full_name= rider.get('rider_name'),real_team=rider.get('team_url'))
                 rider = Rider.objects.get(url=rider.get('rider_url'))
                 RiderGameTeam.objects.create(game_team=gameteam, rider=rider, status='active' if activeAmount > i else 'sub')
-        return Response(status=status.HTTP_200_OK)
+        return Response(data={'added': True}, status=status.HTTP_200_OK)
     return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
