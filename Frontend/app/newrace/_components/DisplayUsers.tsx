@@ -13,11 +13,8 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import React, { useEffect, useState } from 'react';
 import type { ColumnsType } from 'antd/es/table';
+import { User } from '@/app/types'
 
-type User = {
-	key : number,
-	username : string
-}
 const columns: ColumnsType<User>  = [
 	{
 		title: 'User',
@@ -50,7 +47,7 @@ export default function DisplayUsers({ setChosenUsers } : { setChosenUsers : (va
 	const [selectedUsers, setSelectedUsers] = useState<User[]>([])
 
 	useEffect(() => {
-		setDataSource(users.sort((a, b) => a.id - b.id).map(user => {return {key: user.id, username: user.username}}))
+		setDataSource(users.sort((a, b) => a.id - b.id).map((user, i) => {return {key : i, ...user}}))
 	}, [users])
 
 	const sensors = useSensors(
@@ -69,8 +66,8 @@ export default function DisplayUsers({ setChosenUsers } : { setChosenUsers : (va
 	const onDragEnd = ({ active, over }: DragEndEvent) => {
 		if (active.id !== over?.id) {
 		  	setDataSource((prev) => {
-				const activeIndex = prev.findIndex((i) => i.key === active.id);
-				const overIndex = prev.findIndex((i) => i.key === over?.id);
+				const activeIndex = prev.findIndex((i) => i.id === active.id);
+				const overIndex = prev.findIndex((i) => i.id === over?.id);
 				return arrayMove(prev, activeIndex, overIndex);
 		  	});
 		}
@@ -81,7 +78,7 @@ export default function DisplayUsers({ setChosenUsers } : { setChosenUsers : (va
 		<DndContext sensors={sensors} modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
       		<SortableContext
         		// rowKey array
-        		items={dataSource.map((i) => i.key)}
+        		items={dataSource.map((i) => i.id)}
         		strategy={verticalListSortingStrategy}
       		>
 				<Table
