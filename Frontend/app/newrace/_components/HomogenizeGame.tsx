@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-key */
 'use client'
-import { List, Input, Button } from "antd";
+import { List, Input, Button, Modal, Popover, message } from "antd";
 import Cookies from 'js-cookie';
 import { useEffect, useRef, useState } from 'react';
 import { PlusCircleOutlined } from '@ant-design/icons';
@@ -14,16 +14,11 @@ interface UndoInfo {
 	riders: Rider[],
 }
 
-export default function HomogenizeGame({ race, users, riders : inputRiders, template, activeAmount, totalAmount }: { race: RaceInfo, users: User[], riders: Rider[], template : User[], activeAmount : number, totalAmount : number }) {
+export default function HomogenizeGame({ race, users, startRiders, template, activeAmount, totalAmount }: { race: RaceInfo, users: User[], startRiders: Rider[], template : User[], activeAmount : number, totalAmount : number }) {
 	const [teams, setTeams] = useState<Team[]>(users.map(user => { return { user, riders: [] } }))
 	const [filterRider, setFilterRider] = useState<string>('')
 	const [changeRider, setChangeRider] = useState<Rider|null>(null)
-	const [riders, setRiders] = useState<Rider[]>(inputRiders)
-
-	const handleAddGame = async () => {
-		if (teams.some(team => team.riders.length < totalAmount)) return
-		addGame(race, teams, activeAmount)
-	}
+	const [riders, setRiders] = useState<Rider[]>(startRiders)
 
 	const fullTemplate: User[] = fullTemplateMaker(template, users, totalAmount)
 	const [chosingIndex, setChosingIndex] = useState<number>(0)
@@ -82,16 +77,75 @@ export default function HomogenizeGame({ race, users, riders : inputRiders, temp
 
 	useEffect(() => {setFilterRider('')}, [teams])
 
+	
+	const checkGameContent = () => {
+		
+	}
+
+	function prettyPrint(arr : string[]){
+		if (arr.length <= 1) {
+			return arr[0] + ".";
+		}
+		return arr.slice(0, -1).join(", ") + " and " + arr.at(-1) + ".";
+	}
+
+
+    const [messageApi, contextHolder] = message.useMessage();
+    const key = 'updatable';
+    const handleAddGame = async () => {
+        const checkError = () => {
+            const missingTeams = teams.filter(team => team.riders.length < totalAmount)
+            if (missingTeams.length != 0) return `Missing riders for ${prettyPrint(missingTeams.map(team => team.user.username))}`
+        }
+        const error = checkError()
+        if (error) {
+            return messageApi.open({
+                type: 'error',
+                content: error,
+            });
+        }
+        messageApi.open({
+            key,
+            type: 'loading',
+            content: 'Loading...',
+        });
+        addGame(race, teams, activeAmount).then(added =>
+            added ?
+            messageApi.open({
+                key,
+                type: 'success',
+                content: 'Added Succesfully!',
+                duration: 1.5,
+            })
+            :
+            messageApi.open({
+                key,
+                type: 'warning',
+                content: 'Not Added!',
+                duration: 1.5,
+            })
+        ).catch(_ => 
+            messageApi.open({
+                key,
+                type: 'error',
+                content: 'Error!',
+                duration: 1.5,
+            })
+        )
+        
+    }
+
 	return (
 		<>
-			<div className='flex flex-row justify-between space-x-8 w-full'>
+            {contextHolder}
+			<div className='flex flex-row justify-between space-x-8 w-full h-full '>
 				<div className='flex space-x-4'>
 					{
 						users.map(user =>
 							<List
-								className={user === chosingTemplateUser() && changeRider === null ? " bg-green-100" : ""}
+								className={` flex-1 flex-grow h-fit ${user === chosingTemplateUser() && changeRider === null ? " bg-green-100" : ""}`}
 								key={user.id}
-								header={<div className="">{user.username}</div>}
+								header={<div className=" font-bold">{user.username}</div>}
 								bordered
 								dataSource={teams.find(team => team.user === user)!.riders}
 								renderItem={(rider, i) => (
@@ -112,25 +166,26 @@ export default function HomogenizeGame({ race, users, riders : inputRiders, temp
 					}
 				</div>
 				<div className="flex space-x-4">
-					{
-						<List
-							header={<Input placeholder="Filter Riders" value={filterRider} onChange={(e) => setFilterRider(e.target.value)}/>}
-							bordered
-							dataSource={riders.sort((a, b) => a.rider_name.localeCompare(b.rider_name)).filter(rider => new RegExp(filterRider, 'i').test(rider.rider_name))}
-							renderItem={rider => (
-								<List.Item className=" justify-between ">
-									<div className="flex flex-col">
-										<div className=" text-base">{rider.rider_name}</div>
-										<div className=" text-xs text-gray-400">{rider.team_name}</div>
-									</div>
-									<PlusCircleOutlined onClick={() => chooseRider(rider)} />
-								</List.Item>
-							)}
-						/>
-					}
-					<div className="flex flex-col space-y-2">
-						<Button type="primary" onClick={handleAddGame}>Start Game</Button>
-						<Button type="link" onClick={() => undo()} >Undo</Button>
+					<div className=" space-y-3">
+                        <div className="flex justify-between">
+                            <Button type="primary" onClick={handleAddGame}>Start Game</Button>
+                            <Button type="link" onClick={() => undo()} >Undo</Button>
+                        </div>
+						<Input placeholder="Filter Riders" value={filterRider} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilterRider(e.target.value)}/>
+                        <List
+                            bordered
+                            dataSource={riders.sort((a, b) => a.rider_name.localeCompare(b.rider_name)).filter(rider => new RegExp(filterRider, 'i').test(rider.rider_name))}
+                            className=" overflow-auto h-2/5 "
+                            renderItem={rider => (
+                                <List.Item className=" justify-between ">
+                                    <div className="flex flex-col">
+                                        <div className=" text-base">{rider.rider_name}</div>
+                                        <div className=" text-xs text-gray-400">{rider.team_name}</div>
+                                    </div>
+                                    <PlusCircleOutlined onClick={() => chooseRider(rider)} />
+                                </List.Item>
+                            )}
+                        />
 					</div>
 				</div>
 			</div>
@@ -141,9 +196,9 @@ export default function HomogenizeGame({ race, users, riders : inputRiders, temp
 
 
 
-const addGame = async (race: RaceInfo, teams: Team[], activeAmount: number) => {
-	const teamsUpdate = teams.map(team => { return { userId: team.user.id, riders: team.riders.map(rider => rider.rider_url) } })
-	fetch('/api/addGame', {
+const addGame = async (race: RaceInfo, teams: Team[], activeAmount: number): Promise<boolean> => {
+	const teamsUpdate = teams.map(team => { return { userId: team.user.id, riders: team.riders } })
+	const response = await fetch('/api/addGame', {
 		method: 'POST',
 		headers: {
 			'X-CSRFToken': Cookies.get('csrftoken')!,
@@ -151,9 +206,9 @@ const addGame = async (race: RaceInfo, teams: Team[], activeAmount: number) => {
 		},
 		body: JSON.stringify({ raceId : race.id, teams: teamsUpdate, activeAmount })
 	})
-		.catch(error => {
-			console.error('Add game error:', error);
-		});
+	if (!response.ok) throw new Error("add game error")
+	const { added } : { added: boolean } = await response.json()
+	return added
 }
 
 
@@ -169,27 +224,3 @@ const fullTemplateMaker = (template: User[], users: User[], amount: number) => {
 	}
 	return fullTemplate;
 }
-	 
-	 
-
-
-//setTeams(prev => prev.map(team => {
-//	if (changeRider !== null) {
-//		if (team.riders.includes(changeRider)) {
-//			const givenRiderIndex = riders.findIndex(rider => rider === givenRider)
-//			setRiders(prev => [...prev.slice(0, givenRiderIndex), changeRider, ...prev.slice(givenRiderIndex+1)])
-//			setChangeRider(null)
-//			const changeRiderIndex = team.riders.findIndex(rider => rider === changeRider)
-//			return {...team, riders : [...team.riders.slice(0, changeRiderIndex), givenRider, ...team.riders.slice(changeRiderIndex+1)]}
-//		};
-//	} else {
-//		console.log(team.user, chosingTemplateUser())
-//		if (team.user === chosingTemplateUser() ) {
-//			const riderIndex = riders.findIndex(rider => rider === givenRider)
-//			setRiders(prev => [ ...prev.slice(0, riderIndex), ...prev.slice(riderIndex+1)])
-//			setChosingIndex(p => p + 1)
-//			return {...team, riders : [...team.riders, givenRider]}
-//		}
-//	}
-//	return team
-//}));

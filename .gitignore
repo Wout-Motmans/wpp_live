@@ -5,3 +5,5 @@ Backend/Cycling/**/__pycache__/
 Backend/Cycling/database_config.py
 **.env
 **.venv
+
+**/migrations/**

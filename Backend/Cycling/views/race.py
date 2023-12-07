@@ -121,34 +121,23 @@ def get_start_riders(request):
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def add_game(request):
-	if request.user.is_staff:
-		data = request.data
-		race = data.get('race')
-		activeAmount = data.get('activeAmount')
-		teams = data.get('teams')
-		# Save the tour if not already there
-		if not Tour.objects.filter(url=race).exists():
-			tour = Tour(url=race)
-			tour.save()
-		# Get tour object
-		tour = Tour.objects.get(url=race)
-
-		for team in teams:
-			user = User.objects.get(id=team.get('user'))
-			user_team = Team(team_name=f"{user}s team", tour=tour, user=user)
-			user_team.save()
-			for i, rider in enumerate(team.get('riders')):
-				if not Rider.objects.filter(url=rider).exists():
-					renner = Renner(url=rider)
-					renner.save()
-				renner = Renner.objects.get(url=rider)
-				if i < activeAmount:
-					user_team.renners.add(renner)
-				else:
-					user_team.reserves.add(renner)
-			user_team.save()
-		return Response(status=status.HTTP_200_OK)
-	return Response(status=status.HTTP_401_UNAUTHORIZED)
+    if request.user.is_staff:
+        data = request.data
+        tourId = data.get('raceId')
+        activeAmount = data.get('activeAmount')
+        teams = data.get('teams')
+        tour = Tour.objects.get(id=tourId)
+        game = Game.objects.create(tour=tour)
+        for team in teams:
+            user = User.objects.get(id=team.get('userId'))
+            gameteam = GameTeam.objects.create(auth_user=user, game=game)
+            for i, rider in enumerate(team.get('riders')):
+                if not Rider.objects.filter(url=rider.get('rider_url')).exists():
+                    Rider.objects.create(url=rider.get('rider_url'), full_name= rider.get('rider_name'),real_team=rider.get('team_url'))
+                rider = Rider.objects.get(url=rider.get('rider_url'))
+                RiderGameTeam.objects.create(game_team=gameteam, rider=rider, status='active' if activeAmount > i else 'sub')
+        return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 
