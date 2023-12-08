@@ -143,12 +143,12 @@ function RaceInfoPage() {
   const [raceInfo, setRaceInfo] = useState<RaceInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedStage, setSelectedStage] = useState<StageInfo | { stage_name: string; stage_url: string; rider_name: string } | null>(null);
-  const [stageInfo, setStageInfo] = useState(null);
+  const [stageInfo, setStageInfo] = useState<StageInfo | null>(null);
   const [nameSuggestions, setNameSuggestions] = useState<string[]>([]);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState<number>(-1);
   const [showStageInfo, setShowStageInfo] = useState(false);
 
-  const handleShowStageInfo = (stage: React.SetStateAction<StageInfo | null>) => {
+  const handleShowStageInfo = (stage: StageInfo | { stage_name: string; stage_url: string; rider_name: string } | null) => {
     if (selectedStage === stage && showStageInfo) {
       // Start the closing animation
       setShowStageInfo(false);
@@ -189,9 +189,9 @@ function RaceInfoPage() {
   };
 
 
-  const fetchStageInfo = (stage: React.SetStateAction<StageInfo | null>) => {
+  const fetchStageInfo = (stage: StageInfo | { stage_name: string; stage_url: string; rider_name: string } | null) => {
     const stageUrl = (stage as StageInfo)?.stage_url;
-
+  
     axios.get(`api/getstageinfo?stage_name=${stageUrl}`)
       .then((response) => {
         setStageInfo(response.data);
@@ -205,6 +205,7 @@ function RaceInfoPage() {
         setRaceInfo(null);
       });
   };
+  
 
 
   const handleRaceYearChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -530,7 +531,6 @@ function RaceInfoPage() {
                       {selectedStage === stage && showStageInfo && stageInfo && (
                         <div className={`mt-4 p-4 bg-gray-800 rounded-md border border-gray-700 slide-down`}>
                           <p className="text-lg text-white">Stage Info:</p>
-                          <p className="text-md text-white">Name: {stageInfo.name.split('/').pop().split('-').map((part: string, index: number) => index === 0 ? `${part.charAt(0).toUpperCase() + part.slice(1)}` : part).join(' ')}</p>
                           <p className="text-md text-white">Date: {stageInfo.date}</p>
                           <p className="text-md text-white">Distance: {stageInfo.distance}</p>
                           <p className="text-md text-white">Stage Type: {stageInfo.stage_type}</p>
