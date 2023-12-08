@@ -42,8 +42,9 @@ export default function DisplayRaces({ setChosenRace } : { setChosenRace : (valu
         <div className='flex flex-col space-y-2'>
             <CustomTour/>
             <Search placeholder='add tour' onSearch={onSearch} enterButton loading={searchLoading}/>
+
             <Table
-				rowKey="id"
+				        rowKey="id"
                 columns={columns}
                 bordered
                 dataSource={races}
