@@ -18,6 +18,8 @@ class Stage(models.Model):
         ],
         default='non_defined'
     )
+    depart = models.CharField(max_length=255)
+    arrival = models.CharField(max_length=255)
 
 class Tour(models.Model):
     id = models.AutoField(primary_key=True)
