@@ -63,7 +63,6 @@ def get_future_tours(request):
 			return Response(status=status.HTTP_200_OK, data=data)
 		return Response(status=status.HTTP_401_UNAUTHORIZED)
 	except Exception as e:
-		print(e)
 		return Response({'error': str(e)}, status=400)
 
 @api_view(['GET'])
@@ -86,7 +85,6 @@ def get_future_klassiekers(request):
 			return Response(status=status.HTTP_200_OK, data=data)
 		return Response(status=status.HTTP_401_UNAUTHORIZED)
 	except Exception as e:
-		print(e)
 		return Response({'error': str(e)}, status=400)
 
 @api_view(['GET'])
@@ -213,8 +211,6 @@ def get_stage_info(request):
     stage_name = request.GET.get('stage_name')
     try:
         stage = Stageapi(stage_name)
-        print(stage.parse())
-        print(stage)
         date = stage.date()
         distance = stage.distance()
         stage_type = stage.stage_type()
@@ -237,7 +233,7 @@ def calculate_score_per_renner_per_stage(request):
 	if not stage_name:
 		return Response({'error': 'invalid stage data'}, status=400)
 
-	stage = Stage(stage_name)
+	stage = Stageapi(stage_name)
 	
 	try: 
 		gc = stage.gc()[0]['rider_name']
