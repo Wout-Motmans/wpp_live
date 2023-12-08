@@ -17,6 +17,19 @@ interface Rider {
     Reserved: boolean
 }
 
+type PlayerData = {
+    Position: number;
+    Naam: string;
+    Team: string;
+    Points: number;
+    Jersey: number;
+    Total: number;
+    Player: string;
+    Reserved: boolean;
+};
+
+
+
 interface RiderData {
     naam: string;
     total: number;
@@ -25,9 +38,13 @@ interface RiderData {
     player: string;
 }
 
+interface Stages {
+    [key: string]: PlayerData[];
+}
+
 function Dashboard() {
     const { requireAuth } = useAuthCheck();
-	const { isLoggedIn } = useAuth();
+    const { isLoggedIn } = useAuth();
     requireAuth();
     const router = useRouter();
 
@@ -207,20 +224,16 @@ function Dashboard() {
         return 'redarrow.png';
     }
 
-    function getTotalForPlayer(stage2: string, playerName: string) {
 
+    function getTotalForPlayer(stage2: number, playerName: string) {
         let total2 = 0;
-
-        stages[stage2].forEach((player: { player: string; Total: number; }) => {
-            if (player.player === playerName) {
-
-
+    
+        stages[stage2].forEach((player: PlayerData) => {
+            if (player.Player === playerName) {
                 total2 += player.Total;
-
             }
         });
-
-
+    
         return total2;
     }
 
@@ -247,25 +260,25 @@ function Dashboard() {
         }
     };
     // Loop through each stage from 1 to the current stage
-    for (let stage = 1; stage <= parseInt(displayedStage); stage++) {
-        // Calculate the total points for each player in the current stage
-        let stagePoints = stages[stage].reduce((points, rider) => {
-            points[rider.Player] = (points[rider.Player] || 0) + rider.Total;
-            return points;
-        }, {});
-
-        // Add the stage points to the total points for each player
-        for (let player in stagePoints) {
-            playerPoints[player] += stagePoints[player];
+    for (let stage = 1; stage <= parseInt(displayedStage, 10); stage++) {
+        // Check if stages[stage] exists
+        if (stages[stage]) {
+            // Calculate the total points for each player in the current stage
+            let stagePoints = stages[stage].reduce((points, rider) => {
+                points[rider.Player] = (points[rider.Player] || 0) + rider.Total;
+                return points;
+            }, {} as { [key: string]: number });  // Provide a type for 'points'
+    
+            // Add the stage points to the total points for each player
+            for (let player in stagePoints) {
+                if (Object.prototype.hasOwnProperty.call(stagePoints, player)) {
+                    playerPoints[player] = (playerPoints[player] || 0) + stagePoints[player];
+                }
+            }
         }
     }
+    
 
-    function getPlayerDifference(playerName: string): number {
-        const stage1Total = getTotalForPlayer(stages['1'], playerName);
-        const stage2Total = getTotalForPlayer(stages['2'], playerName);
-        console.log(stage1Total, stage2Total)
-        return stage2Total - stage1Total;
-    }
 
 
     function convert(arr: RiderData[]) {
@@ -308,271 +321,178 @@ function Dashboard() {
 
     return (
         !isLoggedIn
-        ?
-        <h1>LOADING</h1>
-        :
-        <div className="grid grid-cols-3 gap-4 h-screen px-10 pt-5">
-            {isSwitchOn ?
-                <div className="col-span-2 bg-white p-4 flex flex-col">
-                    {/* Content for left panel */}
-                    {/* ... */}
-                    <div className="flex items-baseline">
-                        <div className="text-2xl font-bold mb-4">{currentRace} {currentYear}</div>
-                        <div className="flex items-center ml-2">
-                            <div className="w-3 h-3 bg-green-500 rounded-full mr-1 animate-pulse"></div> {/* Green Dot */}
-                            <div className="text-green-500 font-bold">Live</div>
-                        </div>
-                    </div>
-
-                    <Carousel afterChange={e => { setPrevSortedPlayers(sortedPlayers), setCurrentStage(e) }} className="bg-orange-200" arrows={true} prevArrow={<LeftCircleOutlined />} nextArrow={<RightCircleOutlined />} waitForAnimate={true} easing="easeIn" speed={1000} style={{}}>
-                        {stages.map((stage, index) => (<>
-
-                            <div className="flex justify-between text-lg font-bold mb-4 pt-8 pr-8 pl-8">
-                                <div>Stage:{index + 1}</div>
-                                <div>Total Points: {sortedCumPointsPerStage.filter(rider => !rider.reserved).reduce((sum, rider) => sum + rider.points, 0)}
-                                </div>
-                            </div>
-                            <div className="text-lg font-bold mb-4 text-center pt-5">My Team</div>
-                            <div className="flex flex-col items-center pt-10">
-                                {/* Player with the most points (Top Player) */}
-                                {stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0] && (
-                                    <div className="relative mb-4 text-lg">
-                                        <img src="/img/crown.png" alt="Crown" className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-8 h-8" />
-                                        <img src="/img/yellow_jersey.png" alt="Rider Shirt" className="relative left-1/2 transform -translate-x-1/2 w-20 h-20" />
-                                        <div className="mt-2 font-bold">{(cumPoints) ? topPlayerCum.name : stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0].Naam}</div>
-                                        <div style={{ fontSize: '0.85em' }}>({(cumPoints) ? topPlayerCum.team : stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0].Team})</div>
-                                        <div className="italic font-semibold">{(cumPoints) ? topPlayerCum.points : stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0].Total} Points</div>
-                                    </div>
-                                )}
-                                {/* Other Players */}
-                                <div className="flex flex-wrap justify-center pb-8 text-lg font-semibold" style={{ maxWidth: '55rem' }}>
-                                    {stage
-                                        .filter(rider => rider.Player === selectedPlayer)
-                                        .sort((a, b) => b.Total - a.Total)
-                                        .slice(1)
-                                        .map((player, index) => (
-                                            <div
-                                                key={index}
-                                                className={`mx-2 my-2 text-center flex-1 p-4 ${sortedCumPointsPerStageWithoutTop[index].reserved ? 'opacity-50' : ''
-                                                    }`}
-                                            >
-                                                {sortedCumPointsPerStageWithoutTop[index].reserved ?
-                                                    <img src="/img/sub_shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
-                                                    :
-                                                    <img src="/img/rider-shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />}
-                                                <div className="mt-2">{sortedCumPointsPerStageWithoutTop[index].name}</div>
-                                                <div style={{ fontSize: '0.7em' }}>({sortedCumPointsPerStageWithoutTop[index].team})</div>
-                                                <div className='italic'>{sortedCumPointsPerStageWithoutTop[index].points} Points</div>
-                                            </div>
-                                        ))}
-                                </div>
-
-
-                            </div>
-
-                            <Switch
-                                checked={isSwitchOn}
-                                onChange={handleSwitchChange}
-                                checkedChildren="cumulative points"
-                                unCheckedChildren="stage points"
-                                className='bottom-0 absolute bg-black'
-                            />
-                        </>
-                        ))}
-
-                    </Carousel>
-                </div>
-
-
-                :
-
-                <div className="col-span-2 bg-white p-4 flex flex-col">
-                    {/* Content for left panel */}
-                    {/* ... */}
-                    <div className="flex items-baseline">
-                        <div className="text-2xl font-bold mb-4">{currentRace} {currentYear}</div>
-                        <div className="flex items-center ml-2">
-                            <div className="w-3 h-3 bg-green-500 rounded-full mr-1 animate-pulse"></div> {/* Green Dot */}
-                            <div className="text-green-500 font-bold">Live</div>
-                        </div>
-                    </div>
-
-
-
-                    <Carousel afterChange={e => setCurrentStage(e)} className="bg-orange-200" arrows={true} prevArrow={<LeftCircleOutlined />} nextArrow={<RightCircleOutlined />} waitForAnimate={true} easing="easeIn" speed={1000} style={{}}>
-                        {stages.map((stage, index) => (<>
-
-                            <div className="flex justify-between text-lg font-bold mb-4 pt-8 pr-8 pl-8">
-                                <div>Stage:{index + 1}</div>
-                                <div>Total Points: {(cumPoints) ? sortedCumPointsPerStage.reduce((sum, rider) => sum + rider.points, 0) : stage.filter(rider => rider.Player === selectedPlayer).filter(rider => !rider.Reserved).reduce((total, player) => total + player.Total, 0)}
-                                </div>
-                            </div>
-                            <div className="text-lg font-bold mb-4 text-center pt-5">{selectedPlayer}</div>
-                            <div className="flex flex-col items-center pt-10">
-                                {/* Player with the most points (Top Player) */}
-                                {stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0] && (
-                                    <div className="relative mb-4 text-lg">
-                                        <img src="/img/crown.png" alt="Crown" className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-8 h-8" />
-                                        <img src="/img/yellow_jersey.png" alt="Rider Shirt" className="relative left-1/2 transform -translate-x-1/2 w-20 h-20" />
-                                        <div className="mt-2 font-bold">{(cumPoints) ? topPlayerCum.name : stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0].Naam}</div>
-                                        <div style={{ fontSize: '0.85em' }}>({(cumPoints) ? topPlayerCum.team : stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0].Team})</div>
-                                        <div className="italic font-semibold">{(cumPoints) ? topPlayerCum.points : stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0].Total} Points</div>
-                                    </div>
-                                )}
-                                {/* Other Players */}
-                                <div className="flex flex-wrap justify-center pb-8 text-lg font-semibold" style={{ maxWidth: '55rem' }}>
-                                    {stage.filter(rider => rider.Player === selectedPlayer).filter(rider => rider.Reserved === false).sort((a, b) => b.Total - a.Total).slice(1).map((player, index) => (
-                                        <div key={index} className="mx-2 my-2 text-center flex-1 p-4">
-                                            <img src="/img/rider-shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
-                                            <div className="mt-2">{(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].name : player.Naam}</div>
-                                            <div style={{ fontSize: '0.7em' }}>({(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].team : player.Team})</div>
-                                            <div className=' italic '>{(cumPoints) ? sortedCumPointsPerStage[index].points : player.Total} Points</div>
-                                        </div>
-                                    ))}
-                                </div>
-                                {/* Reserved */}
-                                <div className="flex flex-wrap justify-center pb-8 text-lg font-semibold" style={{ maxWidth: '55rem' }}>
-                                    {stage.filter(rider => rider.Player === selectedPlayer).filter(rider => rider.Reserved === true).map((player, index) => (
-                                        <div key={index} className="mx-2 my-2 text-center flex-1 p-4 opacity-50">
-                                            <img src="/img/sub_shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
-                                            <div className="mt-2">{(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].name : player.Naam}</div>
-                                            <div style={{ fontSize: '0.7em' }}>({(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].team : player.Team})</div>
-                                            <div className=' italic '>{(cumPoints) ? 0 : 0} Points</div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <Switch
-                                checked={isSwitchOn}
-                                onChange={handleSwitchChange}
-                                checkedChildren="cumulative points"
-                                unCheckedChildren="stage points"
-                                className='bottom-0 absolute bg-black'
-                            />
-                        </>
-                        ))}
-
-                    </Carousel>
-
-                </div>}
-            {/* Left Panel */}
-
-
-            {/* Right Panels */}
-            <div className="col-span-1 grid grid-cols-1 gap-4">
-
-
-                {/* Top Right Panel */}
-                <div className="white p-4">
-                    {/* Content for bottom right panel */}
-                    {/* ... */}
-                    <div className="text-2xl font-bold mb-4">Overall Leaderboard</div>
-                    <table className="min-w-full table-fixed">
-                        <thead>
-                            <tr className="bg-[#1e1e24] text-white">
-                                <th className="py-2 px-4 w-3/12">Ranking</th>
-                                <th className="py-2 px-4 w-6/12">Name</th>
-                                <th className="py-2 px-4 w-3/12">Points</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                            {totalSortedPlayers.map((player, index) => (
-                                <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}
-                                    onMouseEnter={() => handlePlayerHover(player.name)}
-                                    onMouseLeave={() => handlePlayerHover(null)}
-                                    onClick={() => handlePlayerClick(player.name)}
-                                    style={{ transition: 'ease-in-out 0.1s', cursor: 'pointer', backgroundColor: hoveredPlayer === player.name ? '#e9dbff' : '' }}>
-                                    <td className="py-2 px-4 whitespace-nowrap">
-                                        {index < 3 ? (
-                                            <>
-                                                {index === 0 && <img src="/img/medal-1.png" alt="Gold Medal" className="w-6 h-9 mr-2" />}
-                                                {index === 1 && <img src="/img/medal-2.png" alt="Silver Medal" className="w-6 h-9 mr-2" />}
-                                                {index === 2 && <img src="/img/medal-3.png" alt="Bronze Medal" className="w-6 h-9 mr-2" />}
-                                            </>
-                                        ) : (
-                                            index + 1
-
-                                        )}
-                                    </td>
-                                    <td className="py-2 px-4">{player.name}</td>
-                                    <td className="py-2 px-4">{player.points}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-
-
-                <a href='/stage-overview' ><Button type="primary" shape="round" className=' bg-black'>View all stages</Button></a>
-
-
-                {/* Bottom Right Panel (Leaderboard) */}
+            ?
+            <h1>LOADING</h1>
+            :
+            <div className="grid grid-cols-3 gap-4 h-screen px-10 pt-5">
                 {isSwitchOn ?
-                    <div className="white p-4">
-                        <div className="text-2xl font-bold mb-4">Cummulative Leaderboard { }</div>
-                        <table className="min-w-full">
-                            <thead>
-                                <tr className="bg-[#1e1e24]">
-                                    <th className="py-2 px-4 whitespace-nowrap text-white">Ranking</th>
-                                    <th className="py-2 px-4 text-white">Name</th>
-                                    <th className="py-2 px-4 text-white">Points</th>
-                                    <th className="py-2 px-4 text-white"></th>
-                                    <th className="py-2 px-4 text-white"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {sortedPlayers.map((player, index, array) => {
-                                    const previousIndex = prevSortedPlayers.findIndex(item => item.name === player.name);
-                                    const arrowImage = checkScore(index, previousIndex);
+                    <div className="col-span-2 bg-white p-4 flex flex-col">
+                        {/* Content for left panel */}
+                        {/* ... */}
+                        <div className="flex items-baseline">
+                            <div className="text-2xl font-bold mb-4">{currentRace} {currentYear}</div>
+                            <div className="flex items-center ml-2">
+                                <div className="w-3 h-3 bg-green-500 rounded-full mr-1 animate-pulse"></div> {/* Green Dot */}
+                                <div className="text-green-500 font-bold">Live</div>
+                            </div>
+                        </div>
 
-                                    const stageDifference = getTotalForPlayer(displayedStage, player.name);
+                        <Carousel afterChange={e => { setPrevSortedPlayers(sortedPlayers), setCurrentStage(e) }} className="bg-orange-200" arrows={true} prevArrow={<LeftCircleOutlined />} nextArrow={<RightCircleOutlined />} waitForAnimate={true} easing="easeIn" speed={1000} style={{}}>
+                            {stages.map((stage, index) => (<>
 
-                                    return (
-                                        <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
-                                            <td className="py-2 px-4 whitespace-nowrap">
-                                                {index < 3 ? (
-                                                    <>
-                                                        {index === 0 && <img src="/img/medal-1.png" alt="Gold Medal" className="w-6 h-9 mr-2" />}
-                                                        {index === 1 && <img src="/img/medal-2.png" alt="Silver Medal" className="w-6 h-9 mr-2" />}
-                                                        {index === 2 && <img src="/img/medal-3.png" alt="Bronze Medal" className="w-6 h-9 mr-2" />}
-                                                    </>
-                                                ) : (
-                                                    index + 1
-                                                )}
-                                            </td>
-                                            <td className="py-2 px-4">{player.name}</td>
-                                            <td className="py-2 px-4">
-                                                <img src={`/img/${arrowImage}`} alt="Arrow" className="w-6 h-6 mr-2" />
-                                            </td>
-                                            <td className="py-2 px-4">{calcCumPointsPerPlayer().filter(rider => rider.player === player.name).filter(rider => !rider.reserved).reduce((sum, rider) => sum + rider.total, 0)}
-                                            </td>
-                                            <td className="py-2 px-4" style={{ color: 'lightGreen' }}>
-                                                {'+' + player.points}
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
+                                <div className="flex justify-between text-lg font-bold mb-4 pt-8 pr-8 pl-8">
+                                    <div>Stage:{index + 1}</div>
+                                    <div>Total Points: {sortedCumPointsPerStage.filter(rider => !rider.reserved).reduce((sum, rider) => sum + rider.points, 0)}
+                                    </div>
+                                </div>
+                                <div className="text-lg font-bold mb-4 text-center pt-5">My Team</div>
+                                <div className="flex flex-col items-center pt-10">
+                                    {/* Player with the most points (Top Player) */}
+                                    {stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0] && (
+                                        <div className="relative mb-4 text-lg">
+                                            <img src="/img/crown.png" alt="Crown" className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-8 h-8" />
+                                            <img src="/img/yellow_jersey.png" alt="Rider Shirt" className="relative left-1/2 transform -translate-x-1/2 w-20 h-20" />
+                                            <div className="mt-2 font-bold">{(cumPoints) ? topPlayerCum.name : stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0].Naam}</div>
+                                            <div style={{ fontSize: '0.85em' }}>({(cumPoints) ? topPlayerCum.team : stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0].Team})</div>
+                                            <div className="italic font-semibold">{(cumPoints) ? topPlayerCum.points : stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0].Total} Points</div>
+                                        </div>
+                                    )}
+                                    {/* Other Players */}
+                                    <div className="flex flex-wrap justify-center pb-8 text-lg font-semibold" style={{ maxWidth: '55rem' }}>
+                                        {stage
+                                            .filter(rider => rider.Player === selectedPlayer)
+                                            .sort((a, b) => b.Total - a.Total)
+                                            .slice(1)
+                                            .map((player, index) => (
+                                                <div
+                                                    key={index}
+                                                    className={`mx-2 my-2 text-center flex-1 p-4 ${sortedCumPointsPerStageWithoutTop[index].reserved ? 'opacity-50' : ''
+                                                        }`}
+                                                >
+                                                    {sortedCumPointsPerStageWithoutTop[index].reserved ?
+                                                        <img src="/img/sub_shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
+                                                        :
+                                                        <img src="/img/rider-shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />}
+                                                    <div className="mt-2">{sortedCumPointsPerStageWithoutTop[index].name}</div>
+                                                    <div style={{ fontSize: '0.7em' }}>({sortedCumPointsPerStageWithoutTop[index].team})</div>
+                                                    <div className='italic'>{sortedCumPointsPerStageWithoutTop[index].points} Points</div>
+                                                </div>
+                                            ))}
+                                    </div>
+
+
+                                </div>
+
+                                <Switch
+                                    checked={isSwitchOn}
+                                    onChange={handleSwitchChange}
+                                    checkedChildren="cumulative points"
+                                    unCheckedChildren="stage points"
+                                    className='bottom-0 absolute bg-black'
+                                />
+                            </>
+                            ))}
+
+                        </Carousel>
                     </div>
+
+
                     :
 
+                    <div className="col-span-2 bg-white p-4 flex flex-col">
+                        {/* Content for left panel */}
+                        {/* ... */}
+                        <div className="flex items-baseline">
+                            <div className="text-2xl font-bold mb-4">{currentRace} {currentYear}</div>
+                            <div className="flex items-center ml-2">
+                                <div className="w-3 h-3 bg-green-500 rounded-full mr-1 animate-pulse"></div> {/* Green Dot */}
+                                <div className="text-green-500 font-bold">Live</div>
+                            </div>
+                        </div>
+
+
+
+                        <Carousel afterChange={e => setCurrentStage(e)} className="bg-orange-200" arrows={true} prevArrow={<LeftCircleOutlined />} nextArrow={<RightCircleOutlined />} waitForAnimate={true} easing="easeIn" speed={1000} style={{}}>
+                            {stages.map((stage, index) => (<>
+
+                                <div className="flex justify-between text-lg font-bold mb-4 pt-8 pr-8 pl-8">
+                                    <div>Stage:{index + 1}</div>
+                                    <div>Total Points: {(cumPoints) ? sortedCumPointsPerStage.reduce((sum, rider) => sum + rider.points, 0) : stage.filter(rider => rider.Player === selectedPlayer).filter(rider => !rider.Reserved).reduce((total, player) => total + player.Total, 0)}
+                                    </div>
+                                </div>
+                                <div className="text-lg font-bold mb-4 text-center pt-5">{selectedPlayer}</div>
+                                <div className="flex flex-col items-center pt-10">
+                                    {/* Player with the most points (Top Player) */}
+                                    {stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0] && (
+                                        <div className="relative mb-4 text-lg">
+                                            <img src="/img/crown.png" alt="Crown" className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-8 h-8" />
+                                            <img src="/img/yellow_jersey.png" alt="Rider Shirt" className="relative left-1/2 transform -translate-x-1/2 w-20 h-20" />
+                                            <div className="mt-2 font-bold">{(cumPoints) ? topPlayerCum.name : stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0].Naam}</div>
+                                            <div style={{ fontSize: '0.85em' }}>({(cumPoints) ? topPlayerCum.team : stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0].Team})</div>
+                                            <div className="italic font-semibold">{(cumPoints) ? topPlayerCum.points : stage.filter(rider => rider.Player === selectedPlayer).sort((a, b) => b.Total - a.Total)[0].Total} Points</div>
+                                        </div>
+                                    )}
+                                    {/* Other Players */}
+                                    <div className="flex flex-wrap justify-center pb-8 text-lg font-semibold" style={{ maxWidth: '55rem' }}>
+                                        {stage.filter(rider => rider.Player === selectedPlayer).filter(rider => rider.Reserved === false).sort((a, b) => b.Total - a.Total).slice(1).map((player, index) => (
+                                            <div key={index} className="mx-2 my-2 text-center flex-1 p-4">
+                                                <img src="/img/rider-shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
+                                                <div className="mt-2">{(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].name : player.Naam}</div>
+                                                <div style={{ fontSize: '0.7em' }}>({(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].team : player.Team})</div>
+                                                <div className=' italic '>{(cumPoints) ? sortedCumPointsPerStage[index].points : player.Total} Points</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {/* Reserved */}
+                                    <div className="flex flex-wrap justify-center pb-8 text-lg font-semibold" style={{ maxWidth: '55rem' }}>
+                                        {stage.filter(rider => rider.Player === selectedPlayer).filter(rider => rider.Reserved === true).map((player, index) => (
+                                            <div key={index} className="mx-2 my-2 text-center flex-1 p-4 opacity-50">
+                                                <img src="/img/sub_shirt.png" alt="Rider Shirt" className="w-16 h-16 relative left-1/2 transform -translate-x-1/2 " />
+                                                <div className="mt-2">{(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].name : player.Naam}</div>
+                                                <div style={{ fontSize: '0.7em' }}>({(cumPoints) ? sortedCumPointsPerStageWithoutTop[index].team : player.Team})</div>
+                                                <div className=' italic '>{(cumPoints) ? 0 : 0} Points</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <Switch
+                                    checked={isSwitchOn}
+                                    onChange={handleSwitchChange}
+                                    checkedChildren="cumulative points"
+                                    unCheckedChildren="stage points"
+                                    className='bottom-0 absolute bg-black'
+                                />
+                            </>
+                            ))}
+
+                        </Carousel>
+
+                    </div>}
+                {/* Left Panel */}
+
+
+                {/* Right Panels */}
+                <div className="col-span-1 grid grid-cols-1 gap-4">
+
+
+                    {/* Top Right Panel */}
                     <div className="white p-4">
-                        <div className="text-2xl font-bold mb-4">Stage Leaderboard { }</div>
-                        <table className="min-w-full">
+                        {/* Content for bottom right panel */}
+                        {/* ... */}
+                        <div className="text-2xl font-bold mb-4">Overall Leaderboard</div>
+                        <table className="min-w-full table-fixed">
                             <thead>
-                                <tr className="bg-[#1e1e24]">
-                                    <th className="py-2 px-4 whitespace-nowrap text-white">Ranking</th>
-                                    <th className="py-2 px-4 text-white">Name</th>
-                                    <th className="py-2 px-4 text-white">Points</th>
+                                <tr className="bg-[#1e1e24] text-white">
+                                    <th className="py-2 px-4 w-3/12">Ranking</th>
+                                    <th className="py-2 px-4 w-6/12">Name</th>
+                                    <th className="py-2 px-4 w-3/12">Points</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {sortedPlayers.map((player, index) => (
-                                    <tr
-                                        key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}
+
+                                {totalSortedPlayers.map((player, index) => (
+                                    <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}
                                         onMouseEnter={() => handlePlayerHover(player.name)}
                                         onMouseLeave={() => handlePlayerHover(null)}
                                         onClick={() => handlePlayerClick(player.name)}
@@ -596,10 +516,103 @@ function Dashboard() {
                             </tbody>
                         </table>
                     </div>
-                }
+
+
+                    <a href='/stage-overview' ><Button type="primary" shape="round" className=' bg-black'>View all stages</Button></a>
+
+
+                    {/* Bottom Right Panel (Leaderboard) */}
+                    {isSwitchOn ?
+                        <div className="white p-4">
+                            <div className="text-2xl font-bold mb-4">Cummulative Leaderboard { }</div>
+                            <table className="min-w-full">
+                                <thead>
+                                    <tr className="bg-[#1e1e24]">
+                                        <th className="py-2 px-4 whitespace-nowrap text-white">Ranking</th>
+                                        <th className="py-2 px-4 text-white">Name</th>
+                                        <th className="py-2 px-4 text-white">Points</th>
+                                        <th className="py-2 px-4 text-white"></th>
+                                        <th className="py-2 px-4 text-white"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {sortedPlayers.map((player, index, array) => {
+                                        const previousIndex = prevSortedPlayers.findIndex(item => item.name === player.name);
+                                        const arrowImage = checkScore(index, previousIndex);
+
+                                        const stageDifference = getTotalForPlayer(parseInt(displayedStage), player.name);
+
+                                        return (
+                                            <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
+                                                <td className="py-2 px-4 whitespace-nowrap">
+                                                    {index < 3 ? (
+                                                        <>
+                                                            {index === 0 && <img src="/img/medal-1.png" alt="Gold Medal" className="w-6 h-9 mr-2" />}
+                                                            {index === 1 && <img src="/img/medal-2.png" alt="Silver Medal" className="w-6 h-9 mr-2" />}
+                                                            {index === 2 && <img src="/img/medal-3.png" alt="Bronze Medal" className="w-6 h-9 mr-2" />}
+                                                        </>
+                                                    ) : (
+                                                        index + 1
+                                                    )}
+                                                </td>
+                                                <td className="py-2 px-4">{player.name}</td>
+                                                <td className="py-2 px-4">
+                                                    <img src={`/img/${arrowImage}`} alt="Arrow" className="w-6 h-6 mr-2" />
+                                                </td>
+                                                <td className="py-2 px-4">{calcCumPointsPerPlayer().filter(rider => rider.player === player.name).filter(rider => !rider.reserved).reduce((sum, rider) => sum + rider.total, 0)}
+                                                </td>
+                                                <td className="py-2 px-4" style={{ color: 'lightGreen' }}>
+                                                    {'+' + player.points}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                        :
+
+                        <div className="white p-4">
+                            <div className="text-2xl font-bold mb-4">Stage Leaderboard { }</div>
+                            <table className="min-w-full">
+                                <thead>
+                                    <tr className="bg-[#1e1e24]">
+                                        <th className="py-2 px-4 whitespace-nowrap text-white">Ranking</th>
+                                        <th className="py-2 px-4 text-white">Name</th>
+                                        <th className="py-2 px-4 text-white">Points</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {sortedPlayers.map((player, index) => (
+                                        <tr
+                                            key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}
+                                            onMouseEnter={() => handlePlayerHover(player.name)}
+                                            onMouseLeave={() => handlePlayerHover(null)}
+                                            onClick={() => handlePlayerClick(player.name)}
+                                            style={{ transition: 'ease-in-out 0.1s', cursor: 'pointer', backgroundColor: hoveredPlayer === player.name ? '#e9dbff' : '' }}>
+                                            <td className="py-2 px-4 whitespace-nowrap">
+                                                {index < 3 ? (
+                                                    <>
+                                                        {index === 0 && <img src="/img/medal-1.png" alt="Gold Medal" className="w-6 h-9 mr-2" />}
+                                                        {index === 1 && <img src="/img/medal-2.png" alt="Silver Medal" className="w-6 h-9 mr-2" />}
+                                                        {index === 2 && <img src="/img/medal-3.png" alt="Bronze Medal" className="w-6 h-9 mr-2" />}
+                                                    </>
+                                                ) : (
+                                                    index + 1
+
+                                                )}
+                                            </td>
+                                            <td className="py-2 px-4">{player.name}</td>
+                                            <td className="py-2 px-4">{player.points}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
             </div>
-        </div>
-        
+
 
     )
 }
