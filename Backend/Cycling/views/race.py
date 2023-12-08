@@ -538,27 +538,40 @@ def get_stages_from_tour(request):
     try:
         tour_name = request.GET.get('tour_name')
         if not tour_name:
-            return Response({'error': 'invalid tour data'}, status=400)
-        # Retrieve the tour and its stages and riders
+            return Response({'error': 'Tour name is required'}, status=400)
+
+        # Retrieve the tour; raise an error if not found
         tour = Tour.objects.get(url=tour_name)
         race = Race(f'race/{tour.url}')
         stages = race.stages()
-        a = 0
-        for i in stages:
-            a += 1
-            stage_url = "race/" + tour_name + "/stage-" + str(a)
+        
+        for i, stage_data in enumerate(stages, start=1):
+            stage_url = "race/" + tour_name + "/stage-" + str(i)
             currentstage = Stageapi(stage_url)
-            try:
-            	arrival = currentstage.arrival()
-            except error:
-                arrival = ""
-            try:
-            	depart = currentstage.depart()
-            except:
-                depart = ""
-            print(arrival)
-            print(depart)
-            break
+
+            # Attempt to retrieve arrival, departure, and url
+            arrival = getattr(currentstage, 'arrival', '')()
+            depart = getattr(currentstage, 'departure', '')()
+            url = stage_url
+            date = getattr(currentstage, 'date', None)()  # Retrieve the date
+
+            # Create or update a stage instance
+            stage, stage_created = Stage.objects.update_or_create(
+                url=url, 
+                defaults={
+                    'depart': depart,
+                    'arrival': arrival,
+                    'is_klassieker': False,
+                    'stage_type': "non_defined",
+                    'date': date,
+                }
+            )
+
+            # Link stage to tour
+            StageTour.objects.update_or_create(stage=stage, tour=tour, defaults={'stage_number': i})
+
         return Response({"stage_scores": stages}, status=200)
+    except Tour.DoesNotExist:
+        return Response({'error': 'Tour not found'}, status=404)
     except Exception as e:
-     	return Response({'error': str(e)}, status=500)
+        return Response({'error': str(e)}, status=500)
