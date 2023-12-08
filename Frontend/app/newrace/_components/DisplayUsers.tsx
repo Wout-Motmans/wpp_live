@@ -87,7 +87,7 @@ export default function DisplayUsers({ setChosenUsers } : { setChosenUsers : (va
 						row: Row,
 					},
 					}}
-					rowKey="key"
+					rowKey="id"
 					columns={columns}
 					dataSource={dataSource}
 					pagination = {false}

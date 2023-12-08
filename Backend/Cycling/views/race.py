@@ -49,7 +49,7 @@ def get_future_tours(request):
             data = []
             for tour in Tour.objects.all():
                 if tour.is_klassieker:
-                    data.append({'key' : tour.id, 'name': tour.url.split('/')[0], 'year': tour.url.split('/')[1]})
+                    data.append({'id' : tour.id, 'name': tour.url.split('/')[0], 'year': tour.url.split('/')[1]})
                 else:
                     race = Race(f'race/{tour.url}')
                     if race.name() not in [x.get('name') for x in data]:
@@ -82,7 +82,7 @@ def get_future_klassiekers(request):
                     if not Stage.objects.filter(url=full_unique_url).exists():
                         Stage.objects.create(url=full_unique_url, is_klassieker=True)
                     latest_race = Stage.objects.get(url=full_unique_url)
-                    data.append({'key' : latest_race.id, 'name': race.name(), 'year': latest_year })
+                    data.append({'id' : latest_race.id, 'name': race.name(), 'year': latest_year })
             return Response(status=status.HTTP_200_OK, data=data)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     except Exception as e:
@@ -130,12 +130,19 @@ def add_klassieker(request):
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def get_start_riders(request):
-    raceId = request.GET.get('raceId')
+    tourId = request.GET.get('raceId')
     if request.user.is_staff:
-        race = Tour.objects.get(id=raceId)
-        startlist = RaceStartlist(f"race/{race.url}/startlist").startlist()
+        tour = Tour.objects.get(id=tourId)
+        startlist = []
+        if (tour.is_klassieker):
+            races = StageTour.objects.filter(tour=tour)
+            for race in races:
+                startlist += RaceStartlist(f"race/{race.stage.url}/startlist").startlist()
+        else:
+            startlist += RaceStartlist(f"race/{tour.url}/startlist").startlist()
+        unique_dicts = [dict(t) for t in set(tuple(sorted(d.items())) for d in startlist)]
         selected_keys = ["rider_name", "rider_url", "team_name", "team_url"]
-        result = [{key: item[key] for key in selected_keys} for item in startlist]
+        result = [{key: item[key] for key in selected_keys} for item in unique_dicts]
         return Response(status=status.HTTP_200_OK, data=result)
     return Response(status=status.HTTP_401_UNAUTHORIZED)
     
