@@ -16,6 +16,7 @@ interface StageInfo {
   date: string;
   distance: string;
   stage_type: string;
+  stage_url: string;
   depart: string;
   arrival: string;
   results: {
@@ -141,13 +142,13 @@ function RaceInfoPage() {
   const [raceYear, setRaceYear] = useState('');
   const [raceInfo, setRaceInfo] = useState<RaceInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [selectedStage, setSelectedStage] = useState(null);
+  const [selectedStage, setSelectedStage] = useState<StageInfo | { stage_name: string; stage_url: string; rider_name: string } | null>(null);
   const [stageInfo, setStageInfo] = useState(null);
   const [nameSuggestions, setNameSuggestions] = useState<string[]>([]);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState<number>(-1);
   const [showStageInfo, setShowStageInfo] = useState(false);
 
-  const handleShowStageInfo = (stage: React.SetStateAction<null>) => {
+  const handleShowStageInfo = (stage: React.SetStateAction<StageInfo | null>) => {
     if (selectedStage === stage && showStageInfo) {
       // Start the closing animation
       setShowStageInfo(false);
@@ -190,7 +191,7 @@ function RaceInfoPage() {
 
   const fetchStageInfo = (stage: React.SetStateAction<StageInfo | null>) => {
     const stageUrl = (stage as StageInfo)?.stage_url;
-  
+
     axios.get(`api/getstageinfo?stage_name=${stageUrl}`)
       .then((response) => {
         setStageInfo(response.data);
@@ -204,7 +205,7 @@ function RaceInfoPage() {
         setRaceInfo(null);
       });
   };
-  
+
 
   const handleRaceYearChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRaceYear(event.target.value);
