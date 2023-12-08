@@ -1,5 +1,6 @@
-import {notFound} from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 
 export default function NotFoundCatchAll() {
-  notFound()
+  redirect("/404");
+
 }
