@@ -239,7 +239,7 @@ def calculate_score_per_renner_per_stage(request):
     try: 
         gc = stage.gc()[0]['rider_name']
         
-    except IndexError:
+    except AttributeError:
         gc = ""
         
     try: 
