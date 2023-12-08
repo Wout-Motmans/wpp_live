@@ -161,7 +161,7 @@ export default function HomogenizeGame({ race, users, startRiders, template, act
 						<Button type="link" onClick={() => undo()} >Undo</Button>
 					</div>
 					<Input placeholder="Filter Riders" value={filterRider} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilterRider(e.target.value)}/>
-					<div className="  h-2/5">
+					<div className="  h-[600px]">
 						<List
 							bordered
 							dataSource={riders.sort((a, b) => a.rider_name.localeCompare(b.rider_name)).filter(rider => new RegExp(filterRider, 'i').test(rider.rider_name))}
