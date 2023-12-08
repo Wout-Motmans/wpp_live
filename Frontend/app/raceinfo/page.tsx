@@ -514,24 +514,24 @@ function RaceInfoPage() {
             <ul style={{ marginTop: '10px' }}>
               {raceInfo.stages.map((stage, index) => (
                 <li key={index} className="mb-2" style={{ marginBottom: '40px' }}>
-                  <p>Stage Name: {stage.stage_name}</p>
-                  <p>Stage Winner: {stage.rider_name}</p>
                   <div>
                     <button
                       className="w-full px-15 py-2 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover-bg-gray-600 focus:outline-none focus-bg-gray-600"
                       onClick={() => handleShowStageInfo(stage)}
                     >
-                      {selectedStage === stage ? 'Close Stage Info' : 'Show Stage Info'}
+                      {selectedStage === stage ? 'Close Stage Info' : stage.stage_name}
                     </button>
                     {selectedStage === stage && showStageInfo && stageInfo && (
                       <div className={`mt-4 p-4 bg-gray-800 rounded-md border border-gray-700 slide-down`}>
                         <p className="text-lg text-white">Stage Info:</p>
+                        <br/>
                         <p className="text-md text-white">Name: {stageInfo.name.split('/').pop().split('-').map((part: string, index: number) => index === 0 ? `${part.charAt(0).toUpperCase() + part.slice(1)}` : part).join(' ')}</p>
                         <p className="text-md text-white">Date: {stageInfo.date}</p>
                         <p className="text-md text-white">Distance: {stageInfo.distance}</p>
                         <p className="text-md text-white">Stage Type: {stageInfo.stage_type}</p>
                         <p className="text-md text-white">Departure: {stageInfo.depart}</p>
                         <p className="text-md text-white">Arrival: {stageInfo.arrival}</p>
+                        <br/>
                         {stageInfo.results && (
                           <table className="w-full text-white mt-2" style={{ borderCollapse: 'collapse' }}>
                             <thead>
