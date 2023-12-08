@@ -1,11 +1,11 @@
 
-import {  useEffect, useState } from 'react';
-import { Button, Table, Input, Modal } from 'antd';
+import { useEffect, useState } from 'react';
+import { Table, Input } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { SearchProps } from 'antd/es/input/Search';
 import CustomTour from './CustomTour';
-const { Search } = Input;
 import { RaceInfo } from '@/app/types'
+const { Search } = Input;
 
 
 
@@ -36,12 +36,15 @@ export default function DisplayRaces({ setChosenRace } : { setChosenRace : (valu
         getPossibleRaces().then(res => setRaces(res))
     }
 
+    console.log(races)
+
     return (
         <div className='flex flex-col space-y-2'>
             <CustomTour/>
             <Search placeholder='add tour' onSearch={onSearch} enterButton loading={searchLoading}/>
-            <Table 
-                rowKey={"id"}
+
+            <Table
+				        rowKey="id"
                 columns={columns}
                 bordered
                 dataSource={races}
