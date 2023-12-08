@@ -24,12 +24,7 @@ export default function HomogenizeGame({ race, users, startRiders, template, act
 	const [chosingIndex, setChosingIndex] = useState<number>(0)
 	const chosingTemplateUser = () => { return fullTemplate[chosingIndex] || null }
 
-	const undoInformation = useRef<UndoInfo[]>([{
-		changeRider,
-		chosingIndex,
-		teams,
-		riders
-	}])
+	const undoInformation = useRef<UndoInfo[]>([])
 
 	const undo = () => {
 		const  copy = [...undoInformation.current]
@@ -77,10 +72,6 @@ export default function HomogenizeGame({ race, users, startRiders, template, act
 
 	useEffect(() => {setFilterRider('')}, [teams])
 
-	
-	const checkGameContent = () => {
-		
-	}
 
 	function prettyPrint(arr : string[]){
 		if (arr.length <= 1) {
@@ -132,7 +123,6 @@ export default function HomogenizeGame({ race, users, startRiders, template, act
                 duration: 1.5,
             })
         )
-        
     }
 
 	return (
@@ -165,27 +155,27 @@ export default function HomogenizeGame({ race, users, startRiders, template, act
 						)
 					}
 				</div>
-				<div className="flex space-x-4">
-					<div className=" space-y-3">
-                        <div className="flex justify-between">
-                            <Button type="primary" onClick={handleAddGame}>Start Game</Button>
-                            <Button type="link" onClick={() => undo()} >Undo</Button>
-                        </div>
-						<Input placeholder="Filter Riders" value={filterRider} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilterRider(e.target.value)}/>
-                        <List
-                            bordered
-                            dataSource={riders.sort((a, b) => a.rider_name.localeCompare(b.rider_name)).filter(rider => new RegExp(filterRider, 'i').test(rider.rider_name))}
-                            className=" overflow-auto h-2/5 "
-                            renderItem={rider => (
-                                <List.Item className=" justify-between ">
-                                    <div className="flex flex-col">
-                                        <div className=" text-base">{rider.rider_name}</div>
-                                        <div className=" text-xs text-gray-400">{rider.team_name}</div>
-                                    </div>
-                                    <PlusCircleOutlined onClick={() => chooseRider(rider)} />
-                                </List.Item>
-                            )}
-                        />
+				<div className=" space-y-3">
+					<div className="flex justify-between">
+						<Button type="primary" onClick={handleAddGame}>Start Game</Button>
+						<Button type="link" onClick={() => undo()} >Undo</Button>
+					</div>
+					<Input placeholder="Filter Riders" value={filterRider} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilterRider(e.target.value)}/>
+					<div className="  h-[600px]">
+						<List
+							bordered
+							dataSource={riders.sort((a, b) => a.rider_name.localeCompare(b.rider_name)).filter(rider => new RegExp(filterRider, 'i').test(rider.rider_name))}
+							className=" overflow-auto h-full"
+							renderItem={rider => (
+								<List.Item className=" justify-between ">
+									<div className="flex flex-col">
+										<div className=" text-base">{rider.rider_name}</div>
+										<div className=" text-xs text-gray-400">{rider.team_name}</div>
+									</div>
+									<PlusCircleOutlined onClick={() => chooseRider(rider)} />
+								</List.Item>
+							)}
+						/>
 					</div>
 				</div>
 			</div>
@@ -207,8 +197,7 @@ const addGame = async (race: RaceInfo, teams: Team[], activeAmount: number): Pro
 		body: JSON.stringify({ raceId : race.id, teams: teamsUpdate, activeAmount })
 	})
 	if (!response.ok) throw new Error("add game error")
-	const { added } : { added: boolean } = await response.json()
-	return added
+	return await response.json()
 }
 
 

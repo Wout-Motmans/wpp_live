@@ -17,6 +17,29 @@ from .stagedummy import StageDummy
 import urllib.parse
 
 
+
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticated])
+def get_all_db(request):
+    if request.user.is_staff:
+        #RiderGameTeam.objects.all().delete()
+        #StageTour.objects.all().delete()
+        #Game.objects.all().delete()
+        #GameTeam.objects.all().delete()
+        riders = Rider.objects.all().values('id', 'full_name', 'url', 'real_team')
+        ridergameteams = RiderGameTeam.objects.all().values('id', 'game_team__id', 'rider__full_name', 'status')
+        stagetours = StageTour.objects.all().values('id', 'stage__url', 'tour__url', 'stage_number')
+        stages = Stage.objects.all().values('id', 'url', 'is_klassieker', 'stage_type')
+        games = Game.objects.all().values('id', 'tour__url')
+        gameteams = GameTeam.objects.all().values('id', 'auth_user__username', 'game__tour__url')
+        tours = Tour.objects.all().values('id', 'is_klassieker', 'url')
+        data = {'riders':riders, 'ridergameteams': ridergameteams, 'stagetours':stagetours, 'stages':stages, 'games':games, 'gameteams':gameteams, 'tours':tours}
+        return Response(status=status.HTTP_200_OK, data=data)
+    return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
@@ -66,8 +89,6 @@ def get_future_klassiekers(request):
 		print(e)
 		return Response({'error': str(e)}, status=400)
 
-
-
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
@@ -115,7 +136,7 @@ def get_start_riders(request):
 		result = [{key: item[key] for key in selected_keys} for item in startlist]
 		return Response(status=status.HTTP_200_OK, data=result)
 	return Response(status=status.HTTP_401_UNAUTHORIZED)
-	
+
 
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication])
@@ -138,7 +159,6 @@ def add_game(request):
 				RiderGameTeam.objects.create(game_team=gameteam, rider=rider, status='active' if activeAmount > i else 'sub')
 		return Response(status=status.HTTP_200_OK)
 	return Response(status=status.HTTP_401_UNAUTHORIZED)
-
 
 
 @api_view(['POST'])
@@ -172,23 +192,6 @@ def add_tour_with_klassiekers(request):
 	except Exception as e:
 		print(e)
 		return Response({'error': str(e)}, status=400)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 @api_view(['GET'])
 def get_race_info(request):

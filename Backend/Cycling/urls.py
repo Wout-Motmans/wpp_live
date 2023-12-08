@@ -7,7 +7,6 @@ urlpatterns = [
     path('login', auth.my_login),
     path('logout', auth.my_logout),
     path('authenticate', auth.my_authenticate),
-    path('whoami', auth.my_whoami),
 
     path('users', user.get_all_users),
     path('changeRole', user.change_user_role),
@@ -33,6 +32,7 @@ urlpatterns = [
     path('addKlassieker', race.add_klassieker),
     path('addTourWithKlassiekers', race.add_tour_with_klassiekers),
     path('addGame', race.add_game),
+    path('alldb', race.get_all_db)
     
 ]
 
