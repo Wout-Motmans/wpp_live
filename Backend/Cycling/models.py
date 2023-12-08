@@ -18,6 +18,9 @@ class Stage(models.Model):
         ],
         default='non_defined'
     )
+    depart = models.CharField(max_length=255)
+    arrival = models.CharField(max_length=255)
+    date = models.CharField(max_length=255)
 
 class Tour(models.Model):
     id = models.AutoField(primary_key=True)
@@ -26,7 +29,8 @@ class Tour(models.Model):
 
 class Game(models.Model):
     id = models.AutoField(primary_key=True)
-    tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
+    tour = models.OneToOneField(Tour, on_delete=models.CASCADE)
+    is_finished = models.BooleanField(default=False)
 
 class GameTeam(models.Model):
     id = models.AutoField(primary_key=True)

@@ -467,6 +467,7 @@ function RaceInfoPage() {
             animation: slideUp 0.5s ease-out forwards;
           }
         `}
+
         </style>
         <div className="w-full p-6 bg-white rounded-md shadow-md lg:max-w-xl relative">
           <div className="flex flex-row mb-4">

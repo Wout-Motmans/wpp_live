@@ -32,7 +32,9 @@ urlpatterns = [
     path('addKlassieker', race.add_klassieker),
     path('addTourWithKlassiekers', race.add_tour_with_klassiekers),
     path('addGame', race.add_game),
-    path('alldb', race.get_all_db)
+    path('alldb', race.get_all_db),
+    
+    path('getstagesfromtour', race.get_stages_from_tour)
     
 ]
 
