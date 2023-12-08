@@ -134,3 +134,32 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+"""
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'DEBUG',  # Set this to 'INFO' for less detailed logs
+            'propagate': False,  # Prevent propagation to other loggers
+        },
+    },
+    'filters': {
+        'query': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: (
+                record.levelname == 'DEBUG' and
+                getattr(record, 'sql', '').strip().startswith(('INSERT', 'DELETE'))
+            ),
+        },
+    },
+}
+"""

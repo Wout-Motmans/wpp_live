@@ -24,12 +24,7 @@ export default function HomogenizeGame({ race, users, startRiders, template, act
 	const [chosingIndex, setChosingIndex] = useState<number>(0)
 	const chosingTemplateUser = () => { return fullTemplate[chosingIndex] || null }
 
-	const undoInformation = useRef<UndoInfo[]>([{
-		changeRider,
-		chosingIndex,
-		teams,
-		riders
-	}])
+	const undoInformation = useRef<UndoInfo[]>([])
 
 	const undo = () => {
 		const  copy = [...undoInformation.current]
@@ -202,8 +197,7 @@ const addGame = async (race: RaceInfo, teams: Team[], activeAmount: number): Pro
 		body: JSON.stringify({ raceId : race.id, teams: teamsUpdate, activeAmount })
 	})
 	if (!response.ok) throw new Error("add game error")
-	const { added } : { added: boolean } = await response.json()
-	return added
+	return await response.json()
 }
 
 
