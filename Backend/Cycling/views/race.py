@@ -15,6 +15,8 @@ from bs4 import BeautifulSoup
 import re
 from .stagedummy import StageDummy
 import urllib.parse
+from django.core.serializers import serialize
+from django.db.models import F
 
 
 
@@ -98,6 +100,7 @@ def add_tour(request):
 			text = get_years_from_race(f'https://www.procyclingstats.com/race/{tour_name}')
 			jaartal = re.search(r'\d{4}', text).group(0)
 			Tour.objects.create(url = f'{tour_name}/{jaartal}', is_klassieker = False)
+   
 		return Response(True, status=200)
 	except Exception as e:
 		print(e)
@@ -488,3 +491,63 @@ def get_stage_info_scrape(request):
 		return Response(final_result, status=200)
 	else:
 		return Response('Failed to retrieve the page', status=500)
+
+@api_view(['GET'])
+def get_stage_info_from_db(request):
+    # Retrieve the 'stage_url' from the GET parameters
+    stage_url = request.GET.get('stage_url', None)
+
+    # Check if the 'stage_url' parameter was provided
+    if not stage_url:
+        return Response({'error': 'Stage URL is required'}, status=400)
+
+    try:
+        # Query the database based on the provided 'stage_url'
+        results = RiderStage.objects.select_related(
+            'rider',
+            'stage',
+            'rider__game_team',
+            'rider__game_team__auth_user'
+        ).filter(
+            stage__url=stage_url
+        ).annotate(
+            position=F('position'),
+            full_name=F('rider__full_name'),
+            real_team=F('rider__real_team'),
+            points=F('point'),
+            shirt_points=F('shirt_points'),
+            total_points=F('total_points'),
+            username=F('rider__game_team__auth_user__username'),
+            stage_url=F('stage__url')
+        )
+
+        # Serialize the query set to JSON
+        json_data = serialize('json', results, use_natural_primary_keys=True, fields=(
+            'position', 'full_name', 'real_team', 'points', 'shirt_points', 'total_points', 'username', 'stage_url'
+        ))
+
+        # Return the JSON data
+        return Response(json_data, status=200)
+
+    except Exception as e:
+        # Log the exception or handle it as needed
+        return Response({'error': str(e)}, status=500)
+
+@api_view(['GET'])
+def get_stages_from_tour(request):
+    try:
+        tour_name = request.GET.get('tour_name')
+        if not tour_name:
+            return Response({'error': 'invalid tour data'}, status=400)
+        # Retrieve the tour and its stages and riders
+        tour = Tour.objects.get(url=tour_name)
+        race = Race(f'race/{tour.url}')
+        stages = race.stages()
+        a = 0
+        for i in stages:
+            a += 1
+            stage_url = "race/" + tour_name + "/stage-" + str(a)
+            currentstage = Stageapi(stage_url)
+        return Response({"stage_scores": stages}, status=200)
+    except Exception as e:
+     	return Response({'error': str(e)}, status=500)
