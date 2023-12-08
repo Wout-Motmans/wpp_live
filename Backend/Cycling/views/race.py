@@ -548,6 +548,17 @@ def get_stages_from_tour(request):
             a += 1
             stage_url = "race/" + tour_name + "/stage-" + str(a)
             currentstage = Stageapi(stage_url)
+            try:
+            	arrival = currentstage.arrival()
+            except error:
+                arrival = ""
+            try:
+            	depart = currentstage.depart()
+            except:
+                depart = ""
+            print(arrival)
+            print(depart)
+            break
         return Response({"stage_scores": stages}, status=200)
     except Exception as e:
      	return Response({'error': str(e)}, status=500)
