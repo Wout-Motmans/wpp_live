@@ -624,13 +624,19 @@ def get_riderstage_from_stage(request):
             # Get status from RiderGameTeam
             rider_game_team_status = RiderGameTeam.objects.filter(rider=rider_obj).first()
             status = rider_game_team_status.status if rider_game_team_status else 'non_active'
+            
+             # Calculate cumulative points
+            previous_stages = RiderStage.objects.filter(rider=rider_obj, stage__date__lt=currentstage.date)
+            cumulative_total_points = sum([stage.total_points for stage in previous_stages]) + total_points
+            cumulative_total_active_points = sum([stage.total_points for stage in previous_stages if stage.status == 'active']) + (total_points if status == 'active' else 0)
 
             # Create and save RiderStage instance
             rider_stage = RiderStage(
                 point=points,
                 shirt_points=shirt_points,
                 total_points=total_points,
-                cumulative_total_points=0,  # This needs to be calculated based on your logic
+                cumulative_total_points=cumulative_total_points,  
+                cumulative_total_active_points =cumulative_total_active_points,
                 position=rider['rank'],
                 shirts=shirts,
                 stage=currentstage,
