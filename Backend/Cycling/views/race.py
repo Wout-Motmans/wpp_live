@@ -542,6 +542,11 @@ def get_stages_from_tour(request):
 
         # Retrieve the tour; raise an error if not found
         tour = Tour.objects.get(url=tour_name)
+        
+        # Check if the tour already has stages linked with it
+        if StageTour.objects.filter(tour=tour).exists():
+            return Response({'message': 'Tour already has stages linked with it'}, status=200)
+        
         race = Race(f'race/{tour.url}')
         stages = race.stages()
         
@@ -549,7 +554,7 @@ def get_stages_from_tour(request):
             stage_url = "race/" + tour_name + "/stage-" + str(i)
             currentstage = Stageapi(stage_url)
 
-            # Attempt to retrieve arrival, departure, and url
+            # Attempt to retrieve arrival, departure, and date
             arrival = getattr(currentstage, 'arrival', '')()
             depart = getattr(currentstage, 'departure', '')()
             url = stage_url
@@ -570,8 +575,80 @@ def get_stages_from_tour(request):
             # Link stage to tour
             StageTour.objects.update_or_create(stage=stage, tour=tour, defaults={'stage_number': i})
 
-        return Response({"stage_scores": stages}, status=200)
+        return Response({'message': 'Stages succesfully added in db'}, status=200)
     except Tour.DoesNotExist:
         return Response({'error': 'Tour not found'}, status=404)
     except Exception as e:
         return Response({'error': str(e)}, status=500)
+
+@api_view(['GET'])
+def get_riderstage_from_stage(request):
+    try:
+        stage_name = request.GET.get('stage_name')
+        currentstage = Stage.objects.get(url=stage_name)
+        stage = Stageapi(stage_name)  # Assuming Stageapi is defined elsewhere
+
+        # Retrieve jersey winners and stage results
+        gc_rider, kom_rider, points_rider, youth_rider = "", "", "", ""
+        for method, var in [(stage.gc, 'gc_rider'), (stage.kom, 'kom_rider'),
+                            (stage.points, 'points_rider'), (stage.youth, 'youth_rider')]:
+            try:
+                locals()[var] = method()[0]['rider_name']
+            except IndexError:
+                pass
+
+        # Define or import calculate_points function
+        def calculate_points(rank):
+            point_array = [100, 80, 65, 55, 45, 35, 30, 25, 20, 17, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+            return point_array[rank - 1] if rank and 1 <= rank <= len(point_array) else 0
+
+        for rider in stage.results():
+            # Check if the rider is in the database
+            rider_obj = Rider.objects.filter(full_name=rider['rider_name']).first()
+            if not rider_obj:
+                continue  # Skip riders not in the database
+
+            points = calculate_points(rider['rank'])
+            total_points = points
+            shirt_points = 0
+            shirts = []
+
+            for jersey, jersey_rider in [('gc', gc_rider), ('kom', kom_rider), 
+                                         ('point', points_rider), ('youth', youth_rider)]:
+                if rider['rider_name'] == jersey_rider:
+                    bonus = 20 if jersey == 'gc' else 10 if jersey in ['kom', 'point'] else 5
+                    shirt_points += bonus
+                    total_points += bonus
+                    shirts.append(jersey)
+
+            # Get status from RiderGameTeam
+            rider_game_team_status = RiderGameTeam.objects.filter(rider=rider_obj).first()
+            status = rider_game_team_status.status if rider_game_team_status else 'non_active'
+
+            # Create and save RiderStage instance
+            rider_stage = RiderStage(
+                point=points,
+                shirt_points=shirt_points,
+                total_points=total_points,
+                cumulative_total_points=0,  # This needs to be calculated based on your logic
+                position=rider['rank'],
+                shirts=shirts,
+                stage=currentstage,
+                rider=rider_obj,
+                status=status
+            )
+            rider_stage.save()
+
+        return Response({"message": "RiderStage data updated successfully"}, status=200)
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)     
+
+@api_view(['GET'])
+def get_riders_from_tour(request):
+	tour_name = request.GET.get('tour_name')
+	race = Tour.objects.get(url=tour_name)
+	startlist = RaceStartlist(f"race/{race.url}/startlist").startlist()
+	selected_keys = ["rider_name", "rider_url", "team_url"]
+	result = [{key: item[key] for key in selected_keys} for item in startlist]
+	return Response(status=status.HTTP_200_OK, data=result)
