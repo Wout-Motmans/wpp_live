@@ -16,6 +16,7 @@ interface StageInfo {
   date: string;
   distance: string;
   stage_type: string;
+  stage_url: string;
   depart: string;
   arrival: string;
   results: {
@@ -141,13 +142,13 @@ function RaceInfoPage() {
   const [raceYear, setRaceYear] = useState('');
   const [raceInfo, setRaceInfo] = useState<RaceInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [selectedStage, setSelectedStage] = useState(null);
-  const [stageInfo, setStageInfo] = useState(null);
+  const [selectedStage, setSelectedStage] = useState<StageInfo | { stage_name: string; stage_url: string; rider_name: string } | null>(null);
+  const [stageInfo, setStageInfo] = useState<StageInfo | null>(null);
   const [nameSuggestions, setNameSuggestions] = useState<string[]>([]);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState<number>(-1);
   const [showStageInfo, setShowStageInfo] = useState(false);
 
-  const handleShowStageInfo = (stage: React.SetStateAction<null>) => {
+  const handleShowStageInfo = (stage: StageInfo | { stage_name: string; stage_url: string; rider_name: string } | null) => {
     if (selectedStage === stage && showStageInfo) {
       // Start the closing animation
       setShowStageInfo(false);
@@ -187,8 +188,11 @@ function RaceInfoPage() {
     fetchNameSuggestions(name);
   };
 
-  const fetchStageInfo = (stage: React.SetStateAction<null>) => {
-    axios.get(`api/getstageinfo?stage_name=${stage.stage_url}`)
+
+  const fetchStageInfo = (stage: StageInfo | { stage_name: string; stage_url: string; rider_name: string } | null) => {
+    const stageUrl = (stage as StageInfo)?.stage_url;
+  
+    axios.get(`api/getstageinfo?stage_name=${stageUrl}`)
       .then((response) => {
         setStageInfo(response.data);
       })
@@ -200,8 +204,9 @@ function RaceInfoPage() {
         }
         setRaceInfo(null);
       });
-
   };
+  
+
 
   const handleRaceYearChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRaceYear(event.target.value);
@@ -429,12 +434,12 @@ function RaceInfoPage() {
 
   return (
     !isLoggedIn
-    ?
-    <h1>LOADING</h1>
-    :
-    <div className="flex flex-col items-center justify-center min-h-screen p-6">
-      <style>
-        {`
+      ?
+      <h1>LOADING</h1>
+      :
+      <div className="flex flex-col items-center justify-center min-h-screen p-6">
+        <style>
+          {`
           @keyframes slideDown {
             from {
               opacity: 0;
@@ -462,37 +467,109 @@ function RaceInfoPage() {
             animation: slideUp 0.5s ease-out forwards;
           }
         `}
-      </style>
-      <div className="w-full p-6 bg-white rounded-md shadow-md lg:max-w-xl relative">
-        <div className="flex flex-row mb-4">
-          <input
-            type="text"
-            value={raceName}
-            onChange={handleRaceNameChange}
-            onKeyDown={handleKeyDown}
-            placeholder="Enter race name"
-            className="flex-1 px-4 py-2 text-gray-700 bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40 mr-2"
-          />
-          <input
-            type="number"
-            value={raceYear}
-            onChange={(e) => handleRaceYearChange(e)}
-            min="1903"
-            max={new Date().getFullYear().toString()}
-            placeholder="Year"
-            className="w-24 px-4 py-2 text-gray-700 bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40"
-          />
-        </div>
-        <div className="absolute left-0 w-full bg-white border rounded-md shadow-lg z-10">
-          {nameSuggestions.map((suggestion, index) => (
-            <div
-              key={index}
-              className={`cursor-pointer py-2 px-4 hover:bg-gray-200 ${selectedSuggestionIndex === index ? 'bg-gray-200' : ''}`}
-              onClick={() => handleSuggestionClick(suggestion)}
-            >
-              {suggestion}
+
+        </style>
+        <div className="w-full p-6 bg-white rounded-md shadow-md lg:max-w-xl relative">
+          <div className="flex flex-row mb-4">
+            <input
+              type="text"
+              value={raceName}
+              onChange={handleRaceNameChange}
+              onKeyDown={handleKeyDown}
+              placeholder="Enter race name"
+              className="flex-1 px-4 py-2 text-gray-700 bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40 mr-2"
+            />
+            <input
+              type="number"
+              value={raceYear}
+              onChange={(e) => handleRaceYearChange(e)}
+              min="1903"
+              max={new Date().getFullYear().toString()}
+              placeholder="Year"
+              className="w-20 px-4 py-2 text-gray-700 bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40"
+            />
+          </div>
+          <div className="absolute left-0 w-full bg-white border rounded-md shadow-lg z-10">
+            {nameSuggestions.map((suggestion, index) => (
+              <div
+                key={index}
+                className={`cursor-pointer py-2 px-4 hover:bg-gray-200 ${selectedSuggestionIndex === index ? 'bg-gray-200' : ''}`}
+                onClick={() => handleSuggestionClick(suggestion)}
+              >
+                {suggestion}
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={fetchRaceInfo}
+            className="w-full px-4 py-2 mt-4 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover-bg-gray-600 focus:outline-none focus:bg-gray-600"
+          >
+            Get Race Info
+          </button>
+          {error && (
+            <p className="text-red-500 mt-4">{error}</p>
+          )}
+
+
+          {raceInfo && (
+            <div className="mt-4">
+              <p className="text-lg">Name: {raceInfo.name}</p>
+              <p className="text-lg">Nationality: {raceInfo.nationality}</p>
+              <p className="text-lg">Year: {raceInfo.year} </p>
+              <p className="text-lg">Stages:</p>
+              <ul style={{ marginTop: '10px' }}>
+                {raceInfo.stages.map((stage, index) => (
+                  <li key={index} className="mb-2" style={{ marginBottom: '40px' }}>
+                    <p>Stage Name: {stage.stage_name}</p>
+                    <p>Stage Winner: {stage.rider_name}</p>
+                    <div>
+                      <button
+                        className="w-full px-15 py-2 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover-bg-gray-600 focus:outline-none focus-bg-gray-600"
+                        onClick={() => handleShowStageInfo(stage)}
+                      >
+                        {selectedStage === stage ? 'Close Stage Info' : 'Show Stage Info'}
+                      </button>
+                      {selectedStage === stage && showStageInfo && stageInfo && (
+                        <div className={`mt-4 p-4 bg-gray-800 rounded-md border border-gray-700 slide-down`}>
+                          <p className="text-lg text-white">Stage Info:</p>
+                          <p className="text-md text-white">Date: {stageInfo.date}</p>
+                          <p className="text-md text-white">Distance: {stageInfo.distance}</p>
+                          <p className="text-md text-white">Stage Type: {stageInfo.stage_type}</p>
+                          <p className="text-md text-white">Departure: {stageInfo.depart}</p>
+                          <p className="text-md text-white">Arrival: {stageInfo.arrival}</p>
+                          {stageInfo.results && (
+                            <table className="w-full text-white mt-2" style={{ borderCollapse: 'collapse' }}>
+                              <thead>
+                                <tr className="bg-gray-700">
+                                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rider Name</th>
+                                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rider Number</th>
+                                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rank</th>
+                                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>UCI Points</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {stageInfo.results
+                                  .sort((a, b) => parseInt(a.rank) - parseInt(b.rank))
+                                  .slice(0, 25)
+                                  .map((result, index) => (
+                                    <tr key={index} className={index % 2 === 0 ? 'bg-gray-700' : 'bg-gray-600'}>
+                                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_name}</td>
+                                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_number}</td>
+                                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{index + 1}</td>
+                                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.uci_points}</td>
+                                    </tr>
+                                  ))}
+                              </tbody>
+                            </table>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
-          ))}
+          )}
         </div>
         <button
           onClick={fetchRaceInfo}
@@ -566,7 +643,6 @@ function RaceInfoPage() {
           </div>
         )}
       </div>
-    </div>
   );
 }
 
