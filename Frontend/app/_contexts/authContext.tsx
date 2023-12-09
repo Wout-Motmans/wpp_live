@@ -8,6 +8,7 @@ interface Auth {
 	login: (username: string, password: string) => Promise<boolean>;
 	logout: () => Promise<boolean>;
 	authenticate: () => Promise<boolean>;
+	getUsername: () => Promise<string>;
 }
 
 const AuthContext = createContext<Auth | undefined>(undefined);
@@ -62,6 +63,9 @@ export function AuthProvider({ children } : { children: ReactNode }) {
 			return false;
 		}
 	};
+	const getUsername = async (): Promise<string> => {
+		return user;
+	}
 
 	const logout = async (): Promise<boolean> => {
 		try {
