@@ -70,6 +70,7 @@ class RiderStage(models.Model):
     shirt_points = models.IntegerField()
     total_points = models.IntegerField()
     cumulative_total_points = models.IntegerField()
+    cumulative_total_active_points = models.IntegerField()
     position = models.IntegerField()
     shirts = models.JSONField()  
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
@@ -83,3 +84,5 @@ class RiderStage(models.Model):
         ],
         default='non_active'
     )
+    class Meta:
+        unique_together = ('stage', 'rider')
