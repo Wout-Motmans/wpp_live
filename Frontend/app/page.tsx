@@ -1,10 +1,11 @@
 'use client'
 import { Button, Carousel, FloatButton, Switch } from 'antd';
 import { useAuthCheck } from './_hooks/useAuthCheck';
+import { redirect } from "next/navigation"
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { DownloadOutlined, LeftCircleOutlined, LeftOutlined, RightCircleOutlined, RightOutlined } from '@ant-design/icons';
-import { useAuth } from './_contexts/authContext';
+import { useAuth, AuthProvider } from './_contexts/authContext';
 
 interface Rider {
     Position: number,
@@ -43,9 +44,10 @@ interface Stages {
 }
 
 function Dashboard() {
+    
     const { requireAuth } = useAuthCheck();
     const { isLoggedIn } = useAuth();
-    requireAuth();
+    const { user } = useAuth();
     const router = useRouter();
 
     const currentRace = 'Tour de France';
@@ -112,12 +114,7 @@ function Dashboard() {
     ]
 
 
-    // handle click on player table row
-    const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
-
-    const handlePlayerClick = (playerName: string) => {
-        setSelectedPlayer(playerName);
-    };
+    
 
     // handle hover over player table row
     const [hoveredPlayer, setHoveredPlayer] = useState<string | null>(null);
@@ -161,6 +158,16 @@ function Dashboard() {
 
     // Convert the object to an array of players and their total points
     let players = Object.keys(playerPoints).map(name => ({ name, points: playerPoints[name] }));
+
+
+    // handle click on player table row
+    const [selectedPlayer, setSelectedPlayer] = useState<string | null>(players.map(y => y.name.toLowerCase()).find(y => y === user.toLowerCase()) ? user : totalSortedPlayers[0].name);
+    
+
+    const handlePlayerClick = (playerName: string) => {
+        setSelectedPlayer(playerName);
+    };
+
 
     // Sort the array in descending order of total points
     let sortedPlayers = players.sort((a, b) => b.points - a.points);
@@ -318,12 +325,8 @@ function Dashboard() {
 
     };
 
-
-    return (
-        !isLoggedIn
-            ?
-            <h1>LOADING</h1>
-            :
+    if (isLoggedIn) {
+        return (
             <div className="grid grid-cols-3 gap-4 h-screen px-10 pt-5">
                 {isSwitchOn ?
                     <div className="col-span-2 bg-white p-4 flex flex-col">
@@ -612,9 +615,14 @@ function Dashboard() {
                     }
                 </div>
             </div>
-
-
-    )
+    
+    
+        )
+    }
+    else {
+        redirect("login")
+    }
+    
 }
 
 export default Dashboard;
