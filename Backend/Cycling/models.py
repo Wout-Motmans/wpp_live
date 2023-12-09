@@ -31,6 +31,7 @@ class Game(models.Model):
     id = models.AutoField(primary_key=True)
     tour = models.OneToOneField(Tour, on_delete=models.CASCADE)
     is_finished = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
 
 class GameTeam(models.Model):
     id = models.AutoField(primary_key=True)
