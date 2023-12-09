@@ -83,3 +83,5 @@ class RiderStage(models.Model):
         ],
         default='non_active'
     )
+    class Meta:
+        unique_together = ('stage', 'rider')  # This line enforces the constraint

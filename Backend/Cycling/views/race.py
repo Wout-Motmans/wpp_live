@@ -492,46 +492,46 @@ def get_stage_info_scrape(request):
 	else:
 		return Response('Failed to retrieve the page', status=500)
 
-@api_view(['GET'])
-def get_stage_info_from_db(request):
-    # Retrieve the 'stage_url' from the GET parameters
-    stage_url = request.GET.get('stage_url', None)
+# @api_view(['GET'])
+# def get_stage_info_from_db(request):
+#     # Retrieve the 'stage_url' from the GET parameters
+#     stage_url = request.GET.get('stage_url', None)
 
-    # Check if the 'stage_url' parameter was provided
-    if not stage_url:
-        return Response({'error': 'Stage URL is required'}, status=400)
+#     # Check if the 'stage_url' parameter was provided
+#     if not stage_url:
+#         return Response({'error': 'Stage URL is required'}, status=400)
 
-    try:
-        # Query the database based on the provided 'stage_url'
-        results = RiderStage.objects.select_related(
-            'rider',
-            'stage',
-            'rider__game_team',
-            'rider__game_team__auth_user'
-        ).filter(
-            stage__url=stage_url
-        ).annotate(
-            position=F('position'),
-            full_name=F('rider__full_name'),
-            real_team=F('rider__real_team'),
-            points=F('point'),
-            shirt_points=F('shirt_points'),
-            total_points=F('total_points'),
-            username=F('rider__game_team__auth_user__username'),
-            stage_url=F('stage__url')
-        )
+#     try:
+#         # Query the database based on the provided 'stage_url'
+#         results = RiderStage.objects.select_related(
+#             'rider',
+#             'stage',
+#             'rider__game_team',
+#             'rider__game_team__auth_user'
+#         ).filter(
+#             stage__url=stage_url
+#         ).annotate(
+#             position=F('position'),
+#             full_name=F('rider__full_name'),
+#             real_team=F('rider__real_team'),
+#             points=F('point'),
+#             shirt_points=F('shirt_points'),
+#             total_points=F('total_points'),
+#             username=F('rider__game_team__auth_user__username'),
+#             stage_url=F('stage__url')
+#         )
 
-        # Serialize the query set to JSON
-        json_data = serialize('json', results, use_natural_primary_keys=True, fields=(
-            'position', 'full_name', 'real_team', 'points', 'shirt_points', 'total_points', 'username', 'stage_url'
-        ))
+#         # Serialize the query set to JSON
+#         json_data = serialize('json', results, use_natural_primary_keys=True, fields=(
+#             'position', 'full_name', 'real_team', 'points', 'shirt_points', 'total_points', 'username', 'stage_url'
+#         ))
 
-        # Return the JSON data
-        return Response(json_data, status=200)
+#         # Return the JSON data
+#         return Response(json_data, status=200)
 
-    except Exception as e:
-        # Log the exception or handle it as needed
-        return Response({'error': str(e)}, status=500)
+#     except Exception as e:
+#         # Log the exception or handle it as needed
+#         return Response({'error': str(e)}, status=500)
 
 @api_view(['GET'])
 def get_stages_from_tour(request):
@@ -637,18 +637,23 @@ def get_riderstage_from_stage(request):
                 rider=rider_obj,
                 status=status
             )
-            rider_stage.save()
+            # Try to save the RiderStage instance
+            try:
+                rider_stage.save()
+            except IntegrityError:
+                # If an IntegrityError occurs, skip this entry and continue
+                continue
 
         return Response({"message": "RiderStage data updated successfully"}, status=200)
 
     except Exception as e:
         return Response({'error': str(e)}, status=500)     
 
-@api_view(['GET'])
-def get_riders_from_tour(request):
-	tour_name = request.GET.get('tour_name')
-	race = Tour.objects.get(url=tour_name)
-	startlist = RaceStartlist(f"race/{race.url}/startlist").startlist()
-	selected_keys = ["rider_name", "rider_url", "team_url"]
-	result = [{key: item[key] for key in selected_keys} for item in startlist]
-	return Response(status=status.HTTP_200_OK, data=result)
+# @api_view(['GET'])
+# def get_riders_from_tour(request):
+# 	tour_name = request.GET.get('tour_name')
+# 	race = Tour.objects.get(url=tour_name)
+# 	startlist = RaceStartlist(f"race/{race.url}/startlist").startlist()
+# 	selected_keys = ["rider_name", "rider_url", "team_url"]
+# 	result = [{key: item[key] for key in selected_keys} for item in startlist]
+# 	return Response(status=status.HTTP_200_OK, data=result)
