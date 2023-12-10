@@ -6,7 +6,7 @@ import HomogenizeGame from './_components/HomogenizeGame';
 import DisplayRaces from './_components/DisplayRaces';
 import DisplayUsers from './_components/DisplayUsers';
 import { Template } from './_components/Template';
-import { InputNumber, Button, Popover, message } from 'antd';
+import { InputNumber, Button, message } from 'antd';
 import { useAuth } from '../_contexts/authContext';
 import { User, Rider, RaceInfo } from '@/app/types'
 
@@ -19,13 +19,11 @@ export default function Home() {
     const [chosenUsers, setChosenUsers] = useState<User[]>([])
     const [template, setTemplate] = useState<User[]>([])
     const [startRiders, setStartRiders] = useState<Rider[]>([])
-
     const [activeAmount, setActiveAmount] = useState<number>(1)
     const [reserveAmount, setReserveAmount] = useState<number>(0)
+    const [perteamamount, setperteamamount] = useState<number>(1)
 
     const [displayGame, setDisplayGame] = useState<boolean>(false)
-
-    
 
     useEffect(() => {
         if (chosenRace) {
@@ -39,7 +37,6 @@ export default function Home() {
 		}
 		return arr.slice(0, -1).join(", ") + " and " + arr.at(-1) + ".";
 	}
-
 
     const [messageApi, contextHolder] = message.useMessage();
     const handleContinue = async () => {
@@ -93,12 +90,14 @@ export default function Home() {
                                     <InputNumber min={1} value={activeAmount} onChange={(e) => setActiveAmount(e!)} />
                                     <label>Reserve:</label>
                                     <InputNumber min={0} value={reserveAmount} onChange={(e) => setReserveAmount(e!)} />
+                                    <label># / team:</label>
+                                    <InputNumber min={1} value={perteamamount} onChange={(e) => setperteamamount(e!)} />
                                 </div>
                                 <Button type="primary" onClick={handleContinue}>Continue</Button>
                             </div>
                         </div>
                         :
-                        <HomogenizeGame race={chosenRace!} startRiders={startRiders} users={chosenUsers}  template={template} activeAmount={activeAmount} totalAmount={activeAmount + reserveAmount}/>
+                        <HomogenizeGame race={chosenRace!} startRiders={startRiders} users={chosenUsers}  template={template} activeAmount={activeAmount} totalAmount={activeAmount + reserveAmount} perteamamount={perteamamount}/>
                     }
                 </div>
             </main>
