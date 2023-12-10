@@ -681,7 +681,7 @@ def get_riderstage_from_stage(request):
             # Try to save the RiderStage instance
             try:
                 rider_stage.save()
-            except IntegrityError:
+            except Exception:
                 # If an IntegrityError occurs, skip this entry and continue
                 continue
 
