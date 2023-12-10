@@ -34,7 +34,10 @@ urlpatterns = [
     path('addGame', race.add_game),
     path('getUnfinishedGames', race.get_unfinished_games),
     path('getGameMyRiders', race.get_game_my_riders),
-    path('alldb', race.get_all_db)
+    path('alldb', race.get_all_db),
+    
+    path('getstagesfromtour', race.get_stages_from_tour),
+    path('getriderstagefromstage', race.get_riderstage_from_stage)
     
 ]
 
