@@ -19,7 +19,7 @@ export default function Header() {
                     ], [isAdmin]);
 
     return (
-        <header className="min-w-max bg-[#1e1e24]">
+        <header className="bg-[#1e1e24] sticky top-0 z-50">
             <div className="flex flex-col lg:flex-row items-center justify-between mx-6 p-3 lg:mx-auto max-w-7xl">
                 <Link href="/" className="flex  items-center">
                     <svg width="570" height="90" xmlns="http://www.w3.org/2000/svg">

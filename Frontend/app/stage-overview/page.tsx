@@ -3,14 +3,29 @@ import { useState } from 'react';
 import { useAuthCheck } from '../_hooks/useAuthCheck';
 import { useAuth } from '../_contexts/authContext';
 
+interface StageData {
+    Position: number;
+    Naam: string;
+    Team: string;
+    Points: number;
+    Jersey: number;
+    Total: number;
+    player: string;
+}
+
+interface Stage {
+    id: number;
+    stageInfo: string;
+    stage_contents: StageData[] | null;
+}
+
 export default function StageOverview() {
     const { requireAuth } = useAuthCheck();
     const { isLoggedIn } = useAuth();
     requireAuth();
-    const [showDetails, setShowDetails] = useState(false);
-    const [selectedStage, setSelectedStage] = useState(null);
-
-    const stage_1 = [
+    const [showDetails, setShowDetails] = useState(-1);
+    const [selectedStage, setSelectedStage] = useState<StageData[] | null>(null);
+    const stage_1: StageData[] = [
         { Position: 1, Naam: 'Remco Evenepoel',Team:"Soudal-Quick Step", Points: 100, Jersey: 35, Total: 135, player: 'Roel' },
         { Position: 2, Naam: 'Filippo Ganna', Team:"", Points: 80, Jersey: 0, Total: 80, player: 'Dries' },
         { Position: 3, Naam: 'Joao Almeida', Team:"", Points: 65, Jersey: 0, Total: 65, player: 'Jordy' },
@@ -38,7 +53,7 @@ export default function StageOverview() {
         { Position: 25, Naam: 'Edoardo Affini', Team:"", Points: 1, Jersey: 0, Total: 1, player: 'Roel' }
     ];
 
-    const stage_2 = [
+    const stage_2: StageData[] = [
         { Position: 1, Naam: 'Coole Gast', Team:"", Points: 100, Jersey: 35, Total: 135, player: 'Dries' },
         { Position: 2, Naam: 'Gekke Gast', Team:"", Points: 80, Jersey: 0, Total: 80, player: 'Dries' },
         { Position: 3, Naam: 'Wacko Gast', Team:"", Points: 65, Jersey: 0, Total: 65, player: '' },
@@ -66,13 +81,13 @@ export default function StageOverview() {
         { Position: 25, Naam: 'Edoardo Affini', Team:"", Points: 1, Jersey: 0, Total: 1, player: 'Roel' }
     ];
 
-    const stages = [
+    const stages: Stage[] = [
         { id: 1, stageInfo: "Stage 1 | Brest - Landerneau", stage_contents: stage_1 },
         { id: 2, stageInfo: "Stage 2 | Perros-Guirec - Mûr-de-Bretagne Guerlédan", stage_contents: stage_2 },
         // Add more stages as needed
     ];
 
-    const getRowClassName = (name, column) => {
+    const getRowClassName = (name: string, column: string) => {
         if (column === 'Position' || column === 'Naam') {
             switch (name) {
                 case 'Roel':
@@ -90,9 +105,9 @@ export default function StageOverview() {
         return '';
     };
 
-    const handleStageClick = (stage) => {
+    const handleStageClick = (stage: Stage) => {
         if (showDetails === stage.id) {
-            setShowDetails(null); // Clicked on the same stage, so close it
+            setShowDetails(-1); // Clicked on the same stage, so close it
         } else {
             setSelectedStage(stage.stage_contents);
             setShowDetails(stage.id);
@@ -112,7 +127,7 @@ export default function StageOverview() {
                         <li
                             key={stage.id}
                             className={`cursor-pointer text-blue-500 hover:underline ${
-                                selectedStage === stage ? 'font-bold' : ''
+                                showDetails === stage.id ? 'font-bold' : ''
                             }`}
                             onClick={() => handleStageClick(stage)}
                         >

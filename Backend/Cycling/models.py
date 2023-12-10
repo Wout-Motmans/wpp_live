@@ -18,6 +18,9 @@ class Stage(models.Model):
         ],
         default='non_defined'
     )
+    depart = models.CharField(max_length=255)
+    arrival = models.CharField(max_length=255)
+    date = models.CharField(max_length=255)
 
 class Tour(models.Model):
     id = models.AutoField(primary_key=True)
@@ -28,6 +31,8 @@ class Game(models.Model):
     id = models.AutoField(primary_key=True)
     tour = models.OneToOneField(Tour, on_delete=models.CASCADE)
     is_finished = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
+
 
 class GameTeam(models.Model):
     id = models.AutoField(primary_key=True)
@@ -66,6 +71,7 @@ class RiderStage(models.Model):
     shirt_points = models.IntegerField()
     total_points = models.IntegerField()
     cumulative_total_points = models.IntegerField()
+    cumulative_total_active_points = models.IntegerField()
     position = models.IntegerField()
     shirts = models.JSONField()  
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
@@ -79,3 +85,5 @@ class RiderStage(models.Model):
         ],
         default='non_active'
     )
+    class Meta:
+        unique_together = ('stage', 'rider')
