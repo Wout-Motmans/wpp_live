@@ -32,6 +32,8 @@ urlpatterns = [
     path('addKlassieker', race.add_klassieker),
     path('addTourWithKlassiekers', race.add_tour_with_klassiekers),
     path('addGame', race.add_game),
+    path('getUnfinishedGames', race.get_unfinished_games),
+    path('getGameMyRiders', race.get_game_my_riders),
     path('alldb', race.get_all_db)
     
 ]
