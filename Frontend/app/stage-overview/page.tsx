@@ -178,3 +178,17 @@ export default function StageOverview() {
         </div>
     );
 }
+
+
+
+const getStageInfo = async (): Promise<any[]> => {
+    try {
+        const response = await fetch(`/api/getUnfinishedGames`);
+        if (!response.ok) throw new Error('getUnfinishedGames error');
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('getUnfinishedGames error:', error);
+        throw error;
+    }
+};
