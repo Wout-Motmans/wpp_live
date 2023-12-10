@@ -19,12 +19,40 @@ from django.core.serializers import serialize
 from django.db.models import F
 
 
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticated])
+def get_game_my_riders(request):
+    game_id = request.GET.get('game_id')
+    game = Game.objects.get(id=game_id)
+    gameteam = GameTeam.objects.get(auth_user=request.user, game=game)
+    ridergameteams = RiderGameTeam.objects.filter(game_team=gameteam)
+    data = [{
+        'id': ridergameteam.id,
+        'status': ridergameteam.status,
+        'rider_id': ridergameteam.rider.id,
+        'rider_full_name': ridergameteam.rider.full_name,
+        }
+        for ridergameteam in ridergameteams
+    ]
+    return Response(status=200, data=data)
+
+
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticated])
+def get_unfinished_games(request):
+    gameteams = GameTeam.objects.filter(auth_user=request.user).values_list('game', flat=True)
+    data = Game.objects.filter(id__in=gameteams, is_finished=False).values('id', 'tour__url')
+    return Response(status=200, data=data)
+
 
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def get_all_db(request):
     if request.user.is_staff:
+        #Tour.objects.all().delete()
         #RiderGameTeam.objects.all().delete()
         #StageTour.objects.all().delete()
         #Game.objects.all().delete()

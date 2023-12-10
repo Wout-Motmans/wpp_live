@@ -33,6 +33,7 @@ class Game(models.Model):
     is_finished = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
 
+
 class GameTeam(models.Model):
     id = models.AutoField(primary_key=True)
     auth_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
