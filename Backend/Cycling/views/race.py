@@ -624,13 +624,25 @@ def get_riderstage_from_stage(request):
         stage = Stageapi(stage_name)  # Assuming Stageapi is defined elsewhere
 
         # Retrieve jersey winners and stage results
-        gc_rider, kom_rider, points_rider, youth_rider = "", "", "", ""
-        for method, var in [(stage.gc, 'gc_rider'), (stage.kom, 'kom_rider'),
-                            (stage.points, 'points_rider'), (stage.youth, 'youth_rider')]:
-            try:
-                locals()[var] = method()[0]['rider_name']
-            except IndexError:
-                pass
+        try: 
+            gc_rider = stage.gc()[0]['rider_name']   
+        except IndexError:
+            gc_rider = ""
+            
+        try:
+            kom_rider = stage.kom()[0]['rider_name']
+        except IndexError:
+            kom_rider = ""
+            
+        try:
+            points_rider = stage.points()[0]['rider_name']
+        except IndexError:
+            points_rider = ""
+            
+        try:
+            youth_rider = stage.youth()[0]['rider_name']
+        except IndexError:
+            youth_rider = ""
 
         # Define or import calculate_points function
         def calculate_points(rank):
@@ -690,11 +702,44 @@ def get_riderstage_from_stage(request):
     except Exception as e:
         return Response({'error': str(e)}, status=500)     
 
-# @api_view(['GET'])
-# def get_riders_from_tour(request):
-# 	tour_name = request.GET.get('tour_name')
-# 	race = Tour.objects.get(url=tour_name)
-# 	startlist = RaceStartlist(f"race/{race.url}/startlist").startlist()
-# 	selected_keys = ["rider_name", "rider_url", "team_url"]
-# 	result = [{key: item[key] for key in selected_keys} for item in startlist]
-# 	return Response(status=status.HTTP_200_OK, data=result)
+@api_view(['GET'])
+def get_stage_details(request):
+    stage_name = request.GET.get('stage_name', None)
+    if not stage_name:
+        return Response({'error': 'Stage name is required'}, status=400)
+
+    stage = Stage.objects.get(url=stage_name)
+    stage_tour = StageTour.objects.get(stage=stage.id)
+    rider_stages = RiderStage.objects.filter(stage=stage)
+
+    stage_data = {
+        'stage_number': stage_tour.stage_number,
+        'stage_type': stage.stage_type,
+        'depart': stage.depart,
+        'arrival': stage.arrival,
+        'date': stage.date,
+        'riders': []
+    }
+
+    for rider_stage in rider_stages:
+        rider = rider_stage.rider
+        rider_game_team = RiderGameTeam.objects.filter(rider=rider).first()
+        player = rider_game_team.game_team.auth_user.username if rider_game_team and rider_game_team.game_team.auth_user else None
+
+        rider_data = {
+            'rider_name': rider.rider_name,
+            'team_name': rider.team_name,
+            'nationality': rider.nationality,
+            'point': rider_stage.point,
+            'shirt_points': rider_stage.shirt_points,
+            'total_points': rider_stage.total_points,
+            'cumulative_total_points': rider_stage.cumulative_total_points,
+            'cumulative_total_active_points': rider_stage.cumulative_total_active_points,
+            'position': rider_stage.position,
+            'shirts': rider_stage.shirts,
+            'player': player
+        }
+
+        stage_data['riders'].append(rider_data)
+
+    return Response(stage_data, status=200)
