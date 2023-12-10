@@ -44,6 +44,7 @@ class Rider(models.Model):
     full_name = models.CharField(max_length=255)
     url = models.CharField(max_length=255)
     real_team = models.CharField(max_length=255)
+    real_team_name = models.CharField(max_length=255)
 
 class RiderGameTeam(models.Model):
     id = models.AutoField(primary_key=True)
