@@ -571,79 +571,7 @@ function RaceInfoPage() {
             </div>
           )}
         </div>
-        <button
-          onClick={fetchRaceInfo}
-          className="w-full px-4 py-2 mt-4 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover-bg-gray-600 focus:outline-none focus:bg-gray-600"
-        >
-          Get Race Info
-        </button>
-        {error && (
-          <p className="text-red-500 mt-4">{error}</p>
-        )}
-
-
-        {raceInfo && (
-          <div className="mt-4">
-            <p className="text-lg">Name: {raceInfo.name}</p>
-            <p className="text-lg">Nationality: {raceInfo.nationality}</p>
-            <p className="text-lg">Year: {raceInfo.year} </p>
-            <p className="text-lg">Stages:</p>
-            <ul style={{ marginTop: '10px' }}>
-              {raceInfo.stages.map((stage, index) => (
-                <li key={index} className="mb-2" style={{ marginBottom: '40px' }}>
-                  <div>
-                    <button
-                      className="w-full px-15 py-2 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover-bg-gray-600 focus:outline-none focus-bg-gray-600"
-                      onClick={() => handleShowStageInfo(stage)}
-                    >
-                      {selectedStage === stage ? 'Close Stage Info' : stage.stage_name}
-                    </button>
-                    {selectedStage === stage && showStageInfo && stageInfo && (
-                      <div className={`mt-4 p-4 bg-gray-800 rounded-md border border-gray-700 slide-down`}>
-                        <p className="text-lg text-white">Stage Info:</p>
-                        <br/>
-                        <p className="text-md text-white">Name: {stageInfo.name.split('/').pop().split('-').map((part: string, index: number) => index === 0 ? `${part.charAt(0).toUpperCase() + part.slice(1)}` : part).join(' ')}</p>
-                        <p className="text-md text-white">Date: {stageInfo.date}</p>
-                        <p className="text-md text-white">Distance: {stageInfo.distance}</p>
-                        <p className="text-md text-white">Stage Type: {stageInfo.stage_type}</p>
-                        <p className="text-md text-white">Departure: {stageInfo.depart}</p>
-                        <p className="text-md text-white">Arrival: {stageInfo.arrival}</p>
-                        <br/>
-                        {stageInfo.results && (
-                          <table className="w-full text-white mt-2" style={{ borderCollapse: 'collapse' }}>
-                            <thead>
-                              <tr className="bg-gray-700">
-                                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rider Name</th>
-                                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rider Number</th>
-                                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Rank</th>
-                                <th style={{ border: '1px solid #ddd', padding: '8px' }}>UCI Points</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {stageInfo.results
-                                .sort((a, b) => parseInt(a.rank) - parseInt(b.rank))
-                                .slice(0, 25)
-                                .map((result, index) => (
-                                  <tr key={index} className={index % 2 === 0 ? 'bg-gray-700' : 'bg-gray-600'}>
-                                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_name}</td>
-                                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.rider_number}</td>
-                                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{index + 1}</td>
-                                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{result.uci_points}</td>
-                                  </tr>
-                                ))}
-                            </tbody>
-                          </table>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
   );
 }
-
 export default RaceInfoPage;
