@@ -41,10 +41,11 @@ class GameTeam(models.Model):
 
 class Rider(models.Model):
     id = models.AutoField(primary_key=True)
-    full_name = models.CharField(max_length=255)
-    url = models.CharField(max_length=255)
-    real_team = models.CharField(max_length=255)
-    real_team_name = models.CharField(max_length=255)
+    rider_name = models.CharField(max_length=255)
+    rider_url = models.CharField(max_length=255)
+    team_url = models.CharField(max_length=255)
+    team_name = models.CharField(max_length=255)
+    nationality = models.CharField(max_length=255)
 
 class RiderGameTeam(models.Model):
     id = models.AutoField(primary_key=True)
