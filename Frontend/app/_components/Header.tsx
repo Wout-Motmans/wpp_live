@@ -12,6 +12,7 @@ export default function Header() {
     const { logout, isLoggedIn, isAdmin } = useAuth();
 
     const navigations = useMemo(() => [ { name: 'dashboard', route: '/'  },
+                                        { name: 'My Team', route: '/myteam'  },
                         ...(isAdmin ? [ { name: 'New Race' , route: '/newrace'  }] : []),
                                         { name: 'raceinfo' , route: '/raceinfo' },
                         ...(isAdmin ? [ { name: 'adminpage', route: '/adminpage'}] : []),
@@ -34,16 +35,16 @@ export default function Header() {
                         </path>
                     </svg>
                 </Link>
-                <nav className="flex  items-center">
+                <nav className="flex   divide-x divide-gray-500">
                     {isLoggedIn ? (
                         <>
                             {navigations.map(navigation => (
                                 <Link
                                     key={navigation.name}
                                     href={navigation.route}
-                                    className={`text-xl pr-3 text-white  whitespace-nowrap ${pathname === navigation.route ? 'underline' : ''} `}
+                                    className={`text-xl px-2 text-white items-center whitespace-nowrap ${pathname === navigation.route ? 'underline' : ''} `}
                                 >
-                                    {navigation.name}
+                                    <div>{navigation.name}</div>
                                 </Link>
                             ))}
                             <Button type='link' onClick={logout}>Logout</Button>

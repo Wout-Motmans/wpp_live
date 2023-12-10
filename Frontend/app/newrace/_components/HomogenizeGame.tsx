@@ -14,7 +14,7 @@ interface UndoInfo {
 	riders: Rider[],
 }
 
-export default function HomogenizeGame({ race, users, startRiders, template, activeAmount, totalAmount }: { race: RaceInfo, users: User[], startRiders: Rider[], template : User[], activeAmount : number, totalAmount : number }) {
+export default function HomogenizeGame({ race, users, startRiders, template, activeAmount, totalAmount, perteamamount }: { race: RaceInfo, users: User[], startRiders: Rider[], template : User[], activeAmount : number, totalAmount : number, perteamamount : number }) {
 	const [teams, setTeams] = useState<Team[]>(users.map(user => { return { user, riders: [] } }))
 	const [filterRider, setFilterRider] = useState<string>('')
 	const [changeRider, setChangeRider] = useState<Rider|null>(null)
@@ -42,7 +42,12 @@ export default function HomogenizeGame({ race, users, startRiders, template, act
 		if (changeRider !== null) {
 			const teamIndexWithChangeRider = teams.findIndex(team => team.riders.includes(changeRider))
 			if (teamIndexWithChangeRider != -1) {
-				if (teams[teamIndexWithChangeRider].riders.reduce((acc, rider) => (rider.team_url === givenRider.team_url ? acc + 1 : acc), 1) > 2) return
+				if (teams[teamIndexWithChangeRider].riders.reduce((acc, rider) => (rider.team_url === givenRider.team_url ? acc + 1 : acc), 1) > perteamamount) return messageApi.open({
+					key,
+					type: 'error',
+					content: 'Too many riders of the same team',
+					duration: 1.5,
+				})
 				const givenRiderIndex = riders.findIndex(rider => rider === givenRider)
 				setRiders(prev => [...prev.slice(0, givenRiderIndex), changeRider, ...prev.slice(givenRiderIndex+1)])
 				const ridersChanged = teams[teamIndexWithChangeRider].riders.map(rider => rider === changeRider ? givenRider : rider)
@@ -50,7 +55,12 @@ export default function HomogenizeGame({ race, users, startRiders, template, act
 				setChangeRider(null)
 			}
 		} else if (chosingTemplateUser() != null) {
-			if (teams.find(team => team.user === chosingTemplateUser())!.riders.reduce((acc, rider) => (rider.team_url === givenRider.team_url ? acc + 1 : acc), 1) > 2) return
+			if (teams.find(team => team.user === chosingTemplateUser())!.riders.reduce((acc, rider) => (rider.team_url === givenRider.team_url ? acc + 1 : acc), 1) > perteamamount) return messageApi.open({
+				key,
+				type: 'error',
+				content: 'Too many riders of the same team',
+				duration: 1.5,
+			})
 			const givenRiderIndex = riders.findIndex(rider => rider === givenRider)
 			setRiders(prev => [ ...prev.slice(0, givenRiderIndex), ...prev.slice(givenRiderIndex+1)])
 			setTeams(prev => prev.map(team => team.user === chosingTemplateUser()? {...team, riders : [...team.riders, givenRider]} : team))
