@@ -31,7 +31,7 @@ def get_game_my_riders(request):
         'id': ridergameteam.id,
         'status': ridergameteam.status,
         'rider_id': ridergameteam.rider.id,
-        'rider_full_name': ridergameteam.rider.full_name,
+        'rider_name': ridergameteam.rider.rider_name,
         }
         for ridergameteam in ridergameteams
     ]
@@ -57,8 +57,8 @@ def get_all_db(request):
         #StageTour.objects.all().delete()
         #Game.objects.all().delete()
         #GameTeam.objects.all().delete()
-        riders = Rider.objects.all().values('id', 'full_name', 'url', 'real_team')
-        ridergameteams = RiderGameTeam.objects.all().values('id', 'game_team__id', 'rider__full_name', 'status')
+        riders = Rider.objects.all().values('id', 'rider_name', 'rider_url', 'team_url')
+        ridergameteams = RiderGameTeam.objects.all().values('id', 'game_team__id', 'rider_name', 'status')
         stagetours = StageTour.objects.all().values('id', 'stage__url', 'tour__url', 'stage_number')
         stages = Stage.objects.all().values('id', 'url', 'is_klassieker', 'stage_type')
         games = Game.objects.all().values('id', 'tour__url')
@@ -161,6 +161,15 @@ def get_start_riders(request):
 	if request.user.is_staff:
 		race = Tour.objects.get(id=raceId)
 		startlist = RaceStartlist(f"race/{race.url}/startlist").startlist()
+		for rider in startlist:
+			if not Rider.objects.filter(rider_url=rider.get('rider_url')).exists():
+				Rider.objects.create(
+					rider_url=rider.get('rider_url'),
+					rider_name=rider.get('rider_name'),
+					team_url=rider.get('team_url'),
+					team_name=rider.get('team_name'),
+					nationality=rider.get('nationality'),
+					)
 		selected_keys = ["rider_name", "rider_url", "team_name", "team_url"]
 		result = [{key: item[key] for key in selected_keys} for item in startlist]
 		return Response(status=status.HTTP_200_OK, data=result)
@@ -182,8 +191,6 @@ def add_game(request):
 			user = User.objects.get(id=team.get('userId'))
 			gameteam = GameTeam.objects.create(auth_user=user, game=game)
 			for i, rider in enumerate(team.get('riders')):
-				if not Rider.objects.filter(url=rider.get('rider_url')).exists():
-					Rider.objects.create(url=rider.get('rider_url'), full_name= rider.get('rider_name'),real_team=rider.get('team_url'))
 				rider = Rider.objects.get(url=rider.get('rider_url'))
 				RiderGameTeam.objects.create(game_team=gameteam, rider=rider, status='active' if activeAmount > i else 'sub')
 		return Response(status=status.HTTP_200_OK)
@@ -540,8 +547,8 @@ def get_stage_info_scrape(request):
 #             stage__url=stage_url
 #         ).annotate(
 #             position=F('position'),
-#             full_name=F('rider__full_name'),
-#             real_team=F('rider__real_team'),
+#             rider_name=F('rider__rider_name'),
+#             team_url=F('rider__team_url'),
 #             points=F('point'),
 #             shirt_points=F('shirt_points'),
 #             total_points=F('total_points'),
@@ -551,7 +558,7 @@ def get_stage_info_scrape(request):
 
 #         # Serialize the query set to JSON
 #         json_data = serialize('json', results, use_natural_primary_keys=True, fields=(
-#             'position', 'full_name', 'real_team', 'points', 'shirt_points', 'total_points', 'username', 'stage_url'
+#             'position', 'rider_name', 'team_url', 'points', 'shirt_points', 'total_points', 'username', 'stage_url'
 #         ))
 
 #         # Return the JSON data
@@ -632,7 +639,7 @@ def get_riderstage_from_stage(request):
 
         for rider in stage.results():
             # Check if the rider is in the database
-            rider_obj = Rider.objects.filter(full_name=rider['rider_name']).first()
+            rider_obj = Rider.objects.filter(rider_name=rider['rider_name']).first()
             if not rider_obj:
                 continue  # Skip riders not in the database
 
