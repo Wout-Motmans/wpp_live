@@ -1,30 +1,22 @@
 'use client'
 import Image from 'next/image'
+import bicycle from '../public/img/bicycleman.gif'
 
 export default function Loading() {
     
 
 
     return (
-        <div>
-            <div style={{width: "100%", overflow: "hidden" }}>
+            <div className=' w-full'>
                 <Image
-                    src='/public/img/bicycleman.gif'
+                    src={bicycle}
                     alt='Bicycle Animation'
                     width={120}
                     height={90}
-                    style={{
-                        animation: 'slide 7s linear infinite',
-                        '@keyframes slide': {
-                            '0%': { transform: 'translateX(0)', },
-                            '100%': { transform: 'translateX(-100%)', },
-                        },
-                    }}
+                    className='animate-slide '
                     
                 />
                 
             </div>
-        </div>
-        
     )
 }
