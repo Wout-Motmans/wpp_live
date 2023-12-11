@@ -11,11 +11,11 @@ export default function Header() {
     const pathname = usePathname();
     const { logout, isLoggedIn, isAdmin } = useAuth();
 
-    const navigations = useMemo(() => [ { name: 'dashboard', route: '/'  },
+    const navigations = useMemo(() => [ { name: 'Dashboard', route: '/'  },
                                         { name: 'My Team', route: '/myteam'  },
                         ...(isAdmin ? [ { name: 'New Race' , route: '/newrace'  }] : []),
-                                        { name: 'raceinfo' , route: '/raceinfo' },
-                        ...(isAdmin ? [ { name: 'adminpage', route: '/adminpage'}] : []),
+                                        { name: 'Race Info' , route: '/raceinfo' },
+                        ...(isAdmin ? [ { name: 'Adminpage', route: '/adminpage'}] : []),
                     ], [isAdmin]);
 
     return (
