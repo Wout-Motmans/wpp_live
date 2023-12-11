@@ -469,7 +469,7 @@ function RaceInfoPage() {
         `}
 
         </style>
-        <div className="w-full p-6 bg-white rounded-md shadow-md lg:max-w-xl relative">
+        <div className="w-full p-8 bg-white rounded-md shadow-md lg:max-w-xl relative">
           <div className="flex flex-row mb-4">
             <input
               type="text"
@@ -521,13 +521,16 @@ function RaceInfoPage() {
               <p className="text-lg">Stages:</p>
               <ul style={{ marginTop: '10px' }}>
                 {raceInfo.stages.map((stage, index) => (
-                  <li key={index} className="mb-2" style={{ marginBottom: '40px' }}>
+                  <li key={index} className="mb-2" style={{ marginBottom: '20px' }}>
                     <div>
                       <button
                         className="w-full px-15 py-2 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover-bg-gray-600 focus:outline-none focus-bg-gray-600"
                         onClick={() => handleShowStageInfo(stage)}
                       >
-                        {selectedStage === stage ? stage.stage_name + "   ▲" : stage.stage_name + "   ▼"}
+                        <div className="ml-4 mr-4 flex justify-between items-center">
+                          <p>{stage.stage_name}</p>
+                          {selectedStage === stage ? <p>▲</p> : <p>▼</p>}
+                        </div>
                       </button>
                       {selectedStage === stage && showStageInfo && stageInfo && (
                         <div className={`mt-4 p-4 bg-gray-800 rounded-md border border-gray-700 slide-down`}>
