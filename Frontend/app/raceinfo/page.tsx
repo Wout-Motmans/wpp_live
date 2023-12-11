@@ -529,7 +529,7 @@ function RaceInfoPage() {
                       >
                         <div className="ml-4 mr-4 flex justify-between items-center">
                           <p>{stage.stage_name}</p>
-                          {selectedStage === stage ? <p>▲</p> : <p>▼</p>}
+                          <p className={`transition-transform duration-200 transform ${selectedStage === stage ? 'rotate-0' : 'rotate-180'}`}>▲</p>
                         </div>
                       </button>
                       {selectedStage === stage && showStageInfo && stageInfo && (
