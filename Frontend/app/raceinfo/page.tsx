@@ -486,10 +486,10 @@ function RaceInfoPage() {
               min="1903"
               max={new Date().getFullYear().toString()}
               placeholder="Year"
-              className="w-20 px-4 py-2 text-gray-700 bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40"
+              className="w-24 px-4 py-2 text-gray-700 bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40"
             />
           </div>
-          <div className="absolute left-0 w-full bg-white border rounded-md shadow-lg z-10">
+          <div className="absolute left-0 w-full bg-white rounded-md shadow-lg z-10">
             {nameSuggestions.map((suggestion, index) => (
               <div
                 key={index}
@@ -502,7 +502,7 @@ function RaceInfoPage() {
           </div>
           <button
             onClick={fetchRaceInfo}
-            className="w-full px-4 py-2 mt-4 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover-bg-gray-600 focus:outline-none focus:bg-gray-600"
+            className="w-full px-4 py-2 mt-2 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover-bg-gray-600 focus:outline-none focus:bg-gray-600"
           >
             Get Race Info
           </button>
@@ -512,31 +512,33 @@ function RaceInfoPage() {
 
 
           {raceInfo && (
-            <div className="mt-4">
+            <div className="mt-4 border-t-2">
+              <br />
               <p className="text-lg">Name: {raceInfo.name}</p>
               <p className="text-lg">Nationality: {raceInfo.nationality}</p>
               <p className="text-lg">Year: {raceInfo.year} </p>
+              <br />
               <p className="text-lg">Stages:</p>
               <ul style={{ marginTop: '10px' }}>
                 {raceInfo.stages.map((stage, index) => (
                   <li key={index} className="mb-2" style={{ marginBottom: '40px' }}>
-                    <p>Stage Name: {stage.stage_name}</p>
-                    <p>Stage Winner: {stage.rider_name}</p>
                     <div>
                       <button
                         className="w-full px-15 py-2 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover-bg-gray-600 focus:outline-none focus-bg-gray-600"
                         onClick={() => handleShowStageInfo(stage)}
                       >
-                        {selectedStage === stage ? 'Close Stage Info' : 'Show Stage Info'}
+                        {selectedStage === stage ? stage.stage_name + "   ▲" : stage.stage_name + "   ▼"}
                       </button>
                       {selectedStage === stage && showStageInfo && stageInfo && (
                         <div className={`mt-4 p-4 bg-gray-800 rounded-md border border-gray-700 slide-down`}>
                           <p className="text-lg text-white">Stage Info:</p>
+                          <br />
                           <p className="text-md text-white">Date: {stageInfo.date}</p>
                           <p className="text-md text-white">Distance: {stageInfo.distance}</p>
                           <p className="text-md text-white">Stage Type: {stageInfo.stage_type}</p>
                           <p className="text-md text-white">Departure: {stageInfo.depart}</p>
                           <p className="text-md text-white">Arrival: {stageInfo.arrival}</p>
+                          <br />
                           {stageInfo.results && (
                             <table className="w-full text-white mt-2" style={{ borderCollapse: 'collapse' }}>
                               <thead>
